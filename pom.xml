@@ -2,9 +2,9 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.dreamfactory</groupId>
-  <artifactId>android-client</artifactId>
+  <artifactId></artifactId>
   <packaging>jar</packaging>
-  <name>android-client</name>
+  <name></name>
   <version>1.0.0</version>
   <scm>
     <connection>scm:git:git@github.com:wordnik/swagger-mustache.git</connection>

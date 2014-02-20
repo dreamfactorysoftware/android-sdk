@@ -8,7 +8,7 @@ import com.dreamfactory.model.Tables;
 import java.util.*;
 
 public class DbApi {
-  String basePath = "https://dsp-codegen.cloud.dreamfactory.com/rest";
+  String basePath = "http://localhost/rest";
   ApiInvoker apiInvoker = ApiInvoker.getInstance();
 
   public void addHeader(String key, String value) {

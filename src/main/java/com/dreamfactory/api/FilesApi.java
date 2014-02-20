@@ -16,7 +16,7 @@ import com.dreamfactory.model.ContainerResponse;
 import java.util.*;
 
 public class FilesApi {
-  String basePath = "https://dsp-codegen.cloud.dreamfactory.com/rest";
+  String basePath = "http://localhost/rest";
   ApiInvoker apiInvoker = ApiInvoker.getInstance();
 
   public void addHeader(String key, String value) {

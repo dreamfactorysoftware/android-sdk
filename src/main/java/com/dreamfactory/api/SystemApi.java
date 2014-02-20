@@ -7,8 +7,8 @@ import com.dreamfactory.model.RolesResponse;
 import com.dreamfactory.model.AppGroupsResponse;
 import com.dreamfactory.model.CustomSettings;
 import com.dreamfactory.model.UsersRequest;
-import com.dreamfactory.model.AppGroup;
 import com.dreamfactory.model.EmailTemplateRequest;
+import com.dreamfactory.model.DeviceResponse;
 import com.dreamfactory.model.UserRequest;
 import com.dreamfactory.model.ConfigResponse;
 import com.dreamfactory.model.CustomSetting;
@@ -31,6 +31,7 @@ import com.dreamfactory.model.AppGroupsRequest;
 import com.dreamfactory.model.AppGroupRequest;
 import com.dreamfactory.model.RolesRequest;
 import com.dreamfactory.model.UserResponse;
+import com.dreamfactory.model.DevicesResponse;
 import com.dreamfactory.model.AppResponse;
 import com.dreamfactory.model.UsersResponse;
 import com.dreamfactory.model.RoleResponse;
@@ -38,7 +39,7 @@ import com.dreamfactory.model.ConfigRequest;
 import java.util.*;
 
 public class SystemApi {
-  String basePath = "https://dsp-codegen.cloud.dreamfactory.com/rest";
+  String basePath = "http://localhost/rest";
   ApiInvoker apiInvoker = ApiInvoker.getInstance();
 
   public void addHeader(String key, String value) {
@@ -505,7 +506,7 @@ public class SystemApi {
       }
     }
   }
-  public AppGroup getAppGroup (String id, String fields, String related) throws ApiException {
+  public AppGroupResponse getAppGroup (String id, String fields, String related) throws ApiException {
     // verify required params are set
     if(id == null ) {
        throw new ApiException(400, "missing required params");
@@ -526,7 +527,7 @@ public class SystemApi {
     try {
       String response = apiInvoker.invokeAPI(basePath, path, "GET", queryParams, null, headerParams, contentType);
       if(response != null){
-        return (AppGroup) ApiInvoker.deserialize(response, "", AppGroup.class);
+        return (AppGroupResponse) ApiInvoker.deserialize(response, "", AppGroupResponse.class);
       }
       else {
         return null;
@@ -833,6 +834,156 @@ public class SystemApi {
       String response = apiInvoker.invokeAPI(basePath, path, "DELETE", queryParams, null, headerParams, contentType);
       if(response != null){
         return (Success) ApiInvoker.deserialize(response, "", Success.class);
+      }
+      else {
+        return null;
+      }
+    } catch (ApiException ex) {
+      if(ex.getCode() == 404) {
+        return null;
+      }
+      else {
+        throw ex;
+      }
+    }
+  }
+  public DevicesResponse getDevices (String ids, String filter, Integer limit, String order, Integer offset, String fields, String related, Boolean include_count, Boolean include_schema) throws ApiException {
+    // create path and map variables
+    String path = "/system/device".replaceAll("\\{format\\}","json");
+
+    // query params
+    Map<String, String> queryParams = new HashMap<String, String>();
+    Map<String, String> headerParams = new HashMap<String, String>();
+
+    if(!"null".equals(String.valueOf(ids)))
+      queryParams.put("ids", String.valueOf(ids));
+    if(!"null".equals(String.valueOf(filter)))
+      queryParams.put("filter", String.valueOf(filter));
+    if(!"null".equals(String.valueOf(limit)))
+      queryParams.put("limit", String.valueOf(limit));
+    if(!"null".equals(String.valueOf(order)))
+      queryParams.put("order", String.valueOf(order));
+    if(!"null".equals(String.valueOf(offset)))
+      queryParams.put("offset", String.valueOf(offset));
+    if(!"null".equals(String.valueOf(fields)))
+      queryParams.put("fields", String.valueOf(fields));
+    if(!"null".equals(String.valueOf(related)))
+      queryParams.put("related", String.valueOf(related));
+    if(!"null".equals(String.valueOf(include_count)))
+      queryParams.put("include_count", String.valueOf(include_count));
+    if(!"null".equals(String.valueOf(include_schema)))
+      queryParams.put("include_schema", String.valueOf(include_schema));
+    String contentType = "application/json";
+
+    try {
+      String response = apiInvoker.invokeAPI(basePath, path, "GET", queryParams, null, headerParams, contentType);
+      if(response != null){
+        return (DevicesResponse) ApiInvoker.deserialize(response, "", DevicesResponse.class);
+      }
+      else {
+        return null;
+      }
+    } catch (ApiException ex) {
+      if(ex.getCode() == 404) {
+        return null;
+      }
+      else {
+        throw ex;
+      }
+    }
+  }
+  public DevicesResponse deleteDevices (String ids, Boolean force, String fields, String related) throws ApiException {
+    // create path and map variables
+    String path = "/system/device".replaceAll("\\{format\\}","json");
+
+    // query params
+    Map<String, String> queryParams = new HashMap<String, String>();
+    Map<String, String> headerParams = new HashMap<String, String>();
+
+    if(!"null".equals(String.valueOf(ids)))
+      queryParams.put("ids", String.valueOf(ids));
+    if(!"null".equals(String.valueOf(force)))
+      queryParams.put("force", String.valueOf(force));
+    if(!"null".equals(String.valueOf(fields)))
+      queryParams.put("fields", String.valueOf(fields));
+    if(!"null".equals(String.valueOf(related)))
+      queryParams.put("related", String.valueOf(related));
+    String contentType = "application/json";
+
+    try {
+      String response = apiInvoker.invokeAPI(basePath, path, "DELETE", queryParams, null, headerParams, contentType);
+      if(response != null){
+        return (DevicesResponse) ApiInvoker.deserialize(response, "", DevicesResponse.class);
+      }
+      else {
+        return null;
+      }
+    } catch (ApiException ex) {
+      if(ex.getCode() == 404) {
+        return null;
+      }
+      else {
+        throw ex;
+      }
+    }
+  }
+  public DeviceResponse getDevice (String id, String fields, String related) throws ApiException {
+    // verify required params are set
+    if(id == null ) {
+       throw new ApiException(400, "missing required params");
+    }
+    // create path and map variables
+    String path = "/system/device/{id}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "id" + "\\}", apiInvoker.escapeString(id.toString()));
+
+    // query params
+    Map<String, String> queryParams = new HashMap<String, String>();
+    Map<String, String> headerParams = new HashMap<String, String>();
+
+    if(!"null".equals(String.valueOf(fields)))
+      queryParams.put("fields", String.valueOf(fields));
+    if(!"null".equals(String.valueOf(related)))
+      queryParams.put("related", String.valueOf(related));
+    String contentType = "application/json";
+
+    try {
+      String response = apiInvoker.invokeAPI(basePath, path, "GET", queryParams, null, headerParams, contentType);
+      if(response != null){
+        return (DeviceResponse) ApiInvoker.deserialize(response, "", DeviceResponse.class);
+      }
+      else {
+        return null;
+      }
+    } catch (ApiException ex) {
+      if(ex.getCode() == 404) {
+        return null;
+      }
+      else {
+        throw ex;
+      }
+    }
+  }
+  public DeviceResponse deleteDevice (String id, String fields, String related) throws ApiException {
+    // verify required params are set
+    if(id == null ) {
+       throw new ApiException(400, "missing required params");
+    }
+    // create path and map variables
+    String path = "/system/device/{id}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "id" + "\\}", apiInvoker.escapeString(id.toString()));
+
+    // query params
+    Map<String, String> queryParams = new HashMap<String, String>();
+    Map<String, String> headerParams = new HashMap<String, String>();
+
+    if(!"null".equals(String.valueOf(fields)))
+      queryParams.put("fields", String.valueOf(fields));
+    if(!"null".equals(String.valueOf(related)))
+      queryParams.put("related", String.valueOf(related));
+    String contentType = "application/json";
+
+    try {
+      String response = apiInvoker.invokeAPI(basePath, path, "DELETE", queryParams, null, headerParams, contentType);
+      if(response != null){
+        return (DeviceResponse) ApiInvoker.deserialize(response, "", DeviceResponse.class);
       }
       else {
         return null;
