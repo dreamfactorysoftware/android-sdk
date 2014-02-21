@@ -16,7 +16,7 @@ import com.dreamfactory.model.ContainerResponse;
 import java.util.*;
 
 public class FilesApi {
-  String basePath = "http://localhost/rest";
+  String basePath = "http://192.168.1.23/rest";
   ApiInvoker apiInvoker = ApiInvoker.getInstance();
 
   public void addHeader(String key, String value) {
