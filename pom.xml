@@ -4,7 +4,7 @@
   <groupId>com.dreamfactory</groupId>
   <artifactId>android-client</artifactId>
   <packaging>jar</packaging>
-  <name></name>
+  <name>android-client</name>
   <version>1.0.0</version>
   <scm>
     <connection>scm:git:git@github.com:wordnik/swagger-mustache.git</connection>
