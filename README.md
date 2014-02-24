@@ -5,7 +5,7 @@ DreamFactory Android java sdk
 
 Usage:
 
-class GetRecordsAsyncTask extends AsyncTask<Void, Void, List<Record>> {
+    class GetRecordsAsyncTask extends AsyncTask<Void, Void, List<Record>> {
     @Override
     protected List<Record> doInBackground(Void... params) {
         DbApi api = new DbApi();
@@ -25,6 +25,6 @@ class GetRecordsAsyncTask extends AsyncTask<Void, Void, List<Record>> {
             Log.d("GetRecordsAsyncTask", record.toString());
         }
     }
-}
+    }
 
 
