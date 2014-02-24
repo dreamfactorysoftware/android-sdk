@@ -3,8 +3,11 @@ android-sdk
 
 DreamFactory Android java sdk 
 
-Usage:
+Usage:  Pull records from a table named "todo"
 
+
+    import com.dreamfactory.*;
+    import java.util.List;
     class GetRecordsAsyncTask extends AsyncTask<Void, Void, List<Record>> {
     @Override
     protected List<Record> doInBackground(Void... params) {
