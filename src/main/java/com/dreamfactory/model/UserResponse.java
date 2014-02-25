@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.dreamfactory.model.Role;
 import com.dreamfactory.model.App;
-import com.dreamfactory.model.Integer;
 public class UserResponse {
   /* Identifier of this user. */
   @JsonProperty("id")

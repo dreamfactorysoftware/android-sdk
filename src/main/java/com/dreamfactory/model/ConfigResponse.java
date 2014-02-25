@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.*;
 import com.dreamfactory.model.HostInfo;
-import com.dreamfactory.model.Integer;
 public class ConfigResponse {
   /* Default Role Id assigned to newly registered users, set to null to turn off open registration. */
   @JsonProperty("open_reg_role_id")

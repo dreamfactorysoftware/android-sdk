@@ -3,7 +3,6 @@ package com.dreamfactory.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.dreamfactory.model.User;
-import com.dreamfactory.model.Integer;
 public class DeviceResponse {
   /* Identifier of this device. */
   @JsonProperty("id")

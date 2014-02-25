@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.*;
 import com.dreamfactory.model.EmailAddress;
-import com.dreamfactory.model.Integer;
 public class EmailRequest {
   /* Email Template name to base email on. */
   @JsonProperty("template")

@@ -7,7 +7,7 @@ import com.dreamfactory.model.EmailResponse;
 import java.util.*;
 
 public class EmailApi {
-  String basePath = "http://192.168.1.23/rest";
+  String basePath = "https://next.cloud.dreamfactory.com/rest";
   ApiInvoker apiInvoker = ApiInvoker.getInstance();
 
   public void addHeader(String key, String value) {

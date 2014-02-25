@@ -2,7 +2,6 @@ package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.dreamfactory.model.Integer;
 public class ProfileResponse {
   /* Email address of the current user. */
   @JsonProperty("email")

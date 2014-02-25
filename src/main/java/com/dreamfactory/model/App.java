@@ -2,7 +2,6 @@ package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.dreamfactory.model.Integer;
 public class App {
   /* Id of the application. */
   @JsonProperty("id")

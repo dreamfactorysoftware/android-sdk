@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.*;
 import com.dreamfactory.model.Role;
 import com.dreamfactory.model.App;
-import com.dreamfactory.model.Integer;
 public class ServiceResponse {
   /* Identifier of this service. */
   @JsonProperty("id")

@@ -3,6 +3,7 @@ package com.dreamfactory.api;
 import com.dreamfactory.client.ApiException;
 import com.dreamfactory.client.ApiInvoker;
 import com.dreamfactory.model.Register;
+import com.dreamfactory.model.Resource;
 import com.dreamfactory.model.CustomSettings;
 import com.dreamfactory.model.Login;
 import com.dreamfactory.model.PasswordResponse;
@@ -11,14 +12,13 @@ import com.dreamfactory.model.Session;
 import com.dreamfactory.model.CustomSetting;
 import com.dreamfactory.model.DeviceRequest;
 import com.dreamfactory.model.PasswordRequest;
-import com.dreamfactory.model.Resources;
 import com.dreamfactory.model.Success;
 import com.dreamfactory.model.ProfileRequest;
 import com.dreamfactory.model.DevicesResponse;
 import java.util.*;
 
 public class UserApi {
-  String basePath = "http://192.168.1.23/rest";
+  String basePath = "https://next.cloud.dreamfactory.com/rest";
   ApiInvoker apiInvoker = ApiInvoker.getInstance();
 
   public void addHeader(String key, String value) {
@@ -37,7 +37,7 @@ public class UserApi {
     return basePath;
   }
 
-  public Resources getResources () throws ApiException {
+  public Resource getResources () throws ApiException {
     // create path and map variables
     String path = "/user".replaceAll("\\{format\\}","json");
 
@@ -50,7 +50,7 @@ public class UserApi {
     try {
       String response = apiInvoker.invokeAPI(basePath, path, "GET", queryParams, null, headerParams, contentType);
       if(response != null){
-        return (Resources) ApiInvoker.deserialize(response, "", Resources.class);
+        return (Resource) ApiInvoker.deserialize(response, "", Resource.class);
       }
       else {
         return null;

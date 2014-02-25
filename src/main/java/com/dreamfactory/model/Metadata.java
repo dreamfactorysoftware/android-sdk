@@ -3,7 +3,6 @@ package com.dreamfactory.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.*;
-import com.dreamfactory.model.Integer;
 public class Metadata {
   /* Array of table schema. */
   @JsonProperty("schema")
