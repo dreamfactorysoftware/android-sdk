@@ -2,9 +2,8 @@ package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.*;
-import com.dreamfactory.model.Role;
-import com.dreamfactory.model.App;
+import com.dreamfactory.model.RelatedApps;
+import com.dreamfactory.model.RelatedRoles;
 public class ServiceResponse {
   /* Identifier of this service. */
   @JsonProperty("id")
@@ -53,13 +52,10 @@ public class ServiceResponse {
   private String headers = null;
   /* Related apps by app to service assignment. */
   @JsonProperty("apps")
-  private List<App> apps = new ArrayList<App>();
+  private RelatedApps apps = null;
   /* Related roles by service to role assignment. */
   @JsonProperty("roles")
-  private List<Role> roles = new ArrayList<Role>();
-  /* True if this service is a default system service. */
-  @JsonProperty("is_system")
-  private Boolean is_system = null;
+  private RelatedRoles roles = null;
   /* Date this service was created. */
   @JsonProperty("created_date")
   private String created_date = null;
@@ -72,6 +68,9 @@ public class ServiceResponse {
   /* User Id of who last modified this service. */
   @JsonProperty("last_modified_by_id")
   private Integer last_modified_by_id = null;
+  /* True if this service is a default system service. */
+  @JsonProperty("is_system")
+  private Boolean is_system = null;
   public Integer getId() {
     return id;
   }
@@ -177,25 +176,18 @@ public class ServiceResponse {
     this.headers = headers;
   }
 
-  public List<App> getApps() {
+  public RelatedApps getApps() {
     return apps;
   }
-  public void setApps(List<App> apps) {
+  public void setApps(RelatedApps apps) {
     this.apps = apps;
   }
 
-  public List<Role> getRoles() {
+  public RelatedRoles getRoles() {
     return roles;
   }
-  public void setRoles(List<Role> roles) {
+  public void setRoles(RelatedRoles roles) {
     this.roles = roles;
-  }
-
-  public Boolean getIs_system() {
-    return is_system;
-  }
-  public void setIs_system(Boolean is_system) {
-    this.is_system = is_system;
   }
 
   public String getCreated_date() {
@@ -226,6 +218,13 @@ public class ServiceResponse {
     this.last_modified_by_id = last_modified_by_id;
   }
 
+  public Boolean getIs_system() {
+    return is_system;
+  }
+  public void setIs_system(Boolean is_system) {
+    this.is_system = is_system;
+  }
+
   @Override
   public String toString()  {
     StringBuilder sb = new StringBuilder();
@@ -247,11 +246,11 @@ public class ServiceResponse {
     sb.append("  headers: ").append(headers).append("\n");
     sb.append("  apps: ").append(apps).append("\n");
     sb.append("  roles: ").append(roles).append("\n");
-    sb.append("  is_system: ").append(is_system).append("\n");
     sb.append("  created_date: ").append(created_date).append("\n");
     sb.append("  created_by_id: ").append(created_by_id).append("\n");
     sb.append("  last_modified_date: ").append(last_modified_date).append("\n");
     sb.append("  last_modified_by_id: ").append(last_modified_by_id).append("\n");
+    sb.append("  is_system: ").append(is_system).append("\n");
     sb.append("}\n");
     return sb.toString();
   }

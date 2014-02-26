@@ -2,7 +2,10 @@ package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.*;
+import com.dreamfactory.model.RelatedServices;
+import com.dreamfactory.model.RelatedAppGroups;
+import com.dreamfactory.model.RelatedRoles;
+import com.dreamfactory.model.RelatedUsers;
 public class AppResponse {
   /* Identifier of this application. */
   @JsonProperty("id")
@@ -48,19 +51,19 @@ public class AppResponse {
   private Boolean requires_plugin = null;
   /* Related roles by Role.default_app_id. */
   @JsonProperty("roles_default_app")
-  private List<String> roles_default_app = new ArrayList<String>();
+  private RelatedRoles roles_default_app = null;
   /* Related users by User.default_app_id. */
   @JsonProperty("users_default_app")
-  private List<String> users_default_app = new ArrayList<String>();
+  private RelatedUsers users_default_app = null;
   /* Related groups by app to group assignment. */
   @JsonProperty("app_groups")
-  private List<String> app_groups = new ArrayList<String>();
+  private RelatedAppGroups app_groups = null;
   /* Related roles by app to role assignment. */
   @JsonProperty("roles")
-  private List<String> roles = new ArrayList<String>();
+  private RelatedRoles roles = null;
   /* Related services by app to service assignment. */
   @JsonProperty("services")
-  private List<String> services = new ArrayList<String>();
+  private RelatedServices services = null;
   /* Date this application was created. */
   @JsonProperty("created_date")
   private String created_date = null;
@@ -171,38 +174,38 @@ public class AppResponse {
     this.requires_plugin = requires_plugin;
   }
 
-  public List<String> getRoles_default_app() {
+  public RelatedRoles getRoles_default_app() {
     return roles_default_app;
   }
-  public void setRoles_default_app(List<String> roles_default_app) {
+  public void setRoles_default_app(RelatedRoles roles_default_app) {
     this.roles_default_app = roles_default_app;
   }
 
-  public List<String> getUsers_default_app() {
+  public RelatedUsers getUsers_default_app() {
     return users_default_app;
   }
-  public void setUsers_default_app(List<String> users_default_app) {
+  public void setUsers_default_app(RelatedUsers users_default_app) {
     this.users_default_app = users_default_app;
   }
 
-  public List<String> getApp_groups() {
+  public RelatedAppGroups getApp_groups() {
     return app_groups;
   }
-  public void setApp_groups(List<String> app_groups) {
+  public void setApp_groups(RelatedAppGroups app_groups) {
     this.app_groups = app_groups;
   }
 
-  public List<String> getRoles() {
+  public RelatedRoles getRoles() {
     return roles;
   }
-  public void setRoles(List<String> roles) {
+  public void setRoles(RelatedRoles roles) {
     this.roles = roles;
   }
 
-  public List<String> getServices() {
+  public RelatedServices getServices() {
     return services;
   }
-  public void setServices(List<String> services) {
+  public void setServices(RelatedServices services) {
     this.services = services;
   }
 

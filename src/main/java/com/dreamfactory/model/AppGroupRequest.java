@@ -2,8 +2,7 @@ package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.*;
-import com.dreamfactory.model.App;
+import com.dreamfactory.model.RelatedApps;
 public class AppGroupRequest {
   /* Identifier of this application group. */
   @JsonProperty("id")
@@ -16,7 +15,7 @@ public class AppGroupRequest {
   private String description = null;
   /* Related apps by app to group assignment. */
   @JsonProperty("apps")
-  private List<App> apps = new ArrayList<App>();
+  private RelatedApps apps = null;
   public Integer getId() {
     return id;
   }
@@ -38,10 +37,10 @@ public class AppGroupRequest {
     this.description = description;
   }
 
-  public List<App> getApps() {
+  public RelatedApps getApps() {
     return apps;
   }
-  public void setApps(List<App> apps) {
+  public void setApps(RelatedApps apps) {
     this.apps = apps;
   }
 

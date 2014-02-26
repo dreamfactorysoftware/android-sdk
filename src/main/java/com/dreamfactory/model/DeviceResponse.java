@@ -2,7 +2,7 @@ package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.dreamfactory.model.User;
+import com.dreamfactory.model.RelatedUser;
 public class DeviceResponse {
   /* Identifier of this device. */
   @JsonProperty("id")
@@ -27,7 +27,7 @@ public class DeviceResponse {
   private Integer user_id = null;
   /* Related user by user_id. */
   @JsonProperty("user")
-  private User user = null;
+  private RelatedUser user = null;
   /* Date this device was created. */
   @JsonProperty("created_date")
   private String created_date = null;
@@ -83,10 +83,10 @@ public class DeviceResponse {
     this.user_id = user_id;
   }
 
-  public User getUser() {
+  public RelatedUser getUser() {
     return user;
   }
-  public void setUser(User user) {
+  public void setUser(RelatedUser user) {
     this.user = user;
   }
 

@@ -2,7 +2,6 @@ package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.dreamfactory.model.User;
 public class DeviceRequest {
   /* Identifier of this device. */
   @JsonProperty("id")
@@ -22,12 +21,6 @@ public class DeviceRequest {
   /* Extra information from the device. */
   @JsonProperty("extra")
   private String extra = null;
-  /* Id of the User using this device. */
-  @JsonProperty("user_id")
-  private Integer user_id = null;
-  /* Related user by user_id. */
-  @JsonProperty("user")
-  private User user = null;
   public Integer getId() {
     return id;
   }
@@ -70,20 +63,6 @@ public class DeviceRequest {
     this.extra = extra;
   }
 
-  public Integer getUser_id() {
-    return user_id;
-  }
-  public void setUser_id(Integer user_id) {
-    this.user_id = user_id;
-  }
-
-  public User getUser() {
-    return user;
-  }
-  public void setUser(User user) {
-    this.user = user;
-  }
-
   @Override
   public String toString()  {
     StringBuilder sb = new StringBuilder();
@@ -94,8 +73,6 @@ public class DeviceRequest {
     sb.append("  version: ").append(version).append("\n");
     sb.append("  model: ").append(model).append("\n");
     sb.append("  extra: ").append(extra).append("\n");
-    sb.append("  user_id: ").append(user_id).append("\n");
-    sb.append("  user: ").append(user).append("\n");
     sb.append("}\n");
     return sb.toString();
   }

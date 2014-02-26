@@ -2,9 +2,7 @@ package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.dreamfactory.model.RelatedApp;
-import com.dreamfactory.model.RelatedRole;
-public class UserRequest {
+public class RelatedUser {
   /* Identifier of this user. */
   @JsonProperty("id")
   private Integer id = null;
@@ -38,12 +36,18 @@ public class UserRequest {
   /* The role to which this user is assigned. */
   @JsonProperty("role_id")
   private String role_id = null;
-  /* Related app by default_app_id. */
-  @JsonProperty("default_app")
-  private RelatedApp default_app = null;
-  /* Related role by role_id. */
-  @JsonProperty("role")
-  private RelatedRole role = null;
+  /* Date this user was created. */
+  @JsonProperty("created_date")
+  private String created_date = null;
+  /* User Id of who created this user. */
+  @JsonProperty("created_by_id")
+  private Integer created_by_id = null;
+  /* Date this user was last modified. */
+  @JsonProperty("last_modified_date")
+  private String last_modified_date = null;
+  /* User Id of who last modified this user. */
+  @JsonProperty("last_modified_by_id")
+  private Integer last_modified_by_id = null;
   public Integer getId() {
     return id;
   }
@@ -121,24 +125,38 @@ public class UserRequest {
     this.role_id = role_id;
   }
 
-  public RelatedApp getDefault_app() {
-    return default_app;
+  public String getCreated_date() {
+    return created_date;
   }
-  public void setDefault_app(RelatedApp default_app) {
-    this.default_app = default_app;
+  public void setCreated_date(String created_date) {
+    this.created_date = created_date;
   }
 
-  public RelatedRole getRole() {
-    return role;
+  public Integer getCreated_by_id() {
+    return created_by_id;
   }
-  public void setRole(RelatedRole role) {
-    this.role = role;
+  public void setCreated_by_id(Integer created_by_id) {
+    this.created_by_id = created_by_id;
+  }
+
+  public String getLast_modified_date() {
+    return last_modified_date;
+  }
+  public void setLast_modified_date(String last_modified_date) {
+    this.last_modified_date = last_modified_date;
+  }
+
+  public Integer getLast_modified_by_id() {
+    return last_modified_by_id;
+  }
+  public void setLast_modified_by_id(Integer last_modified_by_id) {
+    this.last_modified_by_id = last_modified_by_id;
   }
 
   @Override
   public String toString()  {
     StringBuilder sb = new StringBuilder();
-    sb.append("class UserRequest {\n");
+    sb.append("class RelatedUser {\n");
     sb.append("  id: ").append(id).append("\n");
     sb.append("  email: ").append(email).append("\n");
     sb.append("  password: ").append(password).append("\n");
@@ -150,8 +168,10 @@ public class UserRequest {
     sb.append("  is_sys_admin: ").append(is_sys_admin).append("\n");
     sb.append("  default_app_id: ").append(default_app_id).append("\n");
     sb.append("  role_id: ").append(role_id).append("\n");
-    sb.append("  default_app: ").append(default_app).append("\n");
-    sb.append("  role: ").append(role).append("\n");
+    sb.append("  created_date: ").append(created_date).append("\n");
+    sb.append("  created_by_id: ").append(created_by_id).append("\n");
+    sb.append("  last_modified_date: ").append(last_modified_date).append("\n");
+    sb.append("  last_modified_by_id: ").append(last_modified_by_id).append("\n");
     sb.append("}\n");
     return sb.toString();
   }

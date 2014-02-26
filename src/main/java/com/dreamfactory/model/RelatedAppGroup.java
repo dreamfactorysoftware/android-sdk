@@ -2,8 +2,7 @@ package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.dreamfactory.model.RelatedApps;
-public class AppGroupResponse {
+public class RelatedAppGroup {
   /* Identifier of this application group. */
   @JsonProperty("id")
   private Integer id = null;
@@ -13,9 +12,6 @@ public class AppGroupResponse {
   /* Description of this application group. */
   @JsonProperty("description")
   private String description = null;
-  /* Related apps by app to group assignment. */
-  @JsonProperty("apps")
-  private RelatedApps apps = null;
   /* Date this group was created. */
   @JsonProperty("created_date")
   private String created_date = null;
@@ -49,13 +45,6 @@ public class AppGroupResponse {
     this.description = description;
   }
 
-  public RelatedApps getApps() {
-    return apps;
-  }
-  public void setApps(RelatedApps apps) {
-    this.apps = apps;
-  }
-
   public String getCreated_date() {
     return created_date;
   }
@@ -87,11 +76,10 @@ public class AppGroupResponse {
   @Override
   public String toString()  {
     StringBuilder sb = new StringBuilder();
-    sb.append("class AppGroupResponse {\n");
+    sb.append("class RelatedAppGroup {\n");
     sb.append("  id: ").append(id).append("\n");
     sb.append("  name: ").append(name).append("\n");
     sb.append("  description: ").append(description).append("\n");
-    sb.append("  apps: ").append(apps).append("\n");
     sb.append("  created_date: ").append(created_date).append("\n");
     sb.append("  created_by_id: ").append(created_by_id).append("\n");
     sb.append("  last_modified_date: ").append(last_modified_date).append("\n");

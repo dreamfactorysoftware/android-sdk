@@ -2,8 +2,10 @@ package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.*;
-import com.dreamfactory.model.App;
+import com.dreamfactory.model.RelatedApps;
+import com.dreamfactory.model.RelatedServices;
+import com.dreamfactory.model.RelatedApp;
+import com.dreamfactory.model.RelatedUsers;
 public class RoleRequest {
   /* Identifier of this role. */
   @JsonProperty("id")
@@ -22,16 +24,16 @@ public class RoleRequest {
   private Integer default_app_id = null;
   /* Related app by default_app_id. */
   @JsonProperty("default_app")
-  private App default_app = null;
+  private RelatedApp default_app = null;
   /* Related users by User.role_id. */
   @JsonProperty("users")
-  private List<String> users = new ArrayList<String>();
+  private RelatedUsers users = null;
   /* Related apps by role assignment. */
   @JsonProperty("apps")
-  private List<String> apps = new ArrayList<String>();
+  private RelatedApps apps = null;
   /* Related services by role assignment. */
   @JsonProperty("services")
-  private List<String> services = new ArrayList<String>();
+  private RelatedServices services = null;
   public Integer getId() {
     return id;
   }
@@ -67,31 +69,31 @@ public class RoleRequest {
     this.default_app_id = default_app_id;
   }
 
-  public App getDefault_app() {
+  public RelatedApp getDefault_app() {
     return default_app;
   }
-  public void setDefault_app(App default_app) {
+  public void setDefault_app(RelatedApp default_app) {
     this.default_app = default_app;
   }
 
-  public List<String> getUsers() {
+  public RelatedUsers getUsers() {
     return users;
   }
-  public void setUsers(List<String> users) {
+  public void setUsers(RelatedUsers users) {
     this.users = users;
   }
 
-  public List<String> getApps() {
+  public RelatedApps getApps() {
     return apps;
   }
-  public void setApps(List<String> apps) {
+  public void setApps(RelatedApps apps) {
     this.apps = apps;
   }
 
-  public List<String> getServices() {
+  public RelatedServices getServices() {
     return services;
   }
-  public void setServices(List<String> services) {
+  public void setServices(RelatedServices services) {
     this.services = services;
   }
 

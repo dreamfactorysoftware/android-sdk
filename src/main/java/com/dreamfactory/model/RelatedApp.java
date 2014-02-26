@@ -2,11 +2,7 @@ package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.dreamfactory.model.RelatedServices;
-import com.dreamfactory.model.RelatedAppGroups;
-import com.dreamfactory.model.RelatedRoles;
-import com.dreamfactory.model.RelatedUsers;
-public class AppRequest {
+public class RelatedApp {
   /* Identifier of this application. */
   @JsonProperty("id")
   private Integer id = null;
@@ -49,21 +45,18 @@ public class AppRequest {
   /* True when the app relies on a browser plugin. */
   @JsonProperty("requires_plugin")
   private Boolean requires_plugin = null;
-  /* Related roles by Role.default_app_id. */
-  @JsonProperty("roles_default_app")
-  private RelatedRoles roles_default_app = null;
-  /* Related users by User.default_app_id. */
-  @JsonProperty("users_default_app")
-  private RelatedUsers users_default_app = null;
-  /* Related groups by app to group assignment. */
-  @JsonProperty("app_groups")
-  private RelatedAppGroups app_groups = null;
-  /* Related roles by app to role assignment. */
-  @JsonProperty("roles")
-  private RelatedRoles roles = null;
-  /* Related services by app to service assignment. */
-  @JsonProperty("services")
-  private RelatedServices services = null;
+  /* Date this application was created. */
+  @JsonProperty("created_date")
+  private String created_date = null;
+  /* User Id of who created this application. */
+  @JsonProperty("created_by_id")
+  private Integer created_by_id = null;
+  /* Date this application was last modified. */
+  @JsonProperty("last_modified_date")
+  private String last_modified_date = null;
+  /* User Id of who last modified this application. */
+  @JsonProperty("last_modified_by_id")
+  private Integer last_modified_by_id = null;
   public Integer getId() {
     return id;
   }
@@ -162,45 +155,38 @@ public class AppRequest {
     this.requires_plugin = requires_plugin;
   }
 
-  public RelatedRoles getRoles_default_app() {
-    return roles_default_app;
+  public String getCreated_date() {
+    return created_date;
   }
-  public void setRoles_default_app(RelatedRoles roles_default_app) {
-    this.roles_default_app = roles_default_app;
-  }
-
-  public RelatedUsers getUsers_default_app() {
-    return users_default_app;
-  }
-  public void setUsers_default_app(RelatedUsers users_default_app) {
-    this.users_default_app = users_default_app;
+  public void setCreated_date(String created_date) {
+    this.created_date = created_date;
   }
 
-  public RelatedAppGroups getApp_groups() {
-    return app_groups;
+  public Integer getCreated_by_id() {
+    return created_by_id;
   }
-  public void setApp_groups(RelatedAppGroups app_groups) {
-    this.app_groups = app_groups;
-  }
-
-  public RelatedRoles getRoles() {
-    return roles;
-  }
-  public void setRoles(RelatedRoles roles) {
-    this.roles = roles;
+  public void setCreated_by_id(Integer created_by_id) {
+    this.created_by_id = created_by_id;
   }
 
-  public RelatedServices getServices() {
-    return services;
+  public String getLast_modified_date() {
+    return last_modified_date;
   }
-  public void setServices(RelatedServices services) {
-    this.services = services;
+  public void setLast_modified_date(String last_modified_date) {
+    this.last_modified_date = last_modified_date;
+  }
+
+  public Integer getLast_modified_by_id() {
+    return last_modified_by_id;
+  }
+  public void setLast_modified_by_id(Integer last_modified_by_id) {
+    this.last_modified_by_id = last_modified_by_id;
   }
 
   @Override
   public String toString()  {
     StringBuilder sb = new StringBuilder();
-    sb.append("class AppRequest {\n");
+    sb.append("class RelatedApp {\n");
     sb.append("  id: ").append(id).append("\n");
     sb.append("  name: ").append(name).append("\n");
     sb.append("  api_name: ").append(api_name).append("\n");
@@ -215,11 +201,10 @@ public class AppRequest {
     sb.append("  allow_fullscreen_toggle: ").append(allow_fullscreen_toggle).append("\n");
     sb.append("  toggle_location: ").append(toggle_location).append("\n");
     sb.append("  requires_plugin: ").append(requires_plugin).append("\n");
-    sb.append("  roles_default_app: ").append(roles_default_app).append("\n");
-    sb.append("  users_default_app: ").append(users_default_app).append("\n");
-    sb.append("  app_groups: ").append(app_groups).append("\n");
-    sb.append("  roles: ").append(roles).append("\n");
-    sb.append("  services: ").append(services).append("\n");
+    sb.append("  created_date: ").append(created_date).append("\n");
+    sb.append("  created_by_id: ").append(created_by_id).append("\n");
+    sb.append("  last_modified_date: ").append(last_modified_date).append("\n");
+    sb.append("  last_modified_by_id: ").append(last_modified_by_id).append("\n");
     sb.append("}\n");
     return sb.toString();
   }
