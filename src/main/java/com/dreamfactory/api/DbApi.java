@@ -3,7 +3,6 @@ package com.dreamfactory.api;
 import com.dreamfactory.client.ApiException;
 import com.dreamfactory.client.ApiInvoker;
 import com.dreamfactory.model.Records;
-import com.dreamfactory.model.Record;
 import com.dreamfactory.model.Tables;
 import java.util.*;
 
@@ -231,7 +230,7 @@ public class DbApi {
       }
     }
   }
-  public Record getRecord (String table_name, String id, String id_field, String fields, String related) throws ApiException {
+  public String getRecord (String table_name, String id, String id_field, String fields, String related) throws ApiException {
     // verify required params are set
     if(table_name == null || id == null ) {
        throw new ApiException(400, "missing required params");
@@ -254,7 +253,7 @@ public class DbApi {
     try {
       String response = apiInvoker.invokeAPI(basePath, path, "GET", queryParams, null, headerParams, contentType);
       if(response != null){
-        return (Record) ApiInvoker.deserialize(response, "", Record.class);
+        return (String) ApiInvoker.deserialize(response, "", String.class);
       }
       else {
         return null;
@@ -268,7 +267,7 @@ public class DbApi {
       }
     }
   }
-  public Record createRecord (String table_name, String id, String id_field, Record body, String fields, String related) throws ApiException {
+  public String createRecord (String table_name, String id, String id_field, String body, String fields, String related) throws ApiException {
     // verify required params are set
     if(table_name == null || id == null || body == null ) {
        throw new ApiException(400, "missing required params");
@@ -291,7 +290,7 @@ public class DbApi {
     try {
       String response = apiInvoker.invokeAPI(basePath, path, "POST", queryParams, body, headerParams, contentType);
       if(response != null){
-        return (Record) ApiInvoker.deserialize(response, "", Record.class);
+        return (String) ApiInvoker.deserialize(response, "", String.class);
       }
       else {
         return null;
@@ -305,7 +304,7 @@ public class DbApi {
       }
     }
   }
-  public Record updateRecord (String table_name, String id, String id_field, Record body, String fields, String related) throws ApiException {
+  public String updateRecord (String table_name, String id, String id_field, String body, String fields, String related) throws ApiException {
     // verify required params are set
     if(table_name == null || id == null || body == null ) {
        throw new ApiException(400, "missing required params");
@@ -328,7 +327,7 @@ public class DbApi {
     try {
       String response = apiInvoker.invokeAPI(basePath, path, "PATCH", queryParams, body, headerParams, contentType);
       if(response != null){
-        return (Record) ApiInvoker.deserialize(response, "", Record.class);
+        return (String) ApiInvoker.deserialize(response, "", String.class);
       }
       else {
         return null;
@@ -342,7 +341,7 @@ public class DbApi {
       }
     }
   }
-  public Record deleteRecord (String table_name, String id, String id_field, String fields, String related) throws ApiException {
+  public String deleteRecord (String table_name, String id, String id_field, String fields, String related) throws ApiException {
     // verify required params are set
     if(table_name == null || id == null ) {
        throw new ApiException(400, "missing required params");
@@ -365,7 +364,7 @@ public class DbApi {
     try {
       String response = apiInvoker.invokeAPI(basePath, path, "DELETE", queryParams, null, headerParams, contentType);
       if(response != null){
-        return (Record) ApiInvoker.deserialize(response, "", Record.class);
+        return (String) ApiInvoker.deserialize(response, "", String.class);
       }
       else {
         return null;

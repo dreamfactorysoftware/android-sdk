@@ -2,14 +2,15 @@ package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.*;
 public class Record {
-  /* Array of DB table specific field name-value pairs. */
+  /* Array of field name-value pairs. */
   @JsonProperty("_field_")
-  private String _field_ = null;
-  public String get_field_() {
+  private List<String> _field_ = new ArrayList<String>();
+  public List<String> get_field_() {
     return _field_;
   }
-  public void set_field_(String _field_) {
+  public void set_field_(List<String> _field_) {
     this._field_ = _field_;
   }
 

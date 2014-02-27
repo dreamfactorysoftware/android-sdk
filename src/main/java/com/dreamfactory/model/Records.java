@@ -4,18 +4,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.*;
 import com.dreamfactory.model.Metadata;
-import com.dreamfactory.model.Record;
 public class Records {
   /* Array of records of the given resource. */
   @JsonProperty("record")
-  private List<Record> record = new ArrayList<Record>();
+  private List<String> record = new ArrayList<String>();
   /* Available metadata for the response. */
   @JsonProperty("meta")
   private Metadata meta = null;
-  public List<Record> getRecord() {
+  public List<String> getRecord() {
     return record;
   }
-  public void setRecord(List<Record> record) {
+  public void setRecord(List<String> record) {
     this.record = record;
   }
 
