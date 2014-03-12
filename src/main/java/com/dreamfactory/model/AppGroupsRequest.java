@@ -2,7 +2,6 @@ package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.*;
 import com.dreamfactory.model.AppGroupRequest;
 public class AppGroupsRequest {
   /* Array of system application group records. */

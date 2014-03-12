@@ -2,7 +2,6 @@ package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.*;
 import com.dreamfactory.model.FieldSchema;
 import com.dreamfactory.model.RelatedSchema;
 public class TableSchema {

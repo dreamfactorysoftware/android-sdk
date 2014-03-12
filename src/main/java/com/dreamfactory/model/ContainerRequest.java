@@ -2,7 +2,6 @@ package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.*;
 import com.dreamfactory.model.FolderRequest;
 import com.dreamfactory.model.FileRequest;
 public class ContainerRequest {
@@ -12,9 +11,6 @@ public class ContainerRequest {
   /* Same as name for the container, for consistency. */
   @JsonProperty("path")
   private String path = null;
-  /* Storage type specific properties. */
-  @JsonProperty("_property_")
-  private String _property_ = null;
   /* An array of name-value pairs. */
   @JsonProperty("metadata")
   private List<String> metadata = new ArrayList<String>();
@@ -36,13 +32,6 @@ public class ContainerRequest {
   }
   public void setPath(String path) {
     this.path = path;
-  }
-
-  public String get_property_() {
-    return _property_;
-  }
-  public void set_property_(String _property_) {
-    this._property_ = _property_;
   }
 
   public List<String> getMetadata() {
@@ -72,7 +61,6 @@ public class ContainerRequest {
     sb.append("class ContainerRequest {\n");
     sb.append("  name: ").append(name).append("\n");
     sb.append("  path: ").append(path).append("\n");
-    sb.append("  _property_: ").append(_property_).append("\n");
     sb.append("  metadata: ").append(metadata).append("\n");
     sb.append("  folder: ").append(folder).append("\n");
     sb.append("  file: ").append(file).append("\n");

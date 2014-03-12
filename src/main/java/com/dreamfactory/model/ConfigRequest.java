@@ -2,7 +2,6 @@ package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.*;
 import com.dreamfactory.model.HostInfo;
 public class ConfigRequest {
   /* Default Role Id assigned to newly registered users, set to null to turn off open registration. */

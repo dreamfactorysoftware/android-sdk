@@ -2,7 +2,6 @@ package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.*;
 public class FieldSchema {
   /* The API name of the field. */
   @JsonProperty("name")

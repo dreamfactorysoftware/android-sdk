@@ -2,7 +2,6 @@ package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.*;
 public class CustomSetting {
   @JsonProperty("name")
   private List<String> name = new ArrayList<String>();

@@ -2,7 +2,6 @@ package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.*;
 import com.dreamfactory.model.RelatedApp;
 import com.dreamfactory.model.Metadata;
 public class RelatedApps {
