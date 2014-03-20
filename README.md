@@ -30,4 +30,6 @@ Usage:  Pull records from a table named "todo"
     }
     }
 
-
+<p><b>Loading the Sample App</b></p>
+Import the SampleApp directory into your Android Project.
+Modify the targeted SDK version if need be in the Android Manifest.
