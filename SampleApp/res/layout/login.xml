@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView 
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:background="@drawable/bg"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp" >
+
+    <TextView
+        android:id="@+id/text_view_user_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="10dp"
+        android:text="@string/login_tital_big"
+        android:textSize="25sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView_user_pass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_view_user_id"
+        android:text="@string/login_tital_small" />
+
+    <EditText
+        android:id="@+id/edit_text_dsp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textView_user_pass"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/btnrectangel"
+        android:hint="@string/dsp_url"
+        android:inputType="text"
+        android:minHeight="40dp"
+        android:maxLines="1" />
+
+    <EditText
+        android:id="@+id/edit_text_user_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edit_text_dsp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/btnrectangel"
+        android:hint="@string/edit_id"
+        android:inputType="text"
+        android:minHeight="40dp"
+        android:maxLines="1" />
+    
+    <EditText
+        android:id="@+id/edit_text_user_pass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edit_text_user_id"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/btnrectangel"
+        android:hint="@string/edit_pass"
+        android:inputType="textPassword"
+        android:minHeight="40dp"
+        android:maxLines="1" />
+    
+    
+    <Button
+        android:id="@+id/button_submit_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edit_text_user_pass"
+        android:layout_marginTop="15dp"
+        android:text="@string/btn_login" />
+
+</RelativeLayout>
+</ScrollView>
