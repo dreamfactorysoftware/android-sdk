@@ -145,8 +145,8 @@ public class MainActivity extends Activity {
 			dbApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
 			dbApi.addHeader("X-DreamFactory-Session-Token", session_id);
 			try {
-				String id = ""+System.currentTimeMillis();
-				Record resultRecord = dbApi.createRecord(IAppConstants.TABLE_NAME, id, null, record, null, null);
+				/* You can not pass ids as path params for this method at this time */
+				Record resultRecord = dbApi.createRecord(IAppConstants.TABLE_NAME, "", null, record, null, null);
 				resultRecord.setName(todoItem);
 				log(resultRecord.toString());
 				return resultRecord;
