@@ -1,6 +1,7 @@
 package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.*;
 
 public class FieldSchema {
   /* The API name of the field. */
@@ -57,9 +58,9 @@ public class FieldSchema {
   /* validations to be performed on this field. */
   @JsonProperty("validation")
   private List<String> validation = new ArrayList<String>();
-  /* Selectable string values for picklist validation. */
-  @JsonProperty("values")
-  private List<String> values = new ArrayList<String>();
+  /* Selectable string values for client menus and picklist validation. */
+  @JsonProperty("value")
+  private List<String> value = new ArrayList<String>();
   public String getName() {
     return name;
   }
@@ -186,11 +187,11 @@ public class FieldSchema {
     this.validation = validation;
   }
 
-  public List<String> getValues() {
-    return values;
+  public List<String> getValue() {
+    return value;
   }
-  public void setValues(List<String> values) {
-    this.values = values;
+  public void setValue(List<String> value) {
+    this.value = value;
   }
 
   @Override
@@ -215,7 +216,7 @@ public class FieldSchema {
     sb.append("  ref_table: ").append(ref_table).append("\n");
     sb.append("  ref_fields: ").append(ref_fields).append("\n");
     sb.append("  validation: ").append(validation).append("\n");
-    sb.append("  values: ").append(values).append("\n");
+    sb.append("  value: ").append(value).append("\n");
     sb.append("}\n");
     return sb.toString();
   }

@@ -1,6 +1,7 @@
 package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.*;
 
 public class Metadata {
   /* Array of table schema. */

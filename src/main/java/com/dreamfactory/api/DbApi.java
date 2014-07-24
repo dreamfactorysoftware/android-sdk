@@ -2,14 +2,16 @@ package com.dreamfactory.api;
 
 import com.dreamfactory.client.ApiException;
 import com.dreamfactory.client.ApiInvoker;
-import com.dreamfactory.Records;
+import com.dreamfactory.model.RecordsRequest;
+import com.dreamfactory.model.RecordResponse;
+import com.dreamfactory.model.RecordRequest;
 import com.dreamfactory.model.Resources;
-import com.dreamfactory.model.Record;
+import com.dreamfactory.model.RecordsResponse;
 import com.dreamfactory.model.Tables;
 import java.util.*;
 
 public class DbApi {
-  String basePath = "https://dsp-codegen.cloud.dreamfactory.com/rest";
+  String basePath = "http://localhost:9080/rest";
   ApiInvoker apiInvoker = ApiInvoker.getInstance();
 
   public void addHeader(String key, String value) {
@@ -88,7 +90,7 @@ public class DbApi {
       }
     }
   }
-  public Records getRecords (String table_name, String ids, String filter, Integer limit, Integer offset, String order, String fields, String related, Boolean include_count, Boolean include_schema, String id_field) throws ApiException {
+  public RecordsResponse getRecords (String table_name, String ids, String filter, Integer limit, Integer offset, String order, String fields, String related, Boolean include_count, Boolean include_schema, String id_field, String id_type, Boolean _continue) throws ApiException {
     // verify required params are set
     if(table_name == null ) {
        throw new ApiException(400, "missing required params");
@@ -120,12 +122,16 @@ public class DbApi {
       queryParams.put("include_schema", String.valueOf(include_schema));
     if(!"null".equals(String.valueOf(id_field)))
       queryParams.put("id_field", String.valueOf(id_field));
+    if(!"null".equals(String.valueOf(id_type)))
+      queryParams.put("id_type", String.valueOf(id_type));
+    if(!"null".equals(String.valueOf(_continue)))
+      queryParams.put("continue", String.valueOf(_continue));
     String contentType = "application/json";
 
     try {
       String response = apiInvoker.invokeAPI(basePath, path, "GET", queryParams, null, headerParams, contentType);
       if(response != null){
-        return (Records) ApiInvoker.deserialize(response, "", Records.class);
+        return (RecordsResponse) ApiInvoker.deserialize(response, "", RecordsResponse.class);
       }
       else {
         return null;
@@ -139,7 +145,7 @@ public class DbApi {
       }
     }
   }
-  public Records createRecords (String table_name, Records body, String id_field, String fields, String related, String XHTTPMETHOD) throws ApiException {
+  public RecordsResponse createRecords (String table_name, RecordsRequest body, String fields, String related, String id_field, String id_type, Boolean _continue, Boolean rollback, String XHTTPMETHOD) throws ApiException {
     // verify required params are set
     if(table_name == null || body == null ) {
        throw new ApiException(400, "missing required params");
@@ -151,19 +157,25 @@ public class DbApi {
     Map<String, String> queryParams = new HashMap<String, String>();
     Map<String, String> headerParams = new HashMap<String, String>();
 
-    if(!"null".equals(String.valueOf(id_field)))
-      queryParams.put("id_field", String.valueOf(id_field));
     if(!"null".equals(String.valueOf(fields)))
       queryParams.put("fields", String.valueOf(fields));
     if(!"null".equals(String.valueOf(related)))
       queryParams.put("related", String.valueOf(related));
+    if(!"null".equals(String.valueOf(id_field)))
+      queryParams.put("id_field", String.valueOf(id_field));
+    if(!"null".equals(String.valueOf(id_type)))
+      queryParams.put("id_type", String.valueOf(id_type));
+    if(!"null".equals(String.valueOf(_continue)))
+      queryParams.put("continue", String.valueOf(_continue));
+    if(!"null".equals(String.valueOf(rollback)))
+      queryParams.put("rollback", String.valueOf(rollback));
     headerParams.put("X-HTTP-METHOD", XHTTPMETHOD);
     String contentType = "application/json";
 
     try {
       String response = apiInvoker.invokeAPI(basePath, path, "POST", queryParams, body, headerParams, contentType);
       if(response != null){
-        return (Records) ApiInvoker.deserialize(response, "", Records.class);
+        return (RecordsResponse) ApiInvoker.deserialize(response, "", RecordsResponse.class);
       }
       else {
         return null;
@@ -177,7 +189,7 @@ public class DbApi {
       }
     }
   }
-  public Records updateRecords (String table_name, Records body, String ids, String filter, String id_field, String fields, String related) throws ApiException {
+  public RecordsResponse updateRecords (String table_name, RecordsRequest body, String ids, String filter, String fields, String related, String id_field, String id_type, Boolean _continue, Boolean rollback) throws ApiException {
     // verify required params are set
     if(table_name == null || body == null ) {
        throw new ApiException(400, "missing required params");
@@ -193,18 +205,24 @@ public class DbApi {
       queryParams.put("ids", String.valueOf(ids));
     if(!"null".equals(String.valueOf(filter)))
       queryParams.put("filter", String.valueOf(filter));
-    if(!"null".equals(String.valueOf(id_field)))
-      queryParams.put("id_field", String.valueOf(id_field));
     if(!"null".equals(String.valueOf(fields)))
       queryParams.put("fields", String.valueOf(fields));
     if(!"null".equals(String.valueOf(related)))
       queryParams.put("related", String.valueOf(related));
+    if(!"null".equals(String.valueOf(id_field)))
+      queryParams.put("id_field", String.valueOf(id_field));
+    if(!"null".equals(String.valueOf(id_type)))
+      queryParams.put("id_type", String.valueOf(id_type));
+    if(!"null".equals(String.valueOf(_continue)))
+      queryParams.put("continue", String.valueOf(_continue));
+    if(!"null".equals(String.valueOf(rollback)))
+      queryParams.put("rollback", String.valueOf(rollback));
     String contentType = "application/json";
 
     try {
       String response = apiInvoker.invokeAPI(basePath, path, "PATCH", queryParams, body, headerParams, contentType);
       if(response != null){
-        return (Records) ApiInvoker.deserialize(response, "", Records.class);
+        return (RecordsResponse) ApiInvoker.deserialize(response, "", RecordsResponse.class);
       }
       else {
         return null;
@@ -218,7 +236,7 @@ public class DbApi {
       }
     }
   }
-  public Records deleteRecords (String table_name, String ids, String filter, Boolean force, String id_field, String fields, String related) throws ApiException {
+  public RecordsResponse deleteRecords (String table_name, String ids, String filter, Boolean force, String fields, String related, String id_field, String id_type, Boolean _continue, Boolean rollback) throws ApiException {
     // verify required params are set
     if(table_name == null ) {
        throw new ApiException(400, "missing required params");
@@ -236,18 +254,24 @@ public class DbApi {
       queryParams.put("filter", String.valueOf(filter));
     if(!"null".equals(String.valueOf(force)))
       queryParams.put("force", String.valueOf(force));
-    if(!"null".equals(String.valueOf(id_field)))
-      queryParams.put("id_field", String.valueOf(id_field));
     if(!"null".equals(String.valueOf(fields)))
       queryParams.put("fields", String.valueOf(fields));
     if(!"null".equals(String.valueOf(related)))
       queryParams.put("related", String.valueOf(related));
+    if(!"null".equals(String.valueOf(id_field)))
+      queryParams.put("id_field", String.valueOf(id_field));
+    if(!"null".equals(String.valueOf(id_type)))
+      queryParams.put("id_type", String.valueOf(id_type));
+    if(!"null".equals(String.valueOf(_continue)))
+      queryParams.put("continue", String.valueOf(_continue));
+    if(!"null".equals(String.valueOf(rollback)))
+      queryParams.put("rollback", String.valueOf(rollback));
     String contentType = "application/json";
 
     try {
       String response = apiInvoker.invokeAPI(basePath, path, "DELETE", queryParams, null, headerParams, contentType);
       if(response != null){
-        return (Records) ApiInvoker.deserialize(response, "", Records.class);
+        return (RecordsResponse) ApiInvoker.deserialize(response, "", RecordsResponse.class);
       }
       else {
         return null;
@@ -261,7 +285,7 @@ public class DbApi {
       }
     }
   }
-  public Record getRecord (String table_name, String id, String id_field, String fields, String related) throws ApiException {
+  public RecordResponse getRecord (String table_name, String id, String fields, String related, String id_field, String id_type) throws ApiException {
     // verify required params are set
     if(table_name == null || id == null ) {
        throw new ApiException(400, "missing required params");
@@ -273,18 +297,20 @@ public class DbApi {
     Map<String, String> queryParams = new HashMap<String, String>();
     Map<String, String> headerParams = new HashMap<String, String>();
 
-    if(!"null".equals(String.valueOf(id_field)))
-      queryParams.put("id_field", String.valueOf(id_field));
     if(!"null".equals(String.valueOf(fields)))
       queryParams.put("fields", String.valueOf(fields));
     if(!"null".equals(String.valueOf(related)))
       queryParams.put("related", String.valueOf(related));
+    if(!"null".equals(String.valueOf(id_field)))
+      queryParams.put("id_field", String.valueOf(id_field));
+    if(!"null".equals(String.valueOf(id_type)))
+      queryParams.put("id_type", String.valueOf(id_type));
     String contentType = "application/json";
 
     try {
       String response = apiInvoker.invokeAPI(basePath, path, "GET", queryParams, null, headerParams, contentType);
       if(response != null){
-        return (Record) ApiInvoker.deserialize(response, "", Record.class);
+        return (RecordResponse) ApiInvoker.deserialize(response, "", RecordResponse.class);
       }
       else {
         return null;
@@ -298,7 +324,7 @@ public class DbApi {
       }
     }
   }
-  public Record createRecord (String table_name, String id, String id_field, Record body, String fields, String related) throws ApiException {
+  public RecordResponse createRecord (String table_name, String id, RecordRequest body, String fields, String related, String id_field, String id_type) throws ApiException {
     // verify required params are set
     if(table_name == null || id == null || body == null ) {
        throw new ApiException(400, "missing required params");
@@ -310,18 +336,20 @@ public class DbApi {
     Map<String, String> queryParams = new HashMap<String, String>();
     Map<String, String> headerParams = new HashMap<String, String>();
 
-    if(!"null".equals(String.valueOf(id_field)))
-      queryParams.put("id_field", String.valueOf(id_field));
     if(!"null".equals(String.valueOf(fields)))
       queryParams.put("fields", String.valueOf(fields));
     if(!"null".equals(String.valueOf(related)))
       queryParams.put("related", String.valueOf(related));
+    if(!"null".equals(String.valueOf(id_field)))
+      queryParams.put("id_field", String.valueOf(id_field));
+    if(!"null".equals(String.valueOf(id_type)))
+      queryParams.put("id_type", String.valueOf(id_type));
     String contentType = "application/json";
 
     try {
       String response = apiInvoker.invokeAPI(basePath, path, "POST", queryParams, body, headerParams, contentType);
       if(response != null){
-        return (Record) ApiInvoker.deserialize(response, "", Record.class);
+        return (RecordResponse) ApiInvoker.deserialize(response, "", RecordResponse.class);
       }
       else {
         return null;
@@ -335,7 +363,7 @@ public class DbApi {
       }
     }
   }
-  public Record updateRecord (String table_name, String id, String id_field, Record body, String fields, String related) throws ApiException {
+  public RecordResponse updateRecord (String table_name, String id, RecordRequest body, String fields, String related, String id_field, String id_type) throws ApiException {
     // verify required params are set
     if(table_name == null || id == null || body == null ) {
        throw new ApiException(400, "missing required params");
@@ -347,18 +375,20 @@ public class DbApi {
     Map<String, String> queryParams = new HashMap<String, String>();
     Map<String, String> headerParams = new HashMap<String, String>();
 
-    if(!"null".equals(String.valueOf(id_field)))
-      queryParams.put("id_field", String.valueOf(id_field));
     if(!"null".equals(String.valueOf(fields)))
       queryParams.put("fields", String.valueOf(fields));
     if(!"null".equals(String.valueOf(related)))
       queryParams.put("related", String.valueOf(related));
+    if(!"null".equals(String.valueOf(id_field)))
+      queryParams.put("id_field", String.valueOf(id_field));
+    if(!"null".equals(String.valueOf(id_type)))
+      queryParams.put("id_type", String.valueOf(id_type));
     String contentType = "application/json";
 
     try {
       String response = apiInvoker.invokeAPI(basePath, path, "PATCH", queryParams, body, headerParams, contentType);
       if(response != null){
-        return (Record) ApiInvoker.deserialize(response, "", Record.class);
+        return (RecordResponse) ApiInvoker.deserialize(response, "", RecordResponse.class);
       }
       else {
         return null;
@@ -372,7 +402,7 @@ public class DbApi {
       }
     }
   }
-  public Record deleteRecord (String table_name, String id, String id_field, String fields, String related) throws ApiException {
+  public RecordResponse deleteRecord (String table_name, String id, String fields, String related, String id_field, String id_type) throws ApiException {
     // verify required params are set
     if(table_name == null || id == null ) {
        throw new ApiException(400, "missing required params");
@@ -384,18 +414,20 @@ public class DbApi {
     Map<String, String> queryParams = new HashMap<String, String>();
     Map<String, String> headerParams = new HashMap<String, String>();
 
-    if(!"null".equals(String.valueOf(id_field)))
-      queryParams.put("id_field", String.valueOf(id_field));
     if(!"null".equals(String.valueOf(fields)))
       queryParams.put("fields", String.valueOf(fields));
     if(!"null".equals(String.valueOf(related)))
       queryParams.put("related", String.valueOf(related));
+    if(!"null".equals(String.valueOf(id_field)))
+      queryParams.put("id_field", String.valueOf(id_field));
+    if(!"null".equals(String.valueOf(id_type)))
+      queryParams.put("id_type", String.valueOf(id_type));
     String contentType = "application/json";
 
     try {
       String response = apiInvoker.invokeAPI(basePath, path, "DELETE", queryParams, null, headerParams, contentType);
       if(response != null){
-        return (Record) ApiInvoker.deserialize(response, "", Record.class);
+        return (RecordResponse) ApiInvoker.deserialize(response, "", RecordResponse.class);
       }
       else {
         return null;

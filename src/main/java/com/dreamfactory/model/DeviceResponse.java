@@ -1,8 +1,8 @@
 package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.*;
 
-import com.dreamfactory.model.RelatedUser;
 public class DeviceResponse {
   /* Identifier of this device. */
   @JsonProperty("id")
@@ -22,12 +22,6 @@ public class DeviceResponse {
   /* Extra information from the device. */
   @JsonProperty("extra")
   private String extra = null;
-  /* Id of the User using this device. */
-  @JsonProperty("user_id")
-  private Integer user_id = null;
-  /* Related user by user_id. */
-  @JsonProperty("user")
-  private RelatedUser user = null;
   /* Date this device was created. */
   @JsonProperty("created_date")
   private String created_date = null;
@@ -76,20 +70,6 @@ public class DeviceResponse {
     this.extra = extra;
   }
 
-  public Integer getUser_id() {
-    return user_id;
-  }
-  public void setUser_id(Integer user_id) {
-    this.user_id = user_id;
-  }
-
-  public RelatedUser getUser() {
-    return user;
-  }
-  public void setUser(RelatedUser user) {
-    this.user = user;
-  }
-
   public String getCreated_date() {
     return created_date;
   }
@@ -114,8 +94,6 @@ public class DeviceResponse {
     sb.append("  version: ").append(version).append("\n");
     sb.append("  model: ").append(model).append("\n");
     sb.append("  extra: ").append(extra).append("\n");
-    sb.append("  user_id: ").append(user_id).append("\n");
-    sb.append("  user: ").append(user).append("\n");
     sb.append("  created_date: ").append(created_date).append("\n");
     sb.append("  last_modified_date: ").append(last_modified_date).append("\n");
     sb.append("}\n");
