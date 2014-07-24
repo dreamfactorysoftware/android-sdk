@@ -2,21 +2,22 @@ package com.dreamfactory.api;
 
 import com.dreamfactory.client.ApiException;
 import com.dreamfactory.client.ApiInvoker;
-import java.io.File;
 import com.dreamfactory.model.FileResponse;
 import com.dreamfactory.model.Container;
 import com.dreamfactory.model.FolderRequest;
 import com.dreamfactory.model.ContainerRequest;
 import com.dreamfactory.model.Folder;
+import com.dreamfactory.model.Resources;
 import com.dreamfactory.model.ContainersResponse;
-import com.dreamfactory.model.FileRequest;
 import com.dreamfactory.model.ContainersRequest;
 import com.dreamfactory.model.FolderResponse;
+import com.dreamfactory.model.FileRequest;
+import com.dreamfactory.model.File;
 import com.dreamfactory.model.ContainerResponse;
 import java.util.*;
 
 public class FilesApi {
-  String basePath = "https://next.cloud.dreamfactory.com/rest";
+  String basePath = "http://localhost:9080/rest";
   ApiInvoker apiInvoker = ApiInvoker.getInstance();
 
   public void addHeader(String key, String value) {
@@ -35,7 +36,38 @@ public class FilesApi {
     return basePath;
   }
 
+  public Resources getResources () throws ApiException {
+    // create path and map variables
+    String path = "/files".replaceAll("\\{format\\}","json");
+
+    // query params
+    Map<String, String> queryParams = new HashMap<String, String>();
+    Map<String, String> headerParams = new HashMap<String, String>();
+
+    String contentType = "application/json";
+
+    try {
+      String response = apiInvoker.invokeAPI(basePath, path, "GET", queryParams, null, headerParams, contentType);
+      if(response != null){
+        return (Resources) ApiInvoker.deserialize(response, "", Resources.class);
+      }
+      else {
+        return null;
+      }
+    } catch (ApiException ex) {
+      if(ex.getCode() == 404) {
+        return null;
+      }
+      else {
+        throw ex;
+      }
+    }
+  }
   public ContainersResponse getContainers (Boolean include_properties) throws ApiException {
+    // verify required params are set
+    if(include_properties == null ) {
+       throw new ApiException(400, "missing required params");
+    }
     // create path and map variables
     String path = "/files".replaceAll("\\{format\\}","json");
 

@@ -11,7 +11,7 @@ import com.dreamfactory.model.Tables;
 import java.util.*;
 
 public class SchemaApi {
-  String basePath = "https://next.cloud.dreamfactory.com/rest";
+  String basePath = "http://localhost:9080/rest";
   ApiInvoker apiInvoker = ApiInvoker.getInstance();
 
   public void addHeader(String key, String value) {

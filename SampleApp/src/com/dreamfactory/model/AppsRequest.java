@@ -1,8 +1,8 @@
 package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.*;
+
 import com.dreamfactory.model.AppRequest;
 public class AppsRequest {
   /* Array of system application records. */

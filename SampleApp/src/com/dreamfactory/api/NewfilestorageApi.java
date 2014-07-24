@@ -2,21 +2,22 @@ package com.dreamfactory.api;
 
 import com.dreamfactory.client.ApiException;
 import com.dreamfactory.client.ApiInvoker;
-import java.io.File;
 import com.dreamfactory.model.FileResponse;
 import com.dreamfactory.model.Container;
 import com.dreamfactory.model.FolderRequest;
 import com.dreamfactory.model.ContainerRequest;
 import com.dreamfactory.model.Folder;
+import com.dreamfactory.model.Resources;
 import com.dreamfactory.model.ContainersResponse;
-import com.dreamfactory.model.FileRequest;
 import com.dreamfactory.model.ContainersRequest;
 import com.dreamfactory.model.FolderResponse;
+import com.dreamfactory.model.FileRequest;
+import com.dreamfactory.model.File;
 import com.dreamfactory.model.ContainerResponse;
 import java.util.*;
 
-public class AppApi {
-  String basePath = "https://next.cloud.dreamfactory.com/rest";
+public class NewfilestorageApi {
+  String basePath = "http://localhost/rest";
   ApiInvoker apiInvoker = ApiInvoker.getInstance();
 
   public void addHeader(String key, String value) {
@@ -35,9 +36,40 @@ public class AppApi {
     return basePath;
   }
 
-  public ContainersResponse getContainers (Boolean include_properties) throws ApiException {
+  public Resources getResources () throws ApiException {
     // create path and map variables
-    String path = "/app".replaceAll("\\{format\\}","json");
+    String path = "/newfilestorage".replaceAll("\\{format\\}","json");
+
+    // query params
+    Map<String, String> queryParams = new HashMap<String, String>();
+    Map<String, String> headerParams = new HashMap<String, String>();
+
+    String contentType = "application/json";
+
+    try {
+      String response = apiInvoker.invokeAPI(basePath, path, "GET", queryParams, null, headerParams, contentType);
+      if(response != null){
+        return (Resources) ApiInvoker.deserialize(response, "", Resources.class);
+      }
+      else {
+        return null;
+      }
+    } catch (ApiException ex) {
+      if(ex.getCode() == 404) {
+        return null;
+      }
+      else {
+        throw ex;
+      }
+    }
+  }
+  public ContainersResponse getContainers (Boolean include_properties) throws ApiException {
+    // verify required params are set
+    if(include_properties == null ) {
+       throw new ApiException(400, "missing required params");
+    }
+    // create path and map variables
+    String path = "/newfilestorage".replaceAll("\\{format\\}","json");
 
     // query params
     Map<String, String> queryParams = new HashMap<String, String>();
@@ -70,7 +102,7 @@ public class AppApi {
        throw new ApiException(400, "missing required params");
     }
     // create path and map variables
-    String path = "/app".replaceAll("\\{format\\}","json");
+    String path = "/newfilestorage".replaceAll("\\{format\\}","json");
 
     // query params
     Map<String, String> queryParams = new HashMap<String, String>();
@@ -100,7 +132,7 @@ public class AppApi {
   }
   public ContainersResponse deleteContainers (String names, Boolean force) throws ApiException {
     // create path and map variables
-    String path = "/app".replaceAll("\\{format\\}","json");
+    String path = "/newfilestorage".replaceAll("\\{format\\}","json");
 
     // query params
     Map<String, String> queryParams = new HashMap<String, String>();
@@ -135,7 +167,7 @@ public class AppApi {
        throw new ApiException(400, "missing required params");
     }
     // create path and map variables
-    String path = "/app/{container}/".replaceAll("\\{format\\}","json").replaceAll("\\{" + "container" + "\\}", apiInvoker.escapeString(container.toString()));
+    String path = "/newfilestorage/{container}/".replaceAll("\\{format\\}","json").replaceAll("\\{" + "container" + "\\}", apiInvoker.escapeString(container.toString()));
 
     // query params
     Map<String, String> queryParams = new HashMap<String, String>();
@@ -176,7 +208,7 @@ public class AppApi {
        throw new ApiException(400, "missing required params");
     }
     // create path and map variables
-    String path = "/app/{container}/".replaceAll("\\{format\\}","json").replaceAll("\\{" + "container" + "\\}", apiInvoker.escapeString(container.toString()));
+    String path = "/newfilestorage/{container}/".replaceAll("\\{format\\}","json").replaceAll("\\{" + "container" + "\\}", apiInvoker.escapeString(container.toString()));
 
     // query params
     Map<String, String> queryParams = new HashMap<String, String>();
@@ -216,7 +248,7 @@ public class AppApi {
        throw new ApiException(400, "missing required params");
     }
     // create path and map variables
-    String path = "/app/{container}/".replaceAll("\\{format\\}","json").replaceAll("\\{" + "container" + "\\}", apiInvoker.escapeString(container.toString()));
+    String path = "/newfilestorage/{container}/".replaceAll("\\{format\\}","json").replaceAll("\\{" + "container" + "\\}", apiInvoker.escapeString(container.toString()));
 
     // query params
     Map<String, String> queryParams = new HashMap<String, String>();
@@ -247,7 +279,7 @@ public class AppApi {
        throw new ApiException(400, "missing required params");
     }
     // create path and map variables
-    String path = "/app/{container}/".replaceAll("\\{format\\}","json").replaceAll("\\{" + "container" + "\\}", apiInvoker.escapeString(container.toString()));
+    String path = "/newfilestorage/{container}/".replaceAll("\\{format\\}","json").replaceAll("\\{" + "container" + "\\}", apiInvoker.escapeString(container.toString()));
 
     // query params
     Map<String, String> queryParams = new HashMap<String, String>();
@@ -282,7 +314,7 @@ public class AppApi {
        throw new ApiException(400, "missing required params");
     }
     // create path and map variables
-    String path = "/app/{container}/{folder_path}/".replaceAll("\\{format\\}","json").replaceAll("\\{" + "container" + "\\}", apiInvoker.escapeString(container.toString())).replaceAll("\\{" + "folder_path" + "\\}", apiInvoker.escapeString(folder_path.toString()));
+    String path = "/newfilestorage/{container}/{folder_path}/".replaceAll("\\{format\\}","json").replaceAll("\\{" + "container" + "\\}", apiInvoker.escapeString(container.toString())).replaceAll("\\{" + "folder_path" + "\\}", apiInvoker.escapeString(folder_path.toString()));
 
     // query params
     Map<String, String> queryParams = new HashMap<String, String>();
@@ -323,7 +355,7 @@ public class AppApi {
        throw new ApiException(400, "missing required params");
     }
     // create path and map variables
-    String path = "/app/{container}/{folder_path}/".replaceAll("\\{format\\}","json").replaceAll("\\{" + "container" + "\\}", apiInvoker.escapeString(container.toString())).replaceAll("\\{" + "folder_path" + "\\}", apiInvoker.escapeString(folder_path.toString()));
+    String path = "/newfilestorage/{container}/{folder_path}/".replaceAll("\\{format\\}","json").replaceAll("\\{" + "container" + "\\}", apiInvoker.escapeString(container.toString())).replaceAll("\\{" + "folder_path" + "\\}", apiInvoker.escapeString(folder_path.toString()));
 
     // query params
     Map<String, String> queryParams = new HashMap<String, String>();
@@ -363,7 +395,7 @@ public class AppApi {
        throw new ApiException(400, "missing required params");
     }
     // create path and map variables
-    String path = "/app/{container}/{folder_path}/".replaceAll("\\{format\\}","json").replaceAll("\\{" + "container" + "\\}", apiInvoker.escapeString(container.toString())).replaceAll("\\{" + "folder_path" + "\\}", apiInvoker.escapeString(folder_path.toString()));
+    String path = "/newfilestorage/{container}/{folder_path}/".replaceAll("\\{format\\}","json").replaceAll("\\{" + "container" + "\\}", apiInvoker.escapeString(container.toString())).replaceAll("\\{" + "folder_path" + "\\}", apiInvoker.escapeString(folder_path.toString()));
 
     // query params
     Map<String, String> queryParams = new HashMap<String, String>();
@@ -394,7 +426,7 @@ public class AppApi {
        throw new ApiException(400, "missing required params");
     }
     // create path and map variables
-    String path = "/app/{container}/{folder_path}/".replaceAll("\\{format\\}","json").replaceAll("\\{" + "container" + "\\}", apiInvoker.escapeString(container.toString())).replaceAll("\\{" + "folder_path" + "\\}", apiInvoker.escapeString(folder_path.toString()));
+    String path = "/newfilestorage/{container}/{folder_path}/".replaceAll("\\{format\\}","json").replaceAll("\\{" + "container" + "\\}", apiInvoker.escapeString(container.toString())).replaceAll("\\{" + "folder_path" + "\\}", apiInvoker.escapeString(folder_path.toString()));
 
     // query params
     Map<String, String> queryParams = new HashMap<String, String>();
@@ -429,7 +461,7 @@ public class AppApi {
        throw new ApiException(400, "missing required params");
     }
     // create path and map variables
-    String path = "/app/{container}/{file_path}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "container" + "\\}", apiInvoker.escapeString(container.toString())).replaceAll("\\{" + "file_path" + "\\}", apiInvoker.escapeString(file_path.toString()));
+    String path = "/newfilestorage/{container}/{file_path}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "container" + "\\}", apiInvoker.escapeString(container.toString())).replaceAll("\\{" + "file_path" + "\\}", apiInvoker.escapeString(file_path.toString()));
 
     // query params
     Map<String, String> queryParams = new HashMap<String, String>();
@@ -466,7 +498,7 @@ public class AppApi {
        throw new ApiException(400, "missing required params");
     }
     // create path and map variables
-    String path = "/app/{container}/{file_path}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "container" + "\\}", apiInvoker.escapeString(container.toString())).replaceAll("\\{" + "file_path" + "\\}", apiInvoker.escapeString(file_path.toString()));
+    String path = "/newfilestorage/{container}/{file_path}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "container" + "\\}", apiInvoker.escapeString(container.toString())).replaceAll("\\{" + "file_path" + "\\}", apiInvoker.escapeString(file_path.toString()));
 
     // query params
     Map<String, String> queryParams = new HashMap<String, String>();
@@ -499,7 +531,7 @@ public class AppApi {
        throw new ApiException(400, "missing required params");
     }
     // create path and map variables
-    String path = "/app/{container}/{file_path}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "container" + "\\}", apiInvoker.escapeString(container.toString())).replaceAll("\\{" + "file_path" + "\\}", apiInvoker.escapeString(file_path.toString()));
+    String path = "/newfilestorage/{container}/{file_path}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "container" + "\\}", apiInvoker.escapeString(container.toString())).replaceAll("\\{" + "file_path" + "\\}", apiInvoker.escapeString(file_path.toString()));
 
     // query params
     Map<String, String> queryParams = new HashMap<String, String>();
@@ -530,7 +562,7 @@ public class AppApi {
        throw new ApiException(400, "missing required params");
     }
     // create path and map variables
-    String path = "/app/{container}/{file_path}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "container" + "\\}", apiInvoker.escapeString(container.toString())).replaceAll("\\{" + "file_path" + "\\}", apiInvoker.escapeString(file_path.toString()));
+    String path = "/newfilestorage/{container}/{file_path}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "container" + "\\}", apiInvoker.escapeString(container.toString())).replaceAll("\\{" + "file_path" + "\\}", apiInvoker.escapeString(file_path.toString()));
 
     // query params
     Map<String, String> queryParams = new HashMap<String, String>();
@@ -561,7 +593,7 @@ public class AppApi {
        throw new ApiException(400, "missing required params");
     }
     // create path and map variables
-    String path = "/app/{container}/{file_path}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "container" + "\\}", apiInvoker.escapeString(container.toString())).replaceAll("\\{" + "file_path" + "\\}", apiInvoker.escapeString(file_path.toString()));
+    String path = "/newfilestorage/{container}/{file_path}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "container" + "\\}", apiInvoker.escapeString(container.toString())).replaceAll("\\{" + "file_path" + "\\}", apiInvoker.escapeString(file_path.toString()));
 
     // query params
     Map<String, String> queryParams = new HashMap<String, String>();

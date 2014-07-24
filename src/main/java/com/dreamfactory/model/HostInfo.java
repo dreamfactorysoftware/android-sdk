@@ -1,6 +1,7 @@
 package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.*;
 
 public class HostInfo {
   /* URL, server name, or * to define the CORS host. */

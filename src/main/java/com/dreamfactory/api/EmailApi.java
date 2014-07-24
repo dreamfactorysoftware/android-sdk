@@ -7,7 +7,7 @@ import com.dreamfactory.model.EmailResponse;
 import java.util.*;
 
 public class EmailApi {
-  String basePath = "https://dsp-codegen.cloud.dreamfactory.com/rest";
+  String basePath = "http://localhost:9080/rest";
   ApiInvoker apiInvoker = ApiInvoker.getInstance();
 
   public void addHeader(String key, String value) {

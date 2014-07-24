@@ -1,8 +1,8 @@
 package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.*;
+
 import com.dreamfactory.model.ServiceResponse;
 import com.dreamfactory.model.Metadata;
 public class ServicesResponse {

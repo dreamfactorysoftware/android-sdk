@@ -11,7 +11,7 @@ import com.dreamfactory.model.Tables;
 import java.util.*;
 
 public class SchemaApi {
-  String basePath = "https://dsp-codegen.cloud.dreamfactory.com/rest";
+  String basePath = "http://localhost:9080/rest";
   ApiInvoker apiInvoker = ApiInvoker.getInstance();
 
   public void addHeader(String key, String value) {
@@ -57,7 +57,7 @@ public class SchemaApi {
       }
     }
   }
-  public Tables createTables (Tables body) throws ApiException {
+  public Resources createTables (Tables body) throws ApiException {
     // verify required params are set
     if(body == null ) {
        throw new ApiException(400, "missing required params");
@@ -74,7 +74,7 @@ public class SchemaApi {
     try {
       String response = apiInvoker.invokeAPI(basePath, path, "POST", queryParams, body, headerParams, contentType);
       if(response != null){
-        return (Tables) ApiInvoker.deserialize(response, "", Tables.class);
+        return (Resources) ApiInvoker.deserialize(response, "", Resources.class);
       }
       else {
         return null;
@@ -88,7 +88,7 @@ public class SchemaApi {
       }
     }
   }
-  public Tables updateTables (Tables body) throws ApiException {
+  public Resources updateTables (Tables body) throws ApiException {
     // verify required params are set
     if(body == null ) {
        throw new ApiException(400, "missing required params");
@@ -105,7 +105,7 @@ public class SchemaApi {
     try {
       String response = apiInvoker.invokeAPI(basePath, path, "PUT", queryParams, body, headerParams, contentType);
       if(response != null){
-        return (Tables) ApiInvoker.deserialize(response, "", Tables.class);
+        return (Resources) ApiInvoker.deserialize(response, "", Resources.class);
       }
       else {
         return null;

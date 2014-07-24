@@ -1,42 +1,55 @@
 package com.dreamfactory.client;
 
 
-import java.io.IOException;
+import com.fasterxml.jackson.core.JsonGenerator.Feature;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import org.apache.http.*;
+import org.apache.http.client.*;
+import org.apache.http.client.methods.*;
+import org.apache.http.conn.*;
+import org.apache.http.conn.scheme.*;
+import org.apache.http.conn.ssl.*;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.*;
+import org.apache.http.impl.conn.*;
+import org.apache.http.params.*;
+import org.apache.http.util.EntityUtils;
+
+import java.io.File;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.net.URLEncoder;
+
+import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
 import java.security.GeneralSecurityException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.security.cert.*;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
+import java.util.Date;
+import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.SingleClientConnManager;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.util.EntityUtils;
-
-import com.fasterxml.jackson.databind.JavaType;
 
 public class ApiInvoker {
   private static ApiInvoker INSTANCE = new ApiInvoker();
@@ -68,11 +81,11 @@ public class ApiInvoker {
     return str;
   }
 
-  public static Object deserialize(String json, String containerType, Class<?> cls) throws ApiException {
+  public static Object deserialize(String json, String containerType, Class cls) throws ApiException {
     try{
       if("List".equals(containerType)) {
         JavaType typeInfo = JsonUtil.getJsonMapper().getTypeFactory().constructCollectionType(List.class, cls);
-        List<?> response = (List<?>) JsonUtil.getJsonMapper().readValue(json, typeInfo);
+        List response = (List<?>) JsonUtil.getJsonMapper().readValue(json, typeInfo);
         return response;
       }
       else if(String.class.equals(cls)) {

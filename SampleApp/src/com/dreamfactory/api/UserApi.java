@@ -18,7 +18,7 @@ import com.dreamfactory.model.DevicesResponse;
 import java.util.*;
 
 public class UserApi {
-  String basePath = "https://next.cloud.dreamfactory.com/rest";
+  String basePath = "http://localhost:9080/rest";
   ApiInvoker apiInvoker = ApiInvoker.getInstance();
 
   public void addHeader(String key, String value) {
