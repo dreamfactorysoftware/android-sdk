@@ -1,7 +1,6 @@
 package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.*;
 
 public class ProfileResponse {
   /* Email address of the current user. */

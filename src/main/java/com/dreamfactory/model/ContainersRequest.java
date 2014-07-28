@@ -1,8 +1,8 @@
 package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.*;
 
+import java.util.*;
 import com.dreamfactory.model.Container;
 public class ContainersRequest {
   /* An array of containers to modify. */

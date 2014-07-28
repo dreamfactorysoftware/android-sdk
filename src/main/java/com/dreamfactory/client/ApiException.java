@@ -1,29 +1,31 @@
 package com.dreamfactory.client;
 
 public class ApiException extends Exception {
-  int code = 0;
-  String message = null;
+	
+	private static final long serialVersionUID = -1056410111848899878L;
+	int code = 0;
+	String message = null;
 
-  public ApiException() {}
+	public ApiException() {}
 
-  public ApiException(int code, String message) {
-    this.code = code;
-    this.message = message;
-  }
+	public ApiException(int code, String message) {
+		this.code = code;
+		this.message = message;
+	}
 
-  public int getCode() {
-    return code;
-  }
-  
-  public void setCode(int code) {
-    this.code = code;
-  }
-  
-  public String getMessage() {
-    return message;
-  }
-  
-  public void setMessage(String message) {
-    this.message = message;
-  }
+	public int getCode() {
+		return code;
+	}
+
+	public void setCode(int code) {
+		this.code = code;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
 }

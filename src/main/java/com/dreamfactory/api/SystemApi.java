@@ -39,7 +39,7 @@ import com.dreamfactory.model.ConfigRequest;
 import java.util.*;
 
 public class SystemApi {
-  String basePath = "https://dsp-codegen.cloud.dreamfactory.com/rest";
+  String basePath = "https://next.cloud.dreamfactory.com/rest";
   ApiInvoker apiInvoker = ApiInvoker.getInstance();
 
   public void addHeader(String key, String value) {

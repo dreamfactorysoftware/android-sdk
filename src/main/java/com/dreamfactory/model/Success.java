@@ -1,7 +1,6 @@
 package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.*;
 
 public class Success {
   /* True when API call was successful, false or error otherwise. */
