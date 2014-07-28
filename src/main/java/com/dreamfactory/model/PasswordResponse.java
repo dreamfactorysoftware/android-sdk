@@ -1,7 +1,6 @@
 package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.*;
 
 public class PasswordResponse {
   /* User's security question, returned on reset request when no email confirmation required. */

@@ -1,8 +1,8 @@
 package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.*;
 
+import java.util.*;
 public class Constant {
   @JsonProperty("name")
   private List<String> name = new ArrayList<String>();
