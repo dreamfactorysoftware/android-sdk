@@ -1,4 +1,4 @@
-package com.dreamfactory;
+package com.dreamfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
