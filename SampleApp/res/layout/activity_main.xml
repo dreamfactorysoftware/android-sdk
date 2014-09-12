@@ -69,4 +69,12 @@
             android:maxLines="1" />
     </RelativeLayout>
 
+    <ImageView 
+        android:id="@+id/downloadedImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+         android:layout_alignParentTop="true"
+        android:layout_marginBottom="5dp"
+        />
+    
 </RelativeLayout>

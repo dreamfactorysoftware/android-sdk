@@ -18,4 +18,6 @@
 	<string name="logout">Logout</string>
 	<string name="dsp_url">Enter DSP URL</string>
 	<string name="dsp_null">Enter DSP url</string>
+	<string name="to_do_list_demo">TO-Do List Demo</string>
+	<string name="file_api_demo">File APIs Demo</string>
 </resources>

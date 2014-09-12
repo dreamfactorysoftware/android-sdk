@@ -4,8 +4,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -27,7 +25,7 @@ import com.dreamfactory.api.UserApi;
 import com.dreamfactory.model.Login;
 import com.dreamfactory.model.Session;
 
-public class LoginActivity extends Activity {//implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener{
+public class LoginActivity extends BaseActivity {//implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener{
 	private EditText editTextUserId, editTextUserPassword, editTextDspUrl;
 	private Button btnSubmitLogin;
 	private ProgressDialog progressDialog;
@@ -36,13 +34,6 @@ public class LoginActivity extends Activity {//implements GooglePlayServicesClie
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		try{
-			ActionBar actionbar = getActionBar();
-			actionbar.setTitle("");
-			actionbar.setIcon(R.drawable.df_logo_txt);
-		}catch(Exception e){
-
-		}
 		setContentView(R.layout.login);
 		progressDialog = new ProgressDialog(LoginActivity.this);
 		progressDialog.setMessage(getText(R.string.loading_message));
@@ -50,20 +41,19 @@ public class LoginActivity extends Activity {//implements GooglePlayServicesClie
 		editTextDspUrl = (EditText)findViewById(R.id.edit_text_dsp);
 		editTextUserId = (EditText) findViewById(R.id.edit_text_user_id);
 		editTextUserPassword = (EditText) findViewById(R.id.edit_text_user_pass);
-		
+
 		editTextUserPassword.setTypeface(Typeface.DEFAULT);
 		editTextUserPassword.setTransformationMethod(new PasswordTransformationMethod());
 
 		btnSubmitLogin = (Button) findViewById(R.id.button_submit_login);
 		userID = PrefUtil.getString(getApplicationContext(), IAppConstants.EMAIL, "");
 		userPass = PrefUtil.getString(getApplicationContext(), IAppConstants.PWD, "");
-		
+
 		dspUrl = PrefUtil.getString(getApplicationContext(), IAppConstants.DSP_URL, "");
-		
+
 		editTextUserId.setText(userID);
 		editTextUserPassword.setText(userPass);
 		editTextDspUrl.setText(dspUrl);
-
 
 		btnSubmitLogin.setOnClickListener(new OnClickListener() {			
 			@Override
@@ -104,7 +94,7 @@ public class LoginActivity extends Activity {//implements GooglePlayServicesClie
 		protected String doInBackground(Void... params) {
 
 			UserApi userApi = new UserApi();
-			userApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.TABLE_NAME);
+			userApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
 			userApi.setBasePath(dspUrl + IAppConstants.DSP_URL_SUFIX);
 			Login login = new Login();
 			login.setEmail(editTextUserId.getText().toString());
@@ -112,7 +102,7 @@ public class LoginActivity extends Activity {//implements GooglePlayServicesClie
 			try {
 				Session session =	userApi.login(login);
 				String session_id = session.getSession_id();
-				
+
 				PrefUtil.putString(getApplicationContext(), IAppConstants.DSP_URL, dspUrl);
 				PrefUtil.putString(getApplicationContext(), IAppConstants.SESSION_ID, session_id);
 				PrefUtil.putString(getApplicationContext(), IAppConstants.EMAIL, editTextUserId.getText().toString());
@@ -146,7 +136,7 @@ public class LoginActivity extends Activity {//implements GooglePlayServicesClie
 				alertDialog.show();	
 			}
 			else {
-				Intent in= new Intent(LoginActivity.this,MainActivity.class);
+				Intent in= new Intent(LoginActivity.this,ChooseDemoActivity.class);
 				startActivity(in);				
 				finish();
 			}

@@ -35,30 +35,45 @@ public final class R {
         public static final int vertical_line=0x7f020007;
     }
     public static final class id {
-        public static final int Separator=0x7f09000a;
-        public static final int action_settings=0x7f090011;
+        public static final int Separator=0x7f090013;
+        public static final int action_settings=0x7f09001b;
         public static final int btnButton=0x7f090004;
         public static final int btnLogout=0x7f090005;
-        public static final int button_submit_login=0x7f090010;
+        public static final int button_file_sample=0x7f09000a;
+        public static final int button_remote_file_test=0x7f09000c;
+        public static final int button_submit_login=0x7f090019;
+        public static final int button_todo=0x7f090009;
+        public static final int button_upload_test=0x7f09000b;
+        public static final int delete=0x7f09000d;
+        public static final int downloadedImage=0x7f090007;
         public static final int editText_add_task=0x7f090006;
-        public static final int edit_text_dsp=0x7f09000d;
-        public static final int edit_text_user_id=0x7f09000e;
-        public static final int edit_text_user_pass=0x7f09000f;
-        public static final int icon_list=0x7f090008;
-        public static final int imageView1=0x7f090007;
+        public static final int edit_text_dsp=0x7f090016;
+        public static final int edit_text_user_id=0x7f090017;
+        public static final int edit_text_user_pass=0x7f090018;
+        public static final int file_name=0x7f09000f;
+        public static final int file_path=0x7f090010;
+        public static final int icon_list=0x7f090011;
+        public static final int imageView1=0x7f090008;
         public static final int layout_button=0x7f090003;
+        public static final int list_view=0x7f09001a;
         public static final int list_view_strik_text=0x7f090001;
         public static final int newlayout=0x7f090002;
+        public static final int read=0x7f09000e;
         public static final int textView_tital=0x7f090000;
-        public static final int textView_user_pass=0x7f09000c;
-        public static final int text_view_list=0x7f090009;
-        public static final int text_view_user_id=0x7f09000b;
+        public static final int textView_user_pass=0x7f090015;
+        public static final int text_view_list=0x7f090012;
+        public static final int text_view_user_id=0x7f090014;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
         public static final int activity_splash=0x7f030001;
-        public static final int list_item=0x7f030002;
-        public static final int login=0x7f030003;
+        public static final int choose_demo=0x7f030002;
+        public static final int choose_file_demo=0x7f030003;
+        public static final int dialog=0x7f030004;
+        public static final int file_list_item=0x7f030005;
+        public static final int list_item=0x7f030006;
+        public static final int login=0x7f030007;
+        public static final int select_file=0x7f030008;
     }
     public static final class menu {
         public static final int main=0x7f080000;
@@ -73,6 +88,7 @@ public final class R {
         public static final int dsp_url=0x7f06000f;
         public static final int edit_id=0x7f060009;
         public static final int edit_pass=0x7f06000a;
+        public static final int file_api_demo=0x7f060012;
         public static final int hello_world=0x7f060002;
         public static final int id_null=0x7f060004;
         public static final int list_view_tital=0x7f06000c;
@@ -82,6 +98,7 @@ public final class R {
         public static final int logout=0x7f06000e;
         public static final int pw_null=0x7f060005;
         public static final int task_blank=0x7f060003;
+        public static final int to_do_list_demo=0x7f060011;
     }
     public static final class style {
         /** 
