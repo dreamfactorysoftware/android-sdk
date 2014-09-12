@@ -20,18 +20,19 @@ import com.df.utils.PrefUtil;
 import com.dfdemo.R;
 import com.dreamfactory.api.DbApi;
 import com.dreamfactory.client.ApiException;
-import com.dreamfactory.model.Record;
+import com.dreamfactory.model.RecordRequest;
+import com.dreamfactory.model.RecordResponse;
 
 public class ToDoAdapter extends BaseAdapter { 
 	private LayoutInflater inflater;
 	private Context context;
 	private ToDoHolder holder=  null;
 	private ProgressDialog progressDialog;
-	private List<Record> records;
+	private List<RecordResponse> records;
 	private String session_id;
 	private String dsp_url;
-	
-	public ToDoAdapter(Context context, List<Record> records) {
+
+	public ToDoAdapter(Context context, List<RecordResponse> records) {
 		this.records = records;
 		this.context = context;
 		this.session_id = PrefUtil.getString(context, IAppConstants.SESSION_ID, "");
@@ -41,8 +42,8 @@ public class ToDoAdapter extends BaseAdapter {
 		progressDialog.setMessage(context.getString((R.string.loading_message)));
 		inflater = LayoutInflater.from(this.context); 
 	}
-	
-	public void addTask(Record record){
+
+	public void addTask(RecordResponse record){
 		records.add(record);
 	}
 
@@ -62,7 +63,7 @@ public class ToDoAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {		
 
 		holder = new ToDoHolder();
-		Record record = records.get(position);
+		RecordResponse record = records.get(position);
 		if (convertView == null){
 			convertView = inflater.inflate(R.layout.list_item, null);
 			holder.iv_icon = (ImageView) convertView.findViewById(R.id.icon_list);
@@ -112,19 +113,20 @@ public class ToDoAdapter extends BaseAdapter {
 		ImageView iv_icon;
 		TextView tv_task;
 	}
-	
+
 	class DeleteRecordTask extends AsyncTask<Object, String, String>{
 
 		@Override
 		protected String doInBackground(Object... params) {
-			Record record = (Record)params[0];
+			RecordResponse record = (RecordResponse)params[0];
 			int pos = (Integer)params[1];
 			DbApi dbApi = new DbApi();
 			dbApi.setBasePath(dsp_url);
-			dbApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.TABLE_NAME);
+			dbApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
 			dbApi.addHeader("X-DreamFactory-Session-Token", session_id);
 			try {
-				dbApi.deleteRecord(IAppConstants.TABLE_NAME, record.getId(), null, null, null);
+				//				dbApi.deleteRecord(IAppConstants.TABLE_NAME, record.getId(), null, null, null);
+				dbApi.deleteRecord(IAppConstants.TABLE_NAME, record.getId(), null, null, null,null);
 				records.remove(pos);
 			} catch (ApiException e) {
 				return e.getMessage();
@@ -140,26 +142,34 @@ public class ToDoAdapter extends BaseAdapter {
 				Toast.makeText(context, result, Toast.LENGTH_LONG).show();
 			}
 		}
-		
+
 		@Override
 		protected void onPreExecute() {
 			progressDialog.show();
 		}
-		
+
 	}
-	
+
 	class UpdateRecordTask extends AsyncTask<Object, String, String>{
 
 		@Override
 		protected String doInBackground(Object... params) {
-			Record record = (Record)params[0];
-			record.setComplete(!record.iscomplete());
+			RecordResponse recordResponse = (RecordResponse)params[0];
+			recordResponse.setComplete(!recordResponse.iscomplete());
+			
+			RecordRequest recordRequest = new RecordRequest();
+			recordRequest.setComplete(recordResponse.iscomplete());
+			recordRequest.set_field_(recordResponse.get_field_());
+			recordRequest.setId(recordResponse.getId());
+			recordRequest.setName(recordResponse.getName());
+			
 			DbApi dbApi = new DbApi();
 			dbApi.setBasePath(dsp_url);
 			dbApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
 			dbApi.addHeader("X-DreamFactory-Session-Token", PrefUtil.getString(context, IAppConstants.SESSION_ID, ""));
 			try {
-				Record result = dbApi.updateRecord(IAppConstants.TABLE_NAME, record.getId(), null, record, null, null);
+//				Record result = dbApi.updateRecord(IAppConstants.TABLE_NAME, record.getId(), null, record, null, null);
+				RecordResponse result = dbApi.updateRecord(IAppConstants.TABLE_NAME, recordRequest.getId(),recordRequest, null, null,null, null);
 				System.out.println("UpdateRecord Result " + result.toString());
 			} catch (ApiException e) {
 				return e.getMessage();
@@ -175,11 +185,11 @@ public class ToDoAdapter extends BaseAdapter {
 				Toast.makeText(context, result, Toast.LENGTH_LONG).show();
 			}
 		}
-		
+
 		@Override
 		protected void onPreExecute() {
 			progressDialog.show();
 		}
-		
+
 	}
 }
