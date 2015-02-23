@@ -1,31 +1,30 @@
 package com.dreamfactory.api;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.dreamfactory.client.ApiException;
 import com.dreamfactory.client.ApiInvoker;
-import com.dreamfactory.model.ComponentList;
+import com.dreamfactory.model.TableSchemas;
+import com.dreamfactory.model.StoredProcRequest;
+import com.dreamfactory.model.RecordsRequest;
+import com.dreamfactory.model.RecordResponse;
 import com.dreamfactory.model.FieldSchema;
-import com.dreamfactory.model.FilterRecordRequest;
+import com.dreamfactory.model.IdsRequest;
+import com.dreamfactory.model.RecordRequest;
 import com.dreamfactory.model.FilterRequest;
 import com.dreamfactory.model.GetRecordsRequest;
 import com.dreamfactory.model.IdsRecordRequest;
-import com.dreamfactory.model.IdsRequest;
-import com.dreamfactory.model.RecordRequest;
-import com.dreamfactory.model.RecordResponse;
-import com.dreamfactory.model.RecordsRequest;
-import com.dreamfactory.model.RecordsResponse;
-import com.dreamfactory.model.Resources;
-import com.dreamfactory.model.StoredProcRequest;
-import com.dreamfactory.model.StoredProcResponse;
-import com.dreamfactory.model.Success;
 import com.dreamfactory.model.TableSchema;
-import com.dreamfactory.model.TableSchemas;
+import com.dreamfactory.model.Resources;
+import com.dreamfactory.model.FilterRecordRequest;
+import com.dreamfactory.model.Success;
+import com.dreamfactory.model.RecordsResponse;
+import com.dreamfactory.model.StoredProcResponse;
+import com.dreamfactory.model.ComponentList;
+import java.util.*;
 
-public class DbApi {
-	String basePath = "http://localhost/rest";
-	String serviceName = "/db";
+public class SqlazureApi {
+	String basePath = "http://192.168.1.12/rest";
+	String serviceName = "/sqlazure";
+	
 	ApiInvoker apiInvoker = ApiInvoker.getInstance();
 
 	public void addHeader(String key, String value) {
@@ -319,8 +318,6 @@ public class DbApi {
 			String response = apiInvoker.invokeAPI(basePath, path, "GET", queryParams, null, headerParams, contentType);
 			if(response != null){
 				return (RecordsResponse) ApiInvoker.deserialize(response, "", RecordsResponse.class);
-				//    	  Records rec = (Records) ApiInvoker.deserialize(response, "", Records.class);
-				//    	  return null;
 			}
 			else {
 				return null;
@@ -365,8 +362,6 @@ public class DbApi {
 			String response = apiInvoker.invokeAPI(basePath, path, "POST", queryParams, body, headerParams, contentType);
 			if(response != null){
 				return (RecordsResponse) ApiInvoker.deserialize(response, "", RecordsResponse.class);
-				//    	  Records rec =  (Records) ApiInvoker.deserialize(response, "", Records.class);
-				//    	  return null;
 			}
 			else {
 				return null;
@@ -806,8 +801,8 @@ public class DbApi {
 			throw new ApiException(400, "missing required params");
 		}
 		// create path and map variables
-		//    String path = serviceName + "/{table_name}/{id}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "table_name" + "\\}", apiInvoker.escapeString(table_name.toString())).replaceAll("\\{" + "id" + "\\}", apiInvoker.escapeString(id.toString()));
-		String path = serviceName + "/{table_name}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "table_name" + "\\}", apiInvoker.escapeString(table_name.toString())); //.replaceAll("\\{" + "id" + "\\}", apiInvoker.escapeString(id.toString()));
+		String path = serviceName + "/{table_name}/{id}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "table_name" + "\\}", apiInvoker.escapeString(table_name.toString())).replaceAll("\\{" + "id" + "\\}", apiInvoker.escapeString(id.toString()));
+
 		// query params
 		Map<String, String> queryParams = new HashMap<String, String>();
 		Map<String, String> headerParams = new HashMap<String, String>();

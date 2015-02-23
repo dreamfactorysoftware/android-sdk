@@ -1,27 +1,24 @@
 package com.dreamfactory.api;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.dreamfactory.client.ApiException;
 import com.dreamfactory.client.ApiInvoker;
-import com.dreamfactory.model.ComponentList;
-import com.dreamfactory.model.Container;
-import com.dreamfactory.model.ContainerRequest;
-import com.dreamfactory.model.ContainerResponse;
-import com.dreamfactory.model.ContainersRequest;
-import com.dreamfactory.model.ContainersResponse;
-import com.dreamfactory.model.File;
-import com.dreamfactory.model.FileRequest;
 import com.dreamfactory.model.FileResponse;
-import com.dreamfactory.model.Folder;
+import com.dreamfactory.model.Container;
 import com.dreamfactory.model.FolderRequest;
-import com.dreamfactory.model.FolderResponse;
+import com.dreamfactory.model.ContainerRequest;
+import com.dreamfactory.model.Folder;
 import com.dreamfactory.model.Resources;
+import com.dreamfactory.model.ContainersResponse;
+import com.dreamfactory.model.ContainersRequest;
+import com.dreamfactory.model.FolderResponse;
+import com.dreamfactory.model.FileRequest;
+import com.dreamfactory.model.File;
+import com.dreamfactory.model.ContainerResponse;
+import java.util.*;
 
-public class FilesApi {
+public class NewfilestorageApi {
 	String basePath = "http://localhost/rest";
-	String serviceName = "/files";
+	String serviceName = "/newfilestorage";
 	ApiInvoker apiInvoker = ApiInvoker.getInstance();
 
 	public void addHeader(String key, String value) {
@@ -62,39 +59,6 @@ public class FilesApi {
 			String response = apiInvoker.invokeAPI(basePath, path, "GET", queryParams, null, headerParams, contentType);
 			if(response != null){
 				return (Resources) ApiInvoker.deserialize(response, "", Resources.class);
-			}
-			else {
-				return null;
-			}
-		} catch (ApiException ex) {
-			if(ex.getCode() == 404) {
-				return null;
-			}
-			else {
-				throw ex;
-			}
-		}
-	}
-	public ComponentList getAccessComponents (Boolean as_access_components) throws ApiException {
-		// verify required params are set
-		if(as_access_components == null ) {
-			throw new ApiException(400, "missing required params");
-		}
-		// create path and map variables
-		String path = serviceName.replaceAll("\\{format\\}","json");
-
-		// query params
-		Map<String, String> queryParams = new HashMap<String, String>();
-		Map<String, String> headerParams = new HashMap<String, String>();
-
-		if(!"null".equals(String.valueOf(as_access_components)))
-			queryParams.put("as_access_components", String.valueOf(as_access_components));
-		String contentType = "application/json";
-
-		try {
-			String response = apiInvoker.invokeAPI(basePath, path, "GET", queryParams, null, headerParams, contentType);
-			if(response != null){
-				return (ComponentList) ApiInvoker.deserialize(response, "", ComponentList.class);
 			}
 			else {
 				return null;
@@ -551,15 +515,10 @@ public class FilesApi {
 
 		if(!"null".equals(String.valueOf(check_exist)))
 			queryParams.put("check_exist", String.valueOf(check_exist));
-		//    String contentType = "application/json";
-		String contentType = body.getContent_type(); //"application/octet-stream";
-		if(contentType == null){
-			contentType = "application/octet-stream";
-		}
-		headerParams.put("X-File-Name", body.getName());
+		String contentType = "application/json";
 
 		try {
-			String response = apiInvoker.invokeAPI(basePath, path, "POST", queryParams, body, headerParams, contentType, body);
+			String response = apiInvoker.invokeAPI(basePath, path, "POST", queryParams, body, headerParams, contentType);
 			if(response != null){
 				return (FileResponse) ApiInvoker.deserialize(response, "", FileResponse.class);
 			}

@@ -105,11 +105,20 @@ public class ApiInvoker {
 		}
 	}
 
+	public String invokeAPI(String host, String path, String method, Map<String, String> queryParams, String body, Map<String, String> headerParams, String contentType) throws ApiException {
+//		return invokeAPI(host, path, method, queryParams, body, headerParams, contentType, null);
+		return invokeAPIInternal(host, path, method, queryParams, body, headerParams, contentType, null);
+	}
+	
 	public String invokeAPI(String host, String path, String method, Map<String, String> queryParams, Object body, Map<String, String> headerParams, String contentType) throws ApiException {
 		return invokeAPI(host, path, method, queryParams, body, headerParams, contentType, null);
 	}
 
 	public String invokeAPI(String host, String path, String method, Map<String, String> queryParams, Object body, Map<String, String> headerParams, String contentType, FileRequest fileRequest) throws ApiException {
+		return invokeAPIInternal(host, path, method, queryParams, serialize(body), headerParams, contentType, fileRequest);
+	}
+	
+	private String invokeAPIInternal(String host, String path, String method, Map<String, String> queryParams, String body, Map<String, String> headerParams, String contentType, FileRequest fileRequest) throws ApiException {
 		HttpClient client = getClient(host);
 
 		StringBuilder b = new StringBuilder();
@@ -157,7 +166,7 @@ public class ApiInvoker {
 					post.setEntity(reqEntity);
 				}
 				else if (body != null) {
-					post.setEntity(new StringEntity(serialize(body), "UTF-8"));
+					post.setEntity(new StringEntity(body, "UTF-8"));
 				}
 				for(String key : headers.keySet()) {
 					post.setHeader(key, headers.get(key));
@@ -168,7 +177,7 @@ public class ApiInvoker {
 				HttpPut put = new HttpPut(url);
 				if(body != null) {
 					put.setHeader("Content-Type", contentType);
-					put.setEntity(new StringEntity(serialize(body), "UTF-8"));
+					put.setEntity(new StringEntity(body, "UTF-8"));
 				}
 				for(String key : headers.keySet()) {
 					put.setHeader(key, headers.get(key));
@@ -187,7 +196,7 @@ public class ApiInvoker {
 
 				if (body != null) {
 					patch.setHeader("Content-Type", contentType);
-					patch.setEntity(new StringEntity(serialize(body), "UTF-8"));
+					patch.setEntity(new StringEntity(body, "UTF-8"));
 				}
 				for(String key : headers.keySet()) {
 					patch.setHeader(key, headers.get(key));
