@@ -26,10 +26,11 @@ If you are using eclipse for android development please follow below steps to im
 
 ####This sdk provides apis to connect default dsp services as well as custom services created by developers
 
-
-#####Sample code to connect to 'user' service (for detailed example please check 
-
 ```java
+
+Sample code to connect to 'user' service (for detailed example please check 
+
+
 LoginActivity in to-do sample app)
 		UserApi userApi = new UserApi();
 		userApi.addHeader("X-DreamFactory-Application-Name", "your app name");
@@ -50,9 +51,7 @@ Sample to connect to 'db' service, for more detail please check ToDoDemoActivity
 		resultRecord.setName(todoItem);
 		log(resultRecord.toString());
 
-```
-
-```java
+ 
 Now, suppose we want to create a new service on dsp and connect using df sdk, here are different approaches
 
 ex. 
