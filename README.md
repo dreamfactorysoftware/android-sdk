@@ -20,192 +20,176 @@ If you are using eclipse for android development please follow below steps to im
 
 	Make sure library (libs)path is correct and modify SDK platform if required.
 
+	Add SDK source code as external source. go to project properties > Java Build Path > Source tab > add external sdk folder
+
 ####Basic Usage
 
-#####User  Login
+####This sdk provides apis to connect default dsp services as well as custom services created by developers
 
 ```java
+Sample code to connect to 'user' service (for detailed example please check LoginActivity in to-do sample app)
+		UserApi userApi = new UserApi();
+		userApi.addHeader("X-DreamFactory-Application-Name", "your app name");
+		userApi.setBasePath("your dsp url");
+		Login login = new Login();
+		login.setEmail("your email");
+		login.setPassword("your password");
+		Session session =	userApi.login(login);
 
-//User Api
-// Creating a user api object
-	UserApi userApi = new UserApi();
-	userApi.addHeader("X-DreamFactory-Application-Name", "your app name");
-	userApi.setBasePath("your dsp server url");
+Sample to connect to 'db' service, for more detail please check ToDoDemoActivity
+		RecordRequest record = new RecordRequest();
+		record.setName("some text"); 
+		DbApi dbApi = new DbApi();  
+		dbApi.addHeader("X-DreamFactory-Application-Name", "your app name");
+		dbApi.setBasePath("your dsp url");
+		dbApi.addHeader("X-DreamFactory-Session-Token", "your session id"); 
+		RecordResponse resultRecord = dbApi.createRecord("table name", "123", record, null, null, null,null);
+		resultRecord.setName(todoItem);
+		log(resultRecord.toString());
 
-	// here is a sample of login user api call,
-	Login login = new Login();
-	login.setEmail(“your login email");
-	login.setPassword("password”;
-	Session session =	userApi.login(login);
+Now, suppose we want to create a new service on dsp and connect using df sdk, here are different approaches
 
-//For complete example please check LoginActivity.java
-
-class LoginTask extends AsyncTask<Void, Void, String>{
-
-		@Override
-		protected String doInBackground(Void... params) {
-
-			UserApi userApi = new UserApi();
-			userApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
-			userApi.setBasePath(dspUrl + IAppConstants.DSP_URL_SUFIX);
-			Login login = new Login();
-			login.setEmail(editTextUserId.getText().toString());
-			login.setPassword(editTextUserPassword.getText().toString());
-			try {
-				Session session =	userApi.login(login);
-				String session_id = session.getSession_id();
-			} catch (Exception e) {
-				return e.getMessage();
-			}
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			if (result !=null){ // error message
-				String errorMsg = "";
-				try {
-					JSONObject jObj = new JSONObject(result);
-					JSONArray jArray = jObj.getJSONArray("error");
-					JSONObject obj = jArray.getJSONObject(0);
-					errorMsg = obj.getString("message");
-				} catch (JSONException e) {
-					errorMsg = result;
-				}
-			}
-			else {
-				 // success
-			}
-		}
-		@Override
-		protected void onPreExecute() {
-			progressDialog.show();
-		}
-	} 
+ex. 
+a)  Lets say we've create a new service called 'city' and a path as 'list' and set up as a 'GET' request
 	
 
+		// create an object of APIInvoker
+		ApiInvoker invoker  = new ApiInvoker();
+		// set default headers, here is app name
+		invoker.addDefaultHeader("X-DreamFactory-Application-Name", "your app name");
+		 
+		String serviceName = "city";
+		String endPoint = "list";
+		// you can create path the way you like
+		String path = new StringBuilder("/").append(serviceName).append("/").append(endPoint).append("/").toString();
+		// query params if any
+		Map<String, String> queryParams = new HashMap<String, String>();
 
-	
-```
-### Working with the DB Service
-```java
+		// additional header if you want to pass with
+		Map<String, String> headerParams = new HashMap<String, String>();
+		String contentType = "application/json";
+
+		String response = invoker.invokeAPI(dsp_url, path, "GET", queryParams, null, headerParams, contentType);
+		// here this api returns 'String' that you can either parse using json object or map to your model class using sdk deserialise function
+		(check function loginServiceDemoApproach_3 in LoginActivity.java )
+
+b) Another example to use 'POST' method for service 'city' with path 'add'
+// create an object of APIInvoker
+		ApiInvoker invoker  = new ApiInvoker();
+		// set default headers, here is app name
+		invoker.addDefaultHeader("X-DreamFactory-Application-Name", "your app name");
+		 
+		String serviceName = "city";
+		String endPoint = "add";
+		// you can create path the way you like
+		String path = new StringBuilder("/").append(serviceName).append("/").append(endPoint).append("/").toString();
+		// query params if any
+		Map<String, String> queryParams = new HashMap<String, String>();
+
+		// additional header if you want to pass with
+		Map<String, String> headerParams = new HashMap<String, String>();
+		String contentType = "application/json";
+
+		CityModelClass city = new CityModelClass();
+		city.setName("your city name");
+		city.setTag("some text");
+
+		// Please check different version of ApiInvoker.invokeApi
+		//we can directly pass objects to api invoiker, model classes should be in proper format with JsonProperty. For a sample model class please check DemoLoginModel.java or you can pass json string
+		String response = invoker.invokeAPI(dsp_url, path, "POST", queryParams, city, headerParams, contentType);
+		or 
+		String response = invoker.invokeAPI(dsp_url, path, "POST", queryParams, "json string", headerParams, contentType);
+
+		// here this api returns 'String' that you can either parse using json object or map to your model class using sdk deserialise function
+		(check function loginServiceDemoApproach_3 in LoginActivity.java )
 
 
-// create a DB api object similar to above
-	DbApi dbApi = new DbApi();
-	dbApi.addHeader("X-DreamFactory-Application-Name", "your app name");
-	dbApi.addHeader("X-DreamFactory-Session-Token", "your session token received from login call");
-	dbApi.setBasePath(dsp_url); // your dsp url
-	// And here is how to get to do records, Please check function getRecords to see how to utilize different parameters
-	RecordsResponse records = dbApi.getRecords(IAppConstants.TABLE_NAME,null,null,-1,-1,null,null,false,false,null,null,true,null);
+		Here are 3 different ways that you can use to call a 'user' api
 
-//For complete example please check ToDoDemoActivity.java
-
-class GetRecordsTask extends AsyncTask<Void, RecordsResponse, RecordsResponse>{
-		private String errorMsg;
-
-		@Override
-		protected void onPreExecute() {
-			progressDialog.show();
-		}
-
-		@Override
-		protected RecordsResponse doInBackground(Void... params) {
-			DbApi dbApi = new DbApi();
-			dbApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
-			dbApi.addHeader("X-DreamFactory-Session-Token", session_id);
-			dbApi.setBasePath(dsp_url);
-			try {
-				RecordsResponse records = dbApi.getRecords(IAppConstants.TABLE_NAME,null,null,-1,-1,null,null,false,false,null,null,true,null);
-				log(records.toString());
-				return records;
-			} catch (Exception e) {
-				e.printStackTrace();
-				errorMsg = e.getMessage();
-			}
-			return null;
-		}
-		@Override
-		protected void onPostExecute(RecordsResponse records) {
-			if(progressDialog != null && progressDialog.isShowing()){
-				progressDialog.cancel();
-			}
-			if(records != null){ // success
-				adapter = new ToDoAdapter(ToDoDemoActivity.this, records.getRecord());
-				list_view.setAdapter(adapter);
-			}else{ // some error show dialog
-				Toast.makeText(getApplicationContext(), errorMsg, Toast.LENGTH_LONG).show();
-				logout();
-			}
-		}
+	/**
+	 * This is a df user Api example. It explains how to use user api by using sdk model classes
+	 * 
+	 */
+	private String loginServiceDemoApproach_1() throws ApiException{
+		UserApi userApi = new UserApi();
+		userApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+		userApi.setBasePath(dspUrl + IAppConstants.DSP_URL_SUFIX);
+		Login login = new Login();
+		login.setEmail(editTextUserId.getText().toString());
+		login.setPassword(editTextUserPassword.getText().toString());
+		Session session =	userApi.login(login);
+		return session.getSession_id();
 	}
 
-```
-####Working with Files
-```java
+	/**
+	 * This is another way to user use df sdk to connect to backend server by passing json string
+	 * This is generic api inoker where you can pass all required header, query parms and body as json string
+	 * 
+	 * This approach is more useful when we you are creating additional services apart from Dreamfactry default services.
+	 * apiInvoiker returns string response and from here you are free to play with data
+	 *
+	 * For custom service you can also create your owd model class (ex Login) using JacksonAnnotation and directly pass to APIinvoker as described in function loginServiceDemoApproach_3
+	 */
+	private String loginServiceDemoApproach_2() throws Exception{
+		ApiInvoker invoker  = new ApiInvoker();
+		invoker.addDefaultHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+		// create path and map variables
+		String serviceName = "user";
+		String endPoint = "session";
+		String path = new StringBuilder("/").append(serviceName).append("/").append(endPoint).append("/").toString();
+		// query params
+		Map<String, String> queryParams = new HashMap<String, String>();
+		Map<String, String> headerParams = new HashMap<String, String>();
+		String contentType = "application/json";
 
-//Here is how to use File API 
-       // create a FilesApi api object similar to above
-       FilesApi fileApi = new FilesApi();
-	fileApi.addHeader("X-DreamFactory-Application-Name", "your app name");
-	fileApi.addHeader("X-DreamFactory-Session-Token", "session id");
-	fileApi.setBasePath(“your dap url”);
-
-	// container and folder name
-	String containerName = "container name on server"
-	String filePathOnServer = "folder name where you want to store file"
-
-	// Create a file request
-	FileRequest request = new FileRequest();
-	request.setName("file name");  // this will be stored file name on server
-	request.setPath("your local file path to upload");
-	FileResponse resp = fileApi.createFile(containerName, filePathOnServer, false, request);
-
-//For complete example please check UploadFileDemo.java
-
-class UploadFileTask extends AsyncTask<Object, FileResponse, FileResponse>{
-		private String errorMsg;
-
-		@Override
-		protected void onPreExecute() {
-			progressDialog.show();
-		}
-
-		@Override
-		protected FileResponse doInBackground(Object... params) {
-			FilesApi fileApi = new FilesApi();
-			fileApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
-			fileApi.addHeader("X-DreamFactory-Session-Token", session_id);
-			fileApi.setBasePath(dsp_url);
-			FileResponse fileToUpload = (FileResponse)params[0];
-			// where to upload on server
-			String containerName = IAppConstants.CONTAINER_NAME;
-			String filePathOnServer = IAppConstants.FOLDER_NAME + "/";
-
-			FileRequest request = new FileRequest();
-			request.setName(fileToUpload.getName());  // this will be stored file name on server
-			request.setPath(fileToUpload.getPath());
-			try {
-				FileResponse resp = fileApi.createFile(containerName, filePathOnServer, false, request);
-				log(resp.toString());
-				return resp;
-			} catch (ApiException e) {
-				e.printStackTrace();
-				errorMsg = e.getMessage();
-			}
-			return null;
-		}
-		@Override
-		protected void onPostExecute(FileResponse resp) {
-			if(progressDialog != null && progressDialog.isShowing()){
-				progressDialog.cancel();
-			}
-			if(resp != null){ // success
-				Toast.makeText(getApplicationContext(), "Uploaded successfully.", Toast.LENGTH_LONG).show(); 
-			}else{ // some error show dialog
-				Toast.makeText(getApplicationContext(), errorMsg, Toast.LENGTH_LONG).show();
-			}
-		}
+		JSONObject obj = new JSONObject();
+		obj.put("email", userID);
+		obj.put("password", userPass);
+		String requestStringFromJsonObject = obj.toString();
+		String response = invoker.invokeAPI(dsp_url, path, "POST", queryParams, requestStringFromJsonObject, headerParams, contentType);
+		JSONObject object = new JSONObject(response);
+		return object.getString("session_id");
 	}
 
+	/**
+	 * This is sample function to demonstrate how to call custom service by passing model object 
+	 */ 
+
+	private String loginServiceDemoApproach_3() throws Exception{
+		ApiInvoker invoker  = new ApiInvoker();
+		invoker.addDefaultHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+		// create path and map variables
+		String serviceName = "user";
+		String endPoint = "session";
+		String path = new StringBuilder("/").append(serviceName).append("/").append(endPoint).append("/").toString();
+		// query params
+		Map<String, String> queryParams = new HashMap<String, String>();
+		Map<String, String> headerParams = new HashMap<String, String>();
+		String contentType = "application/json";
+
+		DemoLoginModel login = new DemoLoginModel();
+		login.setEmail(editTextUserId.getText().toString());
+		login.setPassword(editTextUserPassword.getText().toString());
+		
+		String response = invoker.invokeAPI(dsp_url, path, "POST", queryParams, login, headerParams, contentType);
+		
+		// here you can also convert this response to model class
+		
+		Session session = (Session) ApiInvoker.deserialize(response, "", Session.class);
+
+		JSONObject object = new JSONObject(response);
+		return object.getString("session_id");
+	}
 ```
+
+
+
+		 
+		 
+
+
+
+
+
+
+
