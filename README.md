@@ -27,7 +27,7 @@ If you are using eclipse for android development please follow below steps to im
 ####This sdk provides apis to connect default dsp services as well as custom services created by developers
 
 ```java
-Sample code to connect to 'user' service (for detailed example please check LoginActivity in to-do sample app)
+########Sample code to connect to 'user' service (//for detailed example please check LoginActivity in to-do sample app)
 		UserApi userApi = new UserApi();
 		userApi.addHeader("X-DreamFactory-Application-Name", "your app name");
 		userApi.setBasePath("your dsp url");
@@ -181,15 +181,3 @@ b) Another example to use 'POST' method for service 'city' with path 'add'
 		return object.getString("session_id");
 	}
 ```
-
-
-
-		 
-		 
-
-
-
-
-
-
-
