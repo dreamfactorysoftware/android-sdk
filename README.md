@@ -27,7 +27,7 @@ If you are using eclipse for android development please follow below steps to im
 ####This sdk provides apis to connect default dsp services as well as custom services created by developers
 
 
-########Sample code to connect to 'user' service (for detailed example please check 
+#####Sample code to connect to 'user' service (for detailed example please check 
 
 ```java
 LoginActivity in to-do sample app)
