@@ -2,11 +2,11 @@
 
 ###Getting Started
 
-As always, clone this repo
+To use the Android SDK, simply clone this repo.
 
 ####Importing the Project
 
-If you are using eclipse for android development please follow below steps to import project into your existing workspace
+If you are using Eclipse for Android development please follow the steps below to import the project into your existing workspace.
 
 	File → Import → General → Existing Projects into Workspace → Next
     
@@ -18,56 +18,51 @@ If you are using eclipse for android development please follow below steps to im
     
 	Finish
 
-	Make sure library (libs)path is correct and modify SDK platform if required.
+	Make sure library (libs) path is correct and modify SDK platform if required.
 
-	Add SDK source code as external source. go to project properties > Java Build Path > Source tab > add external sdk folder
+	Add SDK source code as external source. Go to Project Properties > Java Build Path > Source tab > add external SDK folder
 
 ####Basic Usage
 
-####This sdk provides apis to connect default dsp services as well as custom services created by developers
+####This SDK provides APIs to connect default DSP services as well as custom services created by developers.
 
 ```java
 
-Sample code to connect to 'user' service (for detailed example please check 
-
-
-LoginActivity in to-do sample app)
+Sample code to connect to the 'user' service, for more details please check LoginActivity in the to-do sample app.
 		UserApi userApi = new UserApi();
 		userApi.addHeader("X-DreamFactory-Application-Name", "your app name");
-		userApi.setBasePath("your dsp url");
+		userApi.setBasePath("your DSP url");
 		Login login = new Login();
 		login.setEmail("your email");
 		login.setPassword("your password");
-		Session session =	userApi.login(login);
+		Session session = userApi.login(login);
 
-Sample to connect to 'db' service, for more detail please check ToDoDemoActivity
+Sample to connect to 'db' service, for more details please check ToDoDemoActivity in the to-do sample app.
 		RecordRequest record = new RecordRequest();
 		record.setName("some text"); 
 		DbApi dbApi = new DbApi();  
 		dbApi.addHeader("X-DreamFactory-Application-Name", "your app name");
-		dbApi.setBasePath("your dsp url");
+		dbApi.setBasePath("your DSP url");
 		dbApi.addHeader("X-DreamFactory-Session-Token", "your session id"); 
-		RecordResponse resultRecord = dbApi.createRecord("table name", "123", record, null, null, null,null);
+		RecordResponse resultRecord = dbApi.createRecord("table name", "123", record, null, null, null, null);
 		resultRecord.setName(todoItem);
 		log(resultRecord.toString());
 
  
-Now, suppose we want to create a new service on dsp and connect using df sdk, here are different approaches
+Now, suppose we want to create a new REST service on DSP and connect to it using the Android SDK. Here are some examples:
 
-ex. 
-a)  Lets say we've create a new service called 'city' and a path as 'list' and set up as a 'GET' request
-	
+a) Let's say we've create a new service called 'city', path as 'list', and want to 'GET' a list of cities.
 
 		// create an object of APIInvoker
 		ApiInvoker invoker  = new ApiInvoker();
-		// set default headers, here is app name
+		// set default headers, here the header is app name
 		invoker.addDefaultHeader("X-DreamFactory-Application-Name", "your app name");
 		 
 		String serviceName = "city";
 		String endPoint = "list";
-		// you can create path the way you like
+		// you can create the path the way you like
 		String path = new StringBuilder("/").append(serviceName).append("/").append(endPoint).append("/").toString();
-		// query params if any
+		// query params, if any
 		Map<String, String> queryParams = new HashMap<String, String>();
 
 		// additional header if you want to pass with
@@ -75,20 +70,22 @@ a)  Lets say we've create a new service called 'city' and a path as 'list' and s
 		String contentType = "application/json";
 
 		String response = invoker.invokeAPI(dsp_url, path, "GET", queryParams, null, headerParams, contentType);
-		// here this api returns 'String' that you can either parse using json object or map to your model class using sdk deserialise function
+		// here this API returns 'String' that you can either parse using a JSON object 
+		// or map to your model class using the SDK's deserialize function
 		(check function loginServiceDemoApproach_3 in LoginActivity.java )
 
-b) Another example to use 'POST' method for service 'city' with path 'add'
-// create an object of APIInvoker
+b) Another example to use 'POST' method for service 'city' with path 'add'.
+
+		// create an object of APIInvoker
 		ApiInvoker invoker  = new ApiInvoker();
-		// set default headers, here is app name
+		// set default headers, here the header is app name
 		invoker.addDefaultHeader("X-DreamFactory-Application-Name", "your app name");
 		 
 		String serviceName = "city";
 		String endPoint = "add";
 		// you can create path the way you like
 		String path = new StringBuilder("/").append(serviceName).append("/").append(endPoint).append("/").toString();
-		// query params if any
+		// query params, if any
 		Map<String, String> queryParams = new HashMap<String, String>();
 
 		// additional header if you want to pass with
@@ -100,19 +97,21 @@ b) Another example to use 'POST' method for service 'city' with path 'add'
 		city.setTag("some text");
 
 		// Please check different version of ApiInvoker.invokeApi
-		//we can directly pass objects to api invoiker, model classes should be in proper format with JsonProperty. For a sample model class please check DemoLoginModel.java or you can pass json string
+		// We can directly pass objects to API invoker, model classes should be in proper format with JsonProperty. 
+		// For a sample model class please check DemoLoginModel.java or you can pass JSON string.
 		String response = invoker.invokeAPI(dsp_url, path, "POST", queryParams, city, headerParams, contentType);
 		or 
 		String response = invoker.invokeAPI(dsp_url, path, "POST", queryParams, "json string", headerParams, contentType);
 
-		// here this api returns 'String' that you can either parse using json object or map to your model class using sdk deserialise function
+		// here this API returns 'String' that you can either parse using a JSON object 
+		// or map to your model class using the SDK's deserialize function
 		(check function loginServiceDemoApproach_3 in LoginActivity.java )
 
 
-		Here are 3 different ways that you can use to call a 'user' api
+		Here are three different ways you can call the 'user' API.
 
 	/**
-	 * This is a df user Api example. It explains how to use user api by using sdk model classes
+	 * This is a user API example. It explains how to call the User API by using SDK model classes.
 	 * 
 	 */
 	private String loginServiceDemoApproach_1() throws ApiException{
@@ -122,21 +121,22 @@ b) Another example to use 'POST' method for service 'city' with path 'add'
 		Login login = new Login();
 		login.setEmail(editTextUserId.getText().toString());
 		login.setPassword(editTextUserPassword.getText().toString());
-		Session session =	userApi.login(login);
+		Session session = userApi.login(login);
 		return session.getSession_id();
 	}
 
 	/**
-	 * This is another way to user use df sdk to connect to backend server by passing json string
-	 * This is generic api inoker where you can pass all required header, query parms and body as json string
+	 * This is another way to use the SDK to connect to the backend server by passing a JSON string.
+	 * This is the generic API invoker where you can pass all required headers, query params, and body as a JSON string.
 	 * 
-	 * This approach is more useful when we you are creating additional services apart from Dreamfactry default services.
-	 * apiInvoiker returns string response and from here you are free to play with data
+	 * This approach is more useful when we you are creating additional services apart from DreamFactory's default services.
+	 * apiInvoiker returns a string response and from here you are free to play with data.
 	 *
-	 * For custom service you can also create your owd model class (ex Login) using JacksonAnnotation and directly pass to APIinvoker as described in function loginServiceDemoApproach_3
+	 * For custom services you can also create your own model class (e.g. Login) using JacksonAnnotation 
+	 * and directly pass to API invoker as described in the loginServiceDemoApproach_3 function. 
 	 */
 	private String loginServiceDemoApproach_2() throws Exception{
-		ApiInvoker invoker  = new ApiInvoker();
+		ApiInvoker invoker = new ApiInvoker();
 		invoker.addDefaultHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
 		// create path and map variables
 		String serviceName = "user";
@@ -157,7 +157,7 @@ b) Another example to use 'POST' method for service 'city' with path 'add'
 	}
 
 	/**
-	 * This is sample function to demonstrate how to call custom service by passing model object 
+	 * This is sample function to demonstrate how to call a custom service by passing model object. 
 	 */ 
 
 	private String loginServiceDemoApproach_3() throws Exception{
@@ -178,7 +178,7 @@ b) Another example to use 'POST' method for service 'city' with path 'add'
 		
 		String response = invoker.invokeAPI(dsp_url, path, "POST", queryParams, login, headerParams, contentType);
 		
-		// here you can also convert this response to model class
+		// Here you can also convert this response to model class.
 		
 		Session session = (Session) ApiInvoker.deserialize(response, "", Session.class);
 
