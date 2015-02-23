@@ -18,3 +18,5 @@
 .idea/vcs.xml
 
 .idea/workspace.xml
+SampleApp/bin
+SampleApp/gen

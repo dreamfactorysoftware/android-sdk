@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Dreamfactory</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+	<string name="task_blank">Please enter task</string>
+	<string name="id_null">Please Enter User ID </string>
+	<string name="pw_null">Please Enter Password</string>
+	<string name="loading_message">Please Wait..</string>
+	<string name="login_tital_big">Sign In</string>
+	<string name="login_tital_small">Sign In to Your To Do List</string>
+	<string name="edit_id">Enter Email</string>
+	<string name="edit_pass">Enter Password</string>
+	<string name="btn_login">Submit</string>
+	<string name="list_view_tital">My Todo List</string>
+	<string name="add_item">Add Item</string>
+	<string name="logout">Logout</string>
+	<string name="dsp_url">Enter DSP URL</string>
+	<string name="dsp_null">Enter DSP url</string>
+	<string name="to_do_list_demo">TO-Do List Demo</string>
+	<string name="file_api_demo">File APIs Demo</string>
+</resources>
