@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    android:layout_marginTop="15dp"
+    android:layout_marginLeft="0dp"
+    android:layout_marginRight="0dp"
+
+    android:paddingBottom="10dp"
+    android:background="@color/contact_info_background_color"
+    android:orientation="vertical"
+    >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="type: "
+        android:fontFamily="sans-serif-light"
+        android:textSize="23sp"
+        android:id="@+id/type_label"
+
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="8dp"
+        android:textColor="@color/contact_info_text_color"
+        />
+
+    <!-- email layout -->
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/info_email_layout"
+        android:layout_marginBottom="15dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:id="@+id/email_image"
+            android:src="@drawable/mail"
+            android:layout_alignTop="@+id/email_label"
+            android:gravity="center_horizontal"
+            android:layout_marginLeft="15dp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="email:"
+            android:id="@+id/email_label"
+
+            android:layout_toEndOf="@+id/email_image"
+            android:layout_toRightOf="@+id/email_image"
+            android:layout_marginLeft="-10dp"
+
+            android:textSize="17sp"
+            android:textColor="@color/contact_info_text_color"
+            android:fontFamily="sans-serif-light"
+            />
+        </RelativeLayout>
+    <!-- end email layout -->
+
+    <!-- phone layout -->
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/info_phone_layout"
+        android:layout_marginBottom="15dp">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:id="@+id/phone_image"
+            android:src="@drawable/phone1"
+
+            android:layout_alignTop="@+id/phone_label"
+            android:gravity="center_horizontal"
+            android:layout_marginLeft="15dp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Phone: "
+            android:id="@+id/phone_label"
+
+            android:layout_toEndOf="@+id/phone_image"
+            android:layout_toRightOf="@+id/phone_image"
+            android:layout_marginLeft="-10dp"
+
+            android:textSize="17sp"
+            android:textColor="@color/contact_info_text_color"
+            android:fontFamily="sans-serif-light"
+            />
+    </RelativeLayout>
+    <!-- end phone layout -->
+
+    <!-- address layout -->
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/info_address_layout"
+        android:layout_marginBottom="15dp">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:id="@+id/address_image"
+            android:src="@drawable/home"
+
+            android:layout_alignTop="@+id/address_label"
+
+            android:gravity="center_horizontal"
+            android:layout_marginLeft="15dp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="address"
+            android:id="@+id/address_label"
+
+            android:layout_toEndOf="@id/address_image"
+            android:layout_toRightOf="@+id/address_image"
+            android:layout_marginLeft="-10dp"
+
+            android:fontFamily="sans-serif-light"
+            android:textSize="17sp"
+            android:textColor="@color/contact_info_text_color"
+            />
+    </RelativeLayout>
+    <!-- end address layout -->
+
+</LinearLayout>

@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">android-sdk</string>
+    <string name="title_activity_group_list">GroupListActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_contact_list">ContactListActivity</string>
+    <string name="title_activity_contact_view">ContactViewActivity</string>
+    <string name="title_activity_edit_contact">EditContactActivity</string>
+    <string name="title_activity_create_contact">CreateContactActivity</string>
+    <string name="title_activity_group">GroupActivity</string>
+    <string name="title_activity_choose_image">ChooseImageActivity</string>
+    <string name="title_activity_register">RegisterActivity</string>
+</resources>

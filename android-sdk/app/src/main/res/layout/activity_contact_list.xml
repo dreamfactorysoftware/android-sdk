@@ -1,0 +1,22 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:scrollbars="none"
+    android:orientation="vertical"
+    tools:context="com.dreamfactory.sampleapp.ui.ContactListActivity"
+    android:background="@color/activity_background_color">
+
+    <include layout="@layout/persistent_bar"></include>
+
+    <ListView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/contactList"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:scrollbars="none">
+
+    </ListView>
+
+
+</LinearLayout>

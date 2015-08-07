@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:layout_marginBottom="0dp"
+    android:background="@color/persistent_nav_bar_background_color">
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/persistent_back_button"
+
+        android:src="@drawable/back_button_selector"
+
+        android:background="@android:color/transparent"
+
+        android:scaleType="centerInside"
+
+        android:minHeight="0dp"
+        android:minWidth="0dp"
+
+
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:paddingRight="-30dp"
+        android:paddingLeft="-20dp"
+        android:layout_centerVertical="true"/>
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/add_button_selector"
+        android:id="@+id/persistent_add_button"
+
+        android:background="@android:color/transparent"
+        android:scaleType="centerInside"
+
+        android:layout_toLeftOf="@+id/persistent_edit_button"
+
+        android:minHeight="0dp"
+        android:minWidth="0dp"
+
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:paddingRight="-15dp"
+        android:paddingLeft="-15dp"
+
+        android:layout_centerVertical="true"
+        />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/edit_button_selector"
+        android:id="@+id/persistent_edit_button"
+
+        android:background="@android:color/transparent"
+        android:scaleType="centerInside"
+
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+
+        android:layout_marginLeft="0dp"
+        android:layout_marginStart="0dp"
+
+        android:minHeight="0dp"
+        android:minWidth="0dp"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:paddingRight="-20dp"
+        android:paddingLeft="-30dp"
+        android:layout_centerVertical="true"
+        />
+
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/done_button_selector"
+        android:id="@+id/persistent_save_button"
+
+        android:background="@android:color/transparent"
+        android:scaleType="centerInside"
+
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+
+        android:layout_marginLeft="0dp"
+        android:layout_marginStart="0dp"
+
+        android:minHeight="0dp"
+        android:minWidth="0dp"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:paddingRight="-20dp"
+        android:paddingLeft="-30dp"
+        android:layout_centerVertical="true"
+        />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/df_logo_filled"
+
+        android:layout_gravity="center_horizontal"
+        android:scaleType="fitCenter"
+
+        android:layout_margin="10dp"
+
+        android:layout_toEndOf="@id/persistent_back_button"
+        android:layout_toRightOf="@id/persistent_back_button"
+        android:layout_toStartOf="@id/persistent_add_button"
+        android:layout_toLeftOf="@id/persistent_add_button"
+
+        android:minHeight="0dp"
+        android:minWidth="0dp"
+        android:padding="0dp"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:layout_centerInParent="true"
+        />
+
+</RelativeLayout>
+

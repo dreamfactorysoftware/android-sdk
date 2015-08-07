@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/edit_contact_info_linear_layout"
+    android:layout_marginTop="35dp"
+    >
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_contact_info_type"
+        android:hint="type"
+
+        android:layout_marginTop="-5dp"
+
+        />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_contact_info_phone"
+        android:hint="phone number"
+
+        android:layout_marginTop="-5dp"
+        />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_contact_info_email"
+        android:hint="email"
+
+        android:layout_marginTop="-5dp"
+        />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_contact_info_address"
+        android:hint="address"
+
+        android:layout_marginTop="-5dp"
+        />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_contact_info_city"
+        android:hint="city"
+
+        android:layout_marginTop="-5dp"
+        />
+</LinearLayout>

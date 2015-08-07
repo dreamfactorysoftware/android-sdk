@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="contact_info_background_color">#7093B5</color>
+    <color name="contact_info_text_color">#FDFDFD</color>
+
+    <color name="persistent_nav_bar_background_color">#F0F0F0</color>
+    <color name="persistent_nav_bar_back_button">#F9982B</color>
+    <color name="persistent_nav_bar_back_button_selected">#D87A27</color>
+    <color name="persistent_nav_bar_done_button">#F9982B</color>
+    <color name="persistent_nav_bar_done_button_selected">#D87A27</color>
+    <color name="persistent_nav_bar_add_button">#6DA1B3</color>
+    <color name="persistent_nav_bar_add_button_selected">#2B687C</color>
+
+    <color name="activity_background_color">#FDFDFD</color>
+    <color name="contact_list_header">#D2E1EF</color>
+</resources>
