@@ -20,7 +20,7 @@ Launch the DreamFactory Admin Console by going to localhost:8080 in your favorit
 Navigate to the Config tab and click on CORS in the left sidebar. To enable [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing) for development purposes, click add, set the host to *, allow all HTTP verbs and check the enabled box. Click update when you are done. More info on setting up CORS is [here](https://github.com/dreamfactorysoftware/dsp-core/wiki/CORs-Configuration).
 
 ####Running the example Android Address Book app
-From the Apps menu in the DreamFactory Admin Console, click import and import the package from "https://raw.github.com/dreamfactorysoftware/android-sdk/master/package/add_andoid.dfpkg". The Address Book package contains application descriptions, schemas and data used by the Android application. Set the storage service to local file storage and the storage container to applications. Click the Update button when done.
+From the Apps menu in the DreamFactory Admin Console, click import and import the package from "https://raw.github.com/dreamfactorysoftware/android-sdk/master/package/add_android.dfpkg". The Address Book package contains application descriptions, schemas and data used by the Android application. Set the storage service to local file storage and the storage container to applications. Click the Update button when done.
 
 Almost there! Download this repo to your local machine. Open and run the project in Android Studio. You can log in to the app with the username and password you used for the DreamFactory Admin Console. 
 
