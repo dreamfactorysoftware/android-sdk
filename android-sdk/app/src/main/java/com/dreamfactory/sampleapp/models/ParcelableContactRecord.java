@@ -4,37 +4,42 @@ package com.dreamfactory.sampleapp.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class ParcelableContactRecord implements Parcelable{
-    private String firstName;
-    private String lastName;
-    private int contactId;
-    private String notes;
-    private String skype;
-    private String twitter;
-    private String imageUrl;
+public class ParcelableContactRecord implements Parcelable {
 
-    public ParcelableContactRecord(ContactRecord record){
-        firstName = record.firstName;
-        lastName = record.lastName;
-        contactId = record.contactId;
-        notes = record.notes;
-        skype = record.skype;
+    private int id;
+    private String first_name;
+    private String last_name;
+    private String image_url;
+    private String twitter;
+    private String skype;
+    private String notes;
+
+    public ParcelableContactRecord(ContactRecord record) {
+
+        id = record.id;
+        first_name = record.first_name;
+        last_name = record.last_name;
+        image_url = record.image_url;
         twitter = record.twitter;
-        imageUrl = record.imageUrl;
+        skype = record.skype;
+        notes = record.notes;
     }
 
-    public ContactRecord buildContactRecord (){
+    public ContactRecord buildContactRecord () {
+
         ContactRecord record = new ContactRecord();
-        record.firstName = firstName;
-        record.lastName = lastName;
-        record.contactId = contactId;
-        record.notes = notes;
-        record.skype = skype;
+
+        record.id = id;
+        record.first_name = first_name;
+        record.last_name = last_name;
+        record.image_url = image_url;
         record.twitter = twitter;
-        record.imageUrl = imageUrl;
+        record.skype = skype;
+        record.notes = notes;
 
         return record;
     }
+
     @Override
     public int describeContents() {
         return 0;
@@ -42,14 +47,16 @@ public class ParcelableContactRecord implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(firstName);
-        dest.writeString(lastName);
-        dest.writeInt(contactId);
-        dest.writeString(notes);
-        dest.writeString(skype);
+
+        dest.writeInt(id);
+        dest.writeString(first_name);
+        dest.writeString(last_name);
+        dest.writeString(image_url);
         dest.writeString(twitter);
-        dest.writeString(imageUrl);
+        dest.writeString(skype);
+        dest.writeString(notes);
     }
+
     public static final Parcelable.Creator<ParcelableContactRecord> CREATOR = new Parcelable.Creator<ParcelableContactRecord>() {
         public ParcelableContactRecord createFromParcel(Parcel in) {
             return new ParcelableContactRecord(in);
@@ -61,13 +68,14 @@ public class ParcelableContactRecord implements Parcelable{
         }
     };
 
-    private ParcelableContactRecord(Parcel in){
-        firstName = in.readString();
-        lastName = in.readString();
-        contactId = in.readInt();
-        notes = in.readString();
-        skype = in.readString();
+    private ParcelableContactRecord(Parcel in) {
+
+        id = in.readInt();
+        first_name = in.readString();
+        last_name = in.readString();
+        image_url = in.readString();
         twitter = in.readString();
-        imageUrl = in.readString();
+        skype = in.readString();
+        notes = in.readString();
     }
 }

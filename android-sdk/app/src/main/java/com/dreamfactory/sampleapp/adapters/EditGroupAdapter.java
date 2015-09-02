@@ -34,7 +34,7 @@ public class EditGroupAdapter extends CreateGroupAdapter {
 
         inGroupSet = new BitSet(selectedSet.size());
 
-        getContactsInGroupTask = new GetContactsInGroupTask(this.record.contactGroupId);
+        getContactsInGroupTask = new GetContactsInGroupTask(this.record.id);
         getContactsInGroupTask.execute();
     }
 
@@ -78,7 +78,7 @@ public class EditGroupAdapter extends CreateGroupAdapter {
             callerName = "GetContactsInGroupTask";
 
             serviceName = "db";
-            endPoint = "contact_relationships";
+            endPoint = "contact_group_relationship";
 
             verb = "GET";
             applicationName = AppConstants.APP_NAME;
@@ -86,12 +86,12 @@ public class EditGroupAdapter extends CreateGroupAdapter {
 
             // filter to only get the group we want
             queryParams = new HashMap<>();
-            queryParams.put("filter", "contactGroupId=" + groupId);
+            queryParams.put("filter", "contact_group_id=" + groupId);
 
-            // request without related would return just {id, groupId, contactId}
+            // request without related would return just {id, contact_group_id, contact_id}
             // set the related field to go get the contact records referenced by
-            // each contactrelationships record
-            queryParams.put("related", "contacts_by_contactId");
+            // each contact_group_relationship record
+            queryParams.put("related", "contact_by_contact_id");
         }
 
         @Override
@@ -99,7 +99,7 @@ public class EditGroupAdapter extends CreateGroupAdapter {
             // response is in form
             // {
             //      < group info >,
-            //      "contacts_by_contactId" : [
+            //      "contact_by_contactId" : [
             //          { contact record }
             //      ]
             //  }
@@ -109,7 +109,7 @@ public class EditGroupAdapter extends CreateGroupAdapter {
 
             List<ContactRecord> contactRecords = new ArrayList<>();
             for(ContactsRelationalRecord record : relationalRecords.record){
-                contactRecords.add(record.contacts_by_contact_id);
+                contactRecords.add(record.contact_by_contact_id);
             }
 
 
@@ -118,7 +118,7 @@ public class EditGroupAdapter extends CreateGroupAdapter {
 
             int j = 0;
             for(int i = 0; i < mRecordsList.size() && j < contactRecords.size(); i++){
-                if(mRecordsList.get(i).contactId == contactRecords.get(j).contactId){
+                if(mRecordsList.get(i).id == contactRecords.get(j).id){
                     // mark the contacts already in the group
                     // use inGroupSet so we can tell how things changed later
                     inGroupSet.set(i);

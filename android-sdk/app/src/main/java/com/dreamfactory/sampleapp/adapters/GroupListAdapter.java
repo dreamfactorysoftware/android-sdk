@@ -75,7 +75,7 @@ public class GroupListAdapter extends BaseAdapter{
         // fill data
         GroupListHolder holder = (GroupListHolder) rowView.getTag();
         GroupRecord record = records.get(position);
-        holder.text.setText(record.groupName);
+        holder.text.setText(record.name);
         holder.record = record;
 
         return rowView;
@@ -88,7 +88,7 @@ public class GroupListAdapter extends BaseAdapter{
 
     public void handleClick(int position){
         GroupRecord record = (GroupRecord) getItem(position);
-        showContactList(record.contactGroupId, record.groupName);
+        showContactList(record.id, record.name);
     }
 
     public void set(int position, boolean value){
@@ -122,16 +122,16 @@ public class GroupListAdapter extends BaseAdapter{
             callerName = "removeGroupRelationships";
 
             serviceName = "db";
-            endPoint = "contact_relationships";
+            endPoint = "contact_group_relationship";
             verb = "DELETE";
 
             // delete multiple records by chaining filters together
             StringBuilder builder = new StringBuilder();
             int i = deleteSet.nextSetBit(0);
 
-            builder.append("contactGroupId=").append(records.get(i).contactGroupId);
+            builder.append("contact_group_id=").append(records.get(i).id);
             for(i = deleteSet.nextSetBit(i+1);i >=0; i = deleteSet.nextSetBit(i + 1)){
-                builder.append("||contactGroupId=").append(records.get(i).contactGroupId);
+                builder.append("||contact_group_id=").append(records.get(i).id);
             }
 
             queryParams = new HashMap<>();
@@ -156,16 +156,16 @@ public class GroupListAdapter extends BaseAdapter{
         protected void doSetup() throws ApiException, JSONException {
             callerName = "removeGroups";
             serviceName = "db";
-            endPoint = "contact_groups";
+            endPoint = "contact_group";
             verb = "DELETE";
 
             // delete records by ids
             StringBuilder builder = new StringBuilder();
             int i = deleteSet.nextSetBit(0);
 
-            builder.append(records.get(i).contactGroupId);
+            builder.append(records.get(i).id);
             for(i = deleteSet.nextSetBit(i + 1);i >=0; i = deleteSet.nextSetBit(i + 1)){
-                builder.append(",").append(records.get(i).contactGroupId);
+                builder.append(",").append(records.get(i).id);
             }
 
             // ids is a comma separated list of contact_group record ids

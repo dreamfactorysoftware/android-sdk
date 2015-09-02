@@ -36,8 +36,8 @@ public class EditInfoViewGroup extends LinearLayout {
             return;
         }
 
-        if(!record.infoType.isEmpty()){
-            type.setText(record.infoType);
+        if(!record.info_type.isEmpty()){
+            type.setText(record.info_type);
         }
 
         if(!record.email.isEmpty()){
@@ -59,21 +59,22 @@ public class EditInfoViewGroup extends LinearLayout {
     }
 
     public ContactInfoRecord buildToContactInfoRecord() {
+
         // build record and send it back up
 
         ContactInfoRecord record = new ContactInfoRecord();
-        record.infoType = type.getText().toString();
 
+        record.info_type = type.getText().toString();
         record.email = email.getText().toString();
         record.phone = phone.getText().toString();
-
-        record.city = city.getText().toString();
         record.address = address.getText().toString();
+        record.city = city.getText().toString();
 
-        if(contactInfoRecord != null) {
-            record.infoId = contactInfoRecord.infoId;
-            record.contactId = contactInfoRecord.contactId;
+        if (contactInfoRecord != null) {
+            record.id = contactInfoRecord.id;
+            record.contact_id = contactInfoRecord.contact_id;
         }
+
         return record;
     }
 }

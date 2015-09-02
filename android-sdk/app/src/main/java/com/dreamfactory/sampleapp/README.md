@@ -47,7 +47,7 @@ Each example has a link to where the call is made in code as well as a short exc
     ```Java
     queryParams = new HashMap<>();
     // filter to only the contact_info records related to the contact
-    queryParams.put("filter", "contactId=" + contactRecord.contactId);
+    queryParams.put("filter", "id=" + contactRecord.id);
     ```        
 
    - Related records
@@ -56,21 +56,21 @@ Each example has a link to where the call is made in code as well as a short exc
     ```Java
     // filter to only get the group we want
     queryParams = new HashMap<>();
-    queryParams.put("filter", "contactGroupId=" + groupId);
+    queryParams.put("filter", "id=" + groupId);
 
-    // request without related would return just {id, groupId, contactId}
+    // request without related would return just {id, contact_group_id, contact_id}
     // set the related field to go get the contact records referenced by
-    // each contactrelationships record
-    queryParams.put("related", "contacts_by_contactId");
+    // each contact_group_relationship record
+    queryParams.put("related", "contact_by_contact_id");
     ```
 
    - Using id_fields
      - [ContactListAdapter](adapters/ContactListAdapter.java#L225-L261)
      - [ContactListAdapter](adapters/ContactListAdapter.java#L263-L295)
     ```Java
-    // since we don't know the contact_relationship ids, change the id field to contactId
+    // since we don't know the contact_group_relationship ids, change the id field to id
     queryParams = new HashMap<>();
-    queryParams.put("id_field", "contactId");
+    queryParams.put("id_field", "id");
 
     // form of request is { "record": [... ids ...] }
     requestBody = new JSONObject();
@@ -93,9 +93,9 @@ Each example has a link to where the call is made in code as well as a short exc
 - [GroupActivity](ui/GroupActivity.java#L319-L340)
 ```Java
 // send the record to patch, need to include record id
-//requestString = "{\"groupName\":\"" + record.groupName + "\",\"contactGroupId\":" +
-        //record.contactGroupId + "}";
-// form is { "contactGroupId": id, "groupName":groupName }
+//requestString = "{\"name\":\"" + record.name + "\",\"id\":" +
+        //record.id + "}";
+// form is { "id": id, "name":name }
 requestString = ApiInvoker.serialize(record);
 ```
 
@@ -108,7 +108,7 @@ requestString = ApiInvoker.serialize(record);
 ```Java
 // only need to send the groupName in body
 // we don't have a groupID yet, so we can't provide one here
-requestString = "{\"groupName\":\"" + name + "\"}";
+requestString = "{\"name\":\"" + name + "\"}";
 ```
 
 ###Working with files
@@ -161,8 +161,8 @@ verb = "POST";
   // here the folder path is profile_images/contactId/
   // the file path does not end in a '/' because we are targeting a file not a folder
   String containerName = "applications";
-  String folderPath = "profile_images/" + contactRecord.contactId;
-  String fileName = contactRecord.imageUrl;
+  String folderPath = "profile_images/" + contactRecord.id;
+  String fileName = contactRecord.image_url;
   endPoint = containerName + "/" + applicationName + "/" + folderPath + "/" + fileName;
   
   queryParams = new HashMap<>();

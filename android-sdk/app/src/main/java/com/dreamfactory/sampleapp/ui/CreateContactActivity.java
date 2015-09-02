@@ -193,19 +193,19 @@ public class CreateContactActivity extends Activity {
             callerName = "AddContactTask";
 
             serviceName = "db";
-            endPoint = "contacts";
+            endPoint = "contact";
 
             verb = "POST";
 
             // build contact record, don't have id yet so can't provide one
             ContactRecord contactRecord = new ContactRecord();
-            contactRecord.firstName = contactRecord.getNonNull(firstNameEditText.getText().toString());
-            contactRecord.lastName = contactRecord.getNonNull(lastNameEditText.getText().toString());
+            contactRecord.first_name = contactRecord.getNonNull(firstNameEditText.getText().toString());
+            contactRecord.last_name = contactRecord.getNonNull(lastNameEditText.getText().toString());
             contactRecord.skype = contactRecord.getNonNull(skypeEditText.getText().toString());
             contactRecord.twitter = contactRecord.getNonNull(twitterEditText.getText().toString());
             contactRecord.notes = contactRecord.getNonNull(notesEditText.getText().toString());
             if(profileImagePath != null && !profileImagePath.isEmpty()){
-                contactRecord.imageUrl = "testFile.png";
+                contactRecord.image_url = "testFile.png";
             }
 
             requestString = ApiInvoker.serialize(contactRecord);
@@ -216,8 +216,8 @@ public class CreateContactActivity extends Activity {
 
         @Override
         protected void processResponse(String response) throws ApiException, org.json.JSONException {
-            // response has whole contact record, but we just want the contactId
-            contactId = new JSONObject(response).getInt("contactId");
+            // response has whole contact record, but we just want the id
+            contactId = new JSONObject(response).getInt("id");
         }
 
         @Override
@@ -230,7 +230,7 @@ public class CreateContactActivity extends Activity {
                     for (EditInfoViewGroup viewGroup : editInfoViewGroupList) {
                         ContactInfoRecord contactInfoRecord = viewGroup.buildToContactInfoRecord();
                         // need to include the contactId
-                        contactInfoRecord.contactId = contactId;
+                        contactInfoRecord.contact_id = contactId;
                         contactInfoRecords.record.add(contactInfoRecord);
                     }
 
@@ -303,14 +303,14 @@ public class CreateContactActivity extends Activity {
             callerName = "AddContactToGroup";
 
             serviceName = "db";
-            endPoint = "contact_relationships";
+            endPoint = "contact_group_relationship";
 
             verb = "POST";
 
-            // request body is { "contactGroupId":cgId, "contactId":cId }
+            // request body is { "contact_group_id":cgId, "contact_id":cId }
             requestBody = new JSONObject();
-            requestBody.put("contactGroupId", groupId);
-            requestBody.put("contactId", contactId);
+            requestBody.put("contact_group_id", groupId);
+            requestBody.put("contact_id", contactId);
 
             applicationName = AppConstants.APP_NAME;
             sessionId = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_ID);

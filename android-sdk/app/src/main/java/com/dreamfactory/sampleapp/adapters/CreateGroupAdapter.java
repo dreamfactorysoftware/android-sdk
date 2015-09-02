@@ -47,12 +47,12 @@ public class CreateGroupAdapter extends ContactListAdapter {
         if(isHeader){
             rowView.setClickable(true);
             holder.checkBox.setVisibility(View.GONE);
-            holder.textView.setText(("" + record.lastName.charAt(0)).toUpperCase());
+            holder.textView.setText(("" + record.last_name.charAt(0)).toUpperCase());
             holder.textView.setBackgroundColor(context.getResources().getColor(R.color.contact_list_header));
         }
         else{
             rowView.setClickable(false);
-            holder.textView.setText(record.firstName + " " + record.lastName);
+            holder.textView.setText(record.first_name + " " + record.last_name);
 
             holder.record = record;
 
@@ -78,7 +78,7 @@ public class CreateGroupAdapter extends ContactListAdapter {
         List<Integer> selectedContacts = new ArrayList<>();
 
         for(int i = selectedSet.nextSetBit(0); i >= 0; i = selectedSet.nextSetBit(i + 1)){
-            selectedContacts.add(mRecordsList.get(i).contactId);
+            selectedContacts.add(mRecordsList.get(i).id);
         }
         return selectedContacts;
     }

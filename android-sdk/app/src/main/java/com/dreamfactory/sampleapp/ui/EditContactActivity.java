@@ -40,8 +40,8 @@ public class EditContactActivity extends CreateContactActivity {
 
     @Override
     protected void buildViews(){
-        firstNameEditText.setText(contactRecord.firstName);
-        lastNameEditText.setText(contactRecord.lastName);
+        firstNameEditText.setText(contactRecord.first_name);
+        lastNameEditText.setText(contactRecord.last_name);
         twitterEditText.setText(contactRecord.twitter);
         skypeEditText.setText(contactRecord.skype);
         notesEditText.setText(contactRecord.notes);
@@ -96,7 +96,7 @@ public class EditContactActivity extends CreateContactActivity {
             public void onClick(View v) {
                 Activity activity = (Activity) v.getTag();
                 Intent intent = new Intent(activity, ChooseImageActivity.class);
-                intent.putExtra("contactId", contactRecord.contactId);
+                intent.putExtra("contactId", contactRecord.id);
                 activity.startActivityForResult(intent, 2);
             }
         });
@@ -106,7 +106,7 @@ public class EditContactActivity extends CreateContactActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == Activity.RESULT_OK){
-            contactRecord.imageUrl = data.getStringExtra("imageUrl");
+            contactRecord.image_url = data.getStringExtra("imageUrl");
         }
     }
 
@@ -129,8 +129,8 @@ public class EditContactActivity extends CreateContactActivity {
         // just to keep onCreate a little cleaner
         Intent intent = new Intent();
 
-        contactRecord.firstName = firstNameEditText.getText().toString();
-        contactRecord.lastName = lastNameEditText.getText().toString();
+        contactRecord.first_name = firstNameEditText.getText().toString();
+        contactRecord.last_name = lastNameEditText.getText().toString();
         contactRecord.twitter = twitterEditText.getText().toString();
         contactRecord.skype = skypeEditText.getText().toString();
         contactRecord.notes = notesEditText.getText().toString();
@@ -144,9 +144,9 @@ public class EditContactActivity extends CreateContactActivity {
         ContactInfoRecords contactInfoRecords = new ContactInfoRecords();
         for(EditInfoViewGroup editInfoViewGroup : editInfoViewGroupList){
             ContactInfoRecord tmp = editInfoViewGroup.buildToContactInfoRecord();
-            if(tmp.contactId == 0){
-                // new records don't have a contactId
-                tmp.contactId = contactRecord.contactId;
+            if(tmp.id == 0){
+                // new records don't have an id
+                tmp.id = contactRecord.id;
                 contactInfoRecords.record.add(tmp);
             }
             tmpContactInfoRecord.record.add(tmp);

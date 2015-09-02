@@ -111,7 +111,7 @@ public class ContactViewActivity extends Activity {
 
         save_button.setVisibility(View.INVISIBLE);
 
-        if(contactRecord.imageUrl != null && !contactRecord.imageUrl.isEmpty()){
+        if(contactRecord.image_url != null && !contactRecord.image_url.isEmpty()){
             // only fetch the profile image if the user has one
             getProfileImageFromServerTask = new GetProfileImageFromServerTask();
             getProfileImageFromServerTask.execute();
@@ -142,7 +142,7 @@ public class ContactViewActivity extends Activity {
                 updateContactTask = new UpdateContactTask();
                 updateContactTask.execute();
 
-                if(contactRecord.imageUrl != null && !contactRecord.imageUrl.isEmpty()) {
+                if(contactRecord.image_url != null && !contactRecord.image_url.isEmpty()) {
                     // re-get the contact profile image
                     getProfileImageFromServerTask = new GetProfileImageFromServerTask();
                     getProfileImageFromServerTask.execute();
@@ -173,7 +173,7 @@ public class ContactViewActivity extends Activity {
 
     private void buildContactView(){
         TextView nameLabel = (TextView) findViewById(R.id.contactName);
-        nameLabel.setText(contactRecord.firstName + " " + contactRecord.lastName);
+        nameLabel.setText(contactRecord.first_name + " " + contactRecord.last_name);
 
         TextView skypeLabel = (TextView) findViewById(R.id.skypeLabel);
         skypeLabel.setText(contactRecord.skype);
@@ -208,7 +208,7 @@ public class ContactViewActivity extends Activity {
 
             queryParams = new HashMap<>();
             // filter to only the contact_info records related to the contact
-            queryParams.put("filter", "contactId=" + contactRecord.contactId);
+            queryParams.put("filter", "contact_id=" + contactRecord.id);
 
             // include application name and sessionId
             applicationName = AppConstants.APP_NAME;
@@ -233,7 +233,7 @@ public class ContactViewActivity extends Activity {
             if(success){
                 for(ContactInfoRecord record : records.record) {
                     // make sure none of the fields are null
-                    record.infoType = record.getNonNull(record.infoType);
+                    record.info_type = record.getNonNull(record.info_type);
 
                     record.city = record.getNonNull(record.city);
                     record.address = record.getNonNull(record.address);
@@ -257,7 +257,7 @@ public class ContactViewActivity extends Activity {
             callerName = "updateContactTask";
 
             serviceName = "db";
-            endPoint = "contacts";
+            endPoint = "contact";
 
             verb = "PATCH";
 
@@ -320,8 +320,8 @@ public class ContactViewActivity extends Activity {
             // here the folder path is profile_images/contactId/
             // the file path does not end in a '/' because we are targeting a file not a folder
             String containerName = "applications";
-            String folderPath = "profile_images/" + contactRecord.contactId;
-            String fileName = contactRecord.imageUrl;
+            String folderPath = "profile_images/" + contactRecord.id;
+            String fileName = contactRecord.image_url;
             endPoint = containerName + "/" + applicationName + "/" + folderPath + "/" + fileName;
 
             queryParams = new HashMap<>();

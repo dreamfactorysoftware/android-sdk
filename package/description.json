@@ -1,0 +1,8 @@
+{
+    "api_name": "add_android",
+    "name": "AddressBookAndroid",
+    "description": "AsampleaddressbookappforAndroidrunningonDreamFactory.",
+    "is_active": 1,
+    "url": "",
+    "is_url_external": 0
+}

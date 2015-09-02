@@ -56,9 +56,9 @@ public class GroupActivity extends Activity {
         if(intent.getIntExtra("contactGroupId", 0) != 0){
             editingGroup = true;
             groupRecord = new GroupRecord();
-            groupRecord.contactGroupId = intent.getIntExtra("contactGroupId", 0);
-            groupRecord.groupName = intent.getStringExtra("groupName");
-            groupName.setText(groupRecord.groupName);
+            groupRecord.id = intent.getIntExtra("contactGroupId", 0);
+            groupRecord.name = intent.getStringExtra("groupName");
+            groupName.setText(groupRecord.name);
         }
         else{
             editingGroup = false;
@@ -102,9 +102,9 @@ public class GroupActivity extends Activity {
 
     protected void handleCompletion (){
         if(editingGroup){
-            if(!groupName.getText().toString().equals(groupRecord.groupName)){
+            if(!groupName.getText().toString().equals(groupRecord.name)){
 
-                groupRecord.groupName = groupName.getText().toString();
+                groupRecord.name = groupName.getText().toString();
                 UpdateGroupName updateGroupName = new UpdateGroupName(groupRecord);
                 updateGroupName.execute();
                 setResult(Activity.RESULT_OK);
@@ -121,12 +121,12 @@ public class GroupActivity extends Activity {
             if(((EditGroupAdapter) createGroupAdapter).didGroupChange()){
                 // only update group members if the group changed
                 CreateContactGroupRelationships createContactGroupRelationships =
-                        new CreateContactGroupRelationships(groupRecord.contactGroupId,
+                        new CreateContactGroupRelationships(groupRecord.id,
                                 createGroupAdapter.getSelectedContacts());
                 createContactGroupRelationships.execute();
 
                 RemoveContactGroupRelationships removeContactGroupRelationships =
-                        new RemoveContactGroupRelationships(groupRecord.contactGroupId,
+                        new RemoveContactGroupRelationships(groupRecord.id,
                                 ((EditGroupAdapter)createGroupAdapter).getContactsToRemove());
                 removeContactGroupRelationships.execute();
             }
@@ -146,7 +146,7 @@ public class GroupActivity extends Activity {
             callerName = "GetAllContactsTask";
             // Not providing any query params gets all records in the table
             serviceName = "db";
-            endPoint = "contacts";
+            endPoint = "contact";
             verb = "GET";
             applicationName = AppConstants.APP_NAME;
             sessionId = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_ID);
@@ -195,20 +195,20 @@ public class GroupActivity extends Activity {
         protected void doSetup() throws ApiException, JSONException {
             callerName = "CreateGroupTask";
             serviceName = "db";
-            endPoint = "contact_groups";
+            endPoint = "contact_group";
             verb = "POST";
             applicationName = AppConstants.APP_NAME;
             sessionId = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_ID);
-            // only need to send the groupName in body
-            // we don't have a groupID yet, so we can't provide one here
-            requestString = "{\"groupName\":\"" + name + "\"}";
+            // only need to send the name in body
+            // we don't have a group ID yet, so we can't provide one here
+            requestString = "{\"name\":\"" + name + "\"}";
         }
 
         @Override
         protected void processResponse(String response) throws ApiException, JSONException {
             // need to get the groupId from the response to give to relational records
             GroupRecord record = (GroupRecord) ApiInvoker.deserialize(response, "", GroupRecord.class);
-            groupId = record.contactGroupId;
+            groupId = record.id;
         }
 
         @Override
@@ -239,7 +239,7 @@ public class GroupActivity extends Activity {
         protected void doSetup() throws ApiException, JSONException {
             callerName = "CreateContactGroupRelationships";
             serviceName = "db";
-            endPoint = "contact_relationships";
+            endPoint = "contact_group_relationship";
 
             verb = "POST";
 
@@ -248,8 +248,8 @@ public class GroupActivity extends Activity {
              *  {
              *      "record":[
              *          {
-             *              "contactGroupId":id,
-             *              "contactId":id
+             *              "contact_group_id":id,
+             *              "contact_id":id
              *          },
              *          {...}
              *      ]
@@ -258,8 +258,8 @@ public class GroupActivity extends Activity {
             JSONArray jsonArray = new JSONArray();
             for(int contactId : contactIdList){
                 JSONObject relation = new JSONObject();
-                relation.put("contactGroupId", groupId);
-                relation.put("contactId", contactId);
+                relation.put("contact_group_id", groupId);
+                relation.put("contact_id", contactId);
                 jsonArray.put(relation);
             }
             requestString = "{\"record\":" + jsonArray.toString() + "}";
@@ -281,7 +281,7 @@ public class GroupActivity extends Activity {
         protected void doSetup() throws ApiException, JSONException {
             callerName = "RemoveContactGroupRelationshipsTask";
             serviceName = "db";
-            endPoint = "contact_relationships";
+            endPoint = "contact_group_relationship";
 
             verb = "DELETE";
 
@@ -289,14 +289,14 @@ public class GroupActivity extends Activity {
             // one value for groupId, but many values for contactId
             // instead of making a long SQL query, change what we use as identifiers
             queryParams = new HashMap<>();
-            queryParams.put("id_field", "contactGroupId,contactId");
+            queryParams.put("id_field", "contact_group_id,contact_id");
             /*
              * Form of request is:
              *  {
              *      "record":[
              *          {
-             *              "contactGroupId":id,
-             *              "contactId":id
+             *              "contact_group_id":id,
+             *              "contact_id":id
              *          },
              *          {...}
              *      ]
@@ -305,8 +305,8 @@ public class GroupActivity extends Activity {
             JSONArray jsonArray = new JSONArray();
             for(int contactId : contactIdList){
                 JSONObject relation = new JSONObject();
-                relation.put("contactGroupId", groupId);
-                relation.put("contactId", contactId);
+                relation.put("contact_group_id", groupId);
+                relation.put("contact_id", contactId);
                 jsonArray.put(relation);
             }
             requestString = "{\"record\":" + jsonArray.toString() + "}";
@@ -325,13 +325,13 @@ public class GroupActivity extends Activity {
             callerName = "UpdateGroupTask";
 
             serviceName = "db";
-            endPoint = "contact_groups";
+            endPoint = "contact_group";
             verb = "PATCH";
 
             // send the record to patch, need to include record id
-            //requestString = "{\"groupName\":\"" + record.groupName + "\",\"contactGroupId\":" +
-                    //record.contactGroupId + "}";
-            // form is { "contactGroupId": id, "groupName":groupName }
+            //requestString = "{\"name\":\"" + record.name + "\",\"id\":" +
+                    //record.id + "}";
+            // form is { "id": id, "name": name }
             requestString = ApiInvoker.serialize(record);
 
             applicationName = AppConstants.APP_NAME;

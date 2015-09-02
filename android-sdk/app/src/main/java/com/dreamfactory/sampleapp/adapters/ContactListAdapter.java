@@ -70,10 +70,10 @@ public class ContactListAdapter extends BaseAdapter{
         String previous = "";
         for(int i = 0; i < this.mRecordsList.size(); i++){
             // insert headers at first letter of last name
-            if(!mRecordsList.get(i).lastName.substring(0,1).equalsIgnoreCase(previous)){
+            if(!mRecordsList.get(i).last_name.substring(0,1).equalsIgnoreCase(previous)){
                 // index of header is at index of actual + cardinality of mainset
                 mainSet.set(i + mainSet.cardinality());
-                previous = mRecordsList.get(i).lastName.substring(0,1).toUpperCase();
+                previous = mRecordsList.get(i).last_name.substring(0,1).toUpperCase();
             }
         }
     }
@@ -82,10 +82,10 @@ public class ContactListAdapter extends BaseAdapter{
         @Override
         public int compare(ContactRecord lhs, ContactRecord rhs) {
 
-            if(lhs.lastName.equalsIgnoreCase(rhs.lastName)){
-                return lhs.firstName.compareTo(rhs.firstName);
+            if(lhs.last_name.equalsIgnoreCase(rhs.last_name)){
+                return lhs.first_name.compareTo(rhs.first_name);
             }
-            return lhs.lastName.compareToIgnoreCase(rhs.lastName);
+            return lhs.last_name.compareToIgnoreCase(rhs.last_name);
         }
     }
 
@@ -126,13 +126,13 @@ public class ContactListAdapter extends BaseAdapter{
             rowView.setClickable(true);
             // set the header as the first char of the last name
             ContactRecord record = mRecordsList.get(position - num_headers);
-            holder.text.setText(record.lastName.substring(0, 1).toUpperCase());
+            holder.text.setText(record.last_name.substring(0, 1).toUpperCase());
             holder.text.setBackgroundColor(context.getResources().getColor(R.color.contact_list_header));
         }
         else {
             rowView.setClickable(false);
             ContactRecord record = mRecordsList.get(position - num_headers);
-            holder.text.setText(record.firstName + " " + record.lastName);
+            holder.text.setText(record.first_name + " " + record.last_name);
             holder.text.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));
         }
 
@@ -185,13 +185,13 @@ public class ContactListAdapter extends BaseAdapter{
         try{
             for(int i = deleteSet.nextSetBit(0); i >= 0; i = deleteSet.nextSetBit(i + 1)){
                 JSONObject tmp = new JSONObject();
-                jsonArray.put(mRecordsList.get(i-getNumHeaders(i)).contactId);
-                tmp.put("contactId", mRecordsList.get(i-getNumHeaders(i)).contactId);
+                jsonArray.put(mRecordsList.get(i-getNumHeaders(i)).id);
+                tmp.put("id", mRecordsList.get(i-getNumHeaders(i)).id);
                 bodyArray.put(tmp);
-                if(mRecordsList.get(i-getNumHeaders(i)).imageUrl != null &&
-                        !mRecordsList.get(i-getNumHeaders(i)).imageUrl.isEmpty()){
+                if(mRecordsList.get(i-getNumHeaders(i)).image_url != null &&
+                        !mRecordsList.get(i-getNumHeaders(i)).image_url.isEmpty()){
                     RemoveContactFoldersTask removeContactFoldersTask =
-                            new RemoveContactFoldersTask(mRecordsList.get(i-getNumHeaders(i)).contactId);
+                            new RemoveContactFoldersTask(mRecordsList.get(i-getNumHeaders(i)).id);
                     removeContactFoldersTask.execute();
                 }
             }
@@ -231,13 +231,13 @@ public class ContactListAdapter extends BaseAdapter{
             callerName = "removeContactGroupRelations";
 
             serviceName = "db";
-            endPoint = "contact_relationships";
+            endPoint = "contact_group_relationship";
 
             verb = "DELETE";
 
-            // since we don't know the contact_relationship ids, change the id field to contactId
+            // since we don't know the contact_group_relationship ids, change the id field to contact_id
             queryParams = new HashMap<>();
-            queryParams.put("id_field", "contactId");
+            queryParams.put("id_field", "contact_id");
 
             // form of request is { "record": [... ids ...] }
             requestBody = new JSONObject();
@@ -273,9 +273,9 @@ public class ContactListAdapter extends BaseAdapter{
 
             verb = "DELETE";
 
-            // since we don't know the contact_relationship ids, change the id field to contactId
+            // since we don't know the contact_info ids, change the id field to contact_id
             queryParams = new HashMap<>();
-            queryParams.put("id_field", "contactId");
+            queryParams.put("id_field", "contact_id");
             queryParams.put("continue", "1"); // continue to delete even if one fails
 
             // form of request is { "record": [... ids ...] }
@@ -314,7 +314,7 @@ public class ContactListAdapter extends BaseAdapter{
 
             callerName = "removeContactsTask";
             serviceName = "db";
-            endPoint = "contacts";
+            endPoint = "contact";
 
             verb = "DELETE";
 

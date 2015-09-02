@@ -132,17 +132,17 @@ public class ContactListActivity extends Activity {
             callerName = "getContactsInGroup";
 
             serviceName = "db";
-            endPoint = "contact_relationships";
+            endPoint = "contact_group_relationship";
             verb = "GET";
 
             // filter to only select the contacts in this group
             queryParams = new HashMap<>();
-            queryParams.put("filter", "contactGroupId=" + groupId);
+            queryParams.put("filter", "contact_group_id=" + groupId);
 
-            // request without related would return just {id, groupId, contactId}
+            // request without related would return just {id, contact_group_id, contact_id}
             // set the related field to go get the contact mRecordsList referenced by
-            // each contactrelationships record
-            queryParams.put("related", "contacts_by_contactId");
+            // each contact_group_relationship record
+            queryParams.put("related", "contact_by_contact_id");
 
             // need to include the application name and session id
             applicationName = AppConstants.APP_NAME;
@@ -154,7 +154,7 @@ public class ContactListActivity extends Activity {
             // response is in form
             // {
             //      <group info>,
-            //      "contacts_by_contactId": [
+            //      "contact_by_contact_id": [
             //          { <contact record> }
             //      ]
             //  }
@@ -162,7 +162,7 @@ public class ContactListActivity extends Activity {
                     (ContactsRelationalRecords) ApiInvoker.deserialize(response, "", ContactsRelationalRecords.class);
             contactRecords = new ArrayList<>();
             for(ContactsRelationalRecord record : relationalRecords.record){
-                contactRecords.add(record.contacts_by_contact_id);
+                contactRecords.add(record.contact_by_contact_id);
             }
 
         }

@@ -20,7 +20,7 @@ public class InfoViewGroup extends RelativeLayout {
 
         inflater.inflate(R.layout.contact_info_layout, this, true);
         TextView type = (TextView) findViewById(R.id.type_label);
-        type.setText(record.infoType);
+        type.setText(record.info_type);
 
         if (record.phone.isEmpty()) {
             RelativeLayout layout = (RelativeLayout) findViewById(R.id.info_phone_layout);

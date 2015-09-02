@@ -87,7 +87,7 @@ public class GroupListActivity extends Activity {
 
             // Get all the records from the table
             serviceName = "db";
-            endPoint = "contact_groups";
+            endPoint = "contact_group";
 
             verb = "GET";
 
@@ -102,7 +102,7 @@ public class GroupListActivity extends Activity {
             // form is:
             // {
             //      "record": [
-            //          {"contactGroupId":id, "groupName":groupName},
+            //          {"id":id, "name":name},
             //          {...}
             //      ]
             // }
