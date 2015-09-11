@@ -86,14 +86,14 @@ public class GroupListActivity extends Activity {
             callerName = "getGroupsTask";
 
             // Get all the records from the table
-            serviceName = "db";
+            serviceName = AppConstants.DB_SVC;
             endPoint = "contact_group";
 
             verb = "GET";
 
-            // need app name and session id
-            applicationName = AppConstants.APP_NAME;
-            sessionId = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_ID);
+            // need API key and session token
+            applicationApiKey = AppConstants.API_KEY;
+            sessionToken = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_TOKEN);
         }
 
         @Override
@@ -101,7 +101,7 @@ public class GroupListActivity extends Activity {
             // response is an array of group records
             // form is:
             // {
-            //      "record": [
+            //      "resource": [
             //          {"id":id, "name":name},
             //          {...}
             //      ]

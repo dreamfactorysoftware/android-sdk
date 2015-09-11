@@ -31,10 +31,10 @@ public class BaseAsyncRequest extends AsyncTask<Void, Void, Boolean> {
     protected String serviceName; // eg files, db etc
     protected String endPoint; // eg table name
     protected String verb; // rest verb
-    protected String applicationName; // automatically added to the header
+    protected String applicationApiKey; // automatically added to the header
 
-    // sessionId is needed for every call except for login
-    protected String sessionId; // automatically added to the header
+    // sessionToken is needed for every call except for login
+    protected String sessionToken; // automatically added to the header
 
     // objects not already created (to save memory):
     protected Map<String, String> queryParams = null;
@@ -51,11 +51,11 @@ public class BaseAsyncRequest extends AsyncTask<Void, Void, Boolean> {
     // tag to use for error messages and logging
     protected String callerName = "BaseAsyncRequest";
 
-    // header params other than app name and session id
+    // header params other than API key and session token
     protected Map<String, String> headerParams = new HashMap<>();
 
-    // path to DSP url, for example http://localhost:8080/rest
-    protected String baseDspUrl = AppConstants.DSP_URL;
+    // instance url, for example http://localhost:8080/api/v2
+    protected String baseInstanceUrl = AppConstants.INSTANCE_URL;
 
     // set to true to print the request and response strings to verbose
     protected boolean use_logging = false;
@@ -75,21 +75,21 @@ public class BaseAsyncRequest extends AsyncTask<Void, Void, Boolean> {
             // call the setup function
             doSetup();
 
-            // build the path to append onto the the DSP path
+            // build the path to append onto the the instance url
             String path = "/" + serviceName + "/" + endPoint;
 
-            // add sessionId and application name into the header params
-            if(applicationName == null || applicationName.isEmpty()){
-                Log.w(callerName, "application name not provided");
+            // add sessionToken and API key into the header params
+            if(applicationApiKey == null || applicationApiKey.isEmpty()){
+                Log.w(callerName, "API key not provided");
             }
             else {
-                headerParams.put("X-DreamFactory-Application-Name", applicationName);
+                headerParams.put("X-DreamFactory-Api-Key", applicationApiKey);
             }
 
-            if(sessionId == null || sessionId.isEmpty()){
-                Log.w(callerName, "session id not provided, only OK if logging in");
+            if(sessionToken == null || sessionToken.isEmpty()){
+                Log.w(callerName, "session token not provided, only OK if logging in");
             }
-            headerParams.put("X-DreamFactory-Session-Token", sessionId);
+            headerParams.put("X-DreamFactory-Session-Token", sessionToken);
 
             // build the request body
             if(requestBody != null){
@@ -104,7 +104,7 @@ public class BaseAsyncRequest extends AsyncTask<Void, Void, Boolean> {
             }
 
             // send the REST call
-            String response = ApiInvoker.getInstance().invokeAPI(baseDspUrl,
+            String response = ApiInvoker.getInstance().invokeAPI(baseInstanceUrl,
                     path,
                     verb,
                     queryParams,

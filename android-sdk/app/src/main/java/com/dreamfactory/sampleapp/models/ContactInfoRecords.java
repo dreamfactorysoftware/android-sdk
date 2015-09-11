@@ -7,6 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContactInfoRecords extends BaseRecord {
-    @JsonProperty("record")
+    @JsonProperty("resource")
     public List<ContactInfoRecord> record = new ArrayList<>();
 }

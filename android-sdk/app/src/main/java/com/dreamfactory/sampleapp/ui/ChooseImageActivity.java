@@ -68,23 +68,17 @@ public class ChooseImageActivity extends Activity {
         private List<String> file_list = new ArrayList<>();
         @Override
         protected void doSetup() throws ApiException, JSONException {
+
+            verb = "GET";
             serviceName = "files";
-            applicationName = AppConstants.APP_NAME;
-
-            // build rest path for request, form is <url to DSP>/rest/files/container/application/<folder path>
-            // here the folder path is profile_images/contactId/
+            applicationApiKey = AppConstants.API_KEY;
             // the file path ends in a '/' because we are targeting a folder
-            String containerName = "applications";
-            String folderPath = "profile_images/" + contactId + "/";
-            endPoint = containerName + "/" + applicationName + "/" + folderPath;
-
+            endPoint = "profile_images/" + contactId + "/";
             // don't get any folders back in response, only get files
             queryParams = new HashMap<>();
             queryParams.put("include_folders", "0");
             queryParams.put("include_files", "1");
-
-            sessionId = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_ID);
-            verb = "GET";
+            sessionToken = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_TOKEN);
         }
 
         @Override

@@ -201,7 +201,7 @@ public class ContactViewActivity extends Activity {
         public GetContactInfoTask() {
             callerName = "getContactInfoTask";
 
-            serviceName = "db";
+            serviceName = AppConstants.DB_SVC;
             endPoint = "contact_info";
 
             verb = "GET";
@@ -210,9 +210,9 @@ public class ContactViewActivity extends Activity {
             // filter to only the contact_info records related to the contact
             queryParams.put("filter", "contact_id=" + contactRecord.id);
 
-            // include application name and sessionId
-            applicationName = AppConstants.APP_NAME;
-            sessionId = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_ID);
+            // include API key and sessionToken
+            applicationApiKey = AppConstants.API_KEY;
+            sessionToken = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_TOKEN);
         }
 
         @Override
@@ -256,7 +256,7 @@ public class ContactViewActivity extends Activity {
         protected void doSetup() throws ApiException{
             callerName = "updateContactTask";
 
-            serviceName = "db";
+            serviceName = AppConstants.DB_SVC;
             endPoint = "contact";
 
             verb = "PATCH";
@@ -264,9 +264,9 @@ public class ContactViewActivity extends Activity {
             // send the contact record in the body
             requestString = ApiInvoker.serialize(contactRecord);
 
-            // include sessionId
-            applicationName = AppConstants.APP_NAME;
-            sessionId = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_ID);
+            // include sessionToken
+            applicationApiKey = AppConstants.API_KEY;
+            sessionToken = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_TOKEN);
         }
 
         @Override
@@ -286,7 +286,7 @@ public class ContactViewActivity extends Activity {
         protected void doSetup() throws ApiException {
             callerName = "updateContactInfoTask";
 
-            serviceName = "db";
+            serviceName = AppConstants.DB_SVC;
             endPoint = "contact_info";
 
             verb = "PATCH";
@@ -294,9 +294,9 @@ public class ContactViewActivity extends Activity {
             // body is array of records to patch
             requestString = ApiInvoker.serialize(records);
 
-            // include application name and session_id
-            applicationName = AppConstants.APP_NAME;
-            sessionId = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_ID);
+            // include API key and session_token
+            applicationApiKey = AppConstants.API_KEY;
+            sessionToken = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_TOKEN);
         }
 
         @Override
@@ -312,18 +312,12 @@ public class ContactViewActivity extends Activity {
         private Bitmap bitmap;
         @Override
         protected void doSetup() throws ApiException, JSONException {
+
+            verb = "GET";
             callerName = "getImageFromFile";
             serviceName = "files";
-            applicationName = AppConstants.APP_NAME; // app name used in file path
-            verb = "GET";
-            // build rest path for request, form is <url to DSP>/rest/files/container/application/<folder path>/filename
-            // here the folder path is profile_images/contactId/
-            // the file path does not end in a '/' because we are targeting a file not a folder
-            String containerName = "applications";
-            String folderPath = "profile_images/" + contactRecord.id;
-            String fileName = contactRecord.image_url;
-            endPoint = containerName + "/" + applicationName + "/" + folderPath + "/" + fileName;
-
+            applicationApiKey = AppConstants.API_KEY;
+            endPoint = "profile_images/" + contactRecord.id + "/" + contactRecord.image_url;
             queryParams = new HashMap<>();
             // don't include the file properties
             queryParams.put("include_properties", "1");
@@ -331,9 +325,8 @@ public class ContactViewActivity extends Activity {
             queryParams.put("content", "1");
             // give us a download
             queryParams.put("download", "1");
-
-            // need to include session_id
-            sessionId = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_ID);
+            // need to include session_token
+            sessionToken = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_TOKEN);
         }
 
         @Override

@@ -230,7 +230,7 @@ public class ContactListAdapter extends BaseAdapter{
         protected void doSetup() throws ApiException, JSONException {
             callerName = "removeContactGroupRelations";
 
-            serviceName = "db";
+            serviceName = AppConstants.DB_SVC;
             endPoint = "contact_group_relationship";
 
             verb = "DELETE";
@@ -239,12 +239,12 @@ public class ContactListAdapter extends BaseAdapter{
             queryParams = new HashMap<>();
             queryParams.put("id_field", "contact_id");
 
-            // form of request is { "record": [... ids ...] }
+            // form of request is { "resource": [... ids ...] }
             requestBody = new JSONObject();
-            requestBody.put("record", idArray);
+            requestBody.put("resource", idArray);
 
-            applicationName = AppConstants.APP_NAME;
-            sessionId = PrefUtil.getString(context, AppConstants.SESSION_ID);
+            applicationApiKey = AppConstants.API_KEY;
+            sessionToken = PrefUtil.getString(context, AppConstants.SESSION_TOKEN);
         }
 
         @Override
@@ -268,7 +268,7 @@ public class ContactListAdapter extends BaseAdapter{
         @Override
         protected void doSetup() throws ApiException, JSONException {
             callerName = "removeContactInfo";
-            serviceName = "db";
+            serviceName = AppConstants.DB_SVC;
             endPoint = "contact_info";
 
             verb = "DELETE";
@@ -278,12 +278,12 @@ public class ContactListAdapter extends BaseAdapter{
             queryParams.put("id_field", "contact_id");
             queryParams.put("continue", "1"); // continue to delete even if one fails
 
-            // form of request is { "record": [... ids ...] }
+            // form of request is { "resource": [... ids ...] }
             requestBody = new JSONObject();
-            requestBody.put("record", idArray);
+            requestBody.put("resource", idArray);
 
-            applicationName = AppConstants.APP_NAME;
-            sessionId = PrefUtil.getString(context, AppConstants.SESSION_ID);
+            applicationApiKey = AppConstants.API_KEY;
+            sessionToken = PrefUtil.getString(context, AppConstants.SESSION_TOKEN);
         }
 
         @Override
@@ -313,7 +313,7 @@ public class ContactListAdapter extends BaseAdapter{
             deleteSemaphore.release(2); // don't hold on to these guys
 
             callerName = "removeContactsTask";
-            serviceName = "db";
+            serviceName = AppConstants.DB_SVC;
             endPoint = "contact";
 
             verb = "DELETE";
@@ -323,8 +323,8 @@ public class ContactListAdapter extends BaseAdapter{
             queryParams = new HashMap<>();
             queryParams.put("ids", idArray.toString().replace("[", "").replace("]", ""));
 
-            applicationName = AppConstants.APP_NAME;
-            sessionId = PrefUtil.getString(context, AppConstants.SESSION_ID);
+            applicationApiKey = AppConstants.API_KEY;
+            sessionToken = PrefUtil.getString(context, AppConstants.SESSION_TOKEN);
         }
 
         @Override
@@ -350,22 +350,17 @@ public class ContactListAdapter extends BaseAdapter{
 
         @Override
         protected void doSetup() throws ApiException, JSONException {
-            callerName = "remove contact folders";
-            serviceName = "files";
-            applicationName = AppConstants.APP_NAME;
-            // build rest path for request, form is <url to DSP>/rest/files/container/application/<folder path>
-            // here the folder path is profile_images/contactId/
-            // the file path ends in a '/' because we are targeting a folder
-            String containerName = "applications";
-            String folderPath = "profile_images/" + contactId + "/";
-            endPoint = containerName + "/" + applicationName + "/" + folderPath;
 
             verb = "DELETE";
+            callerName = "remove contact folders";
+            serviceName = "files";
+            applicationApiKey = AppConstants.API_KEY;
+            // the file path ends in a '/' because we are targeting a folder
+            endPoint = "profile_images/" + contactId + "/";
             // want to delete all the files and folders in the target folder
             queryParams = new HashMap<>();
             queryParams.put("force", "1");
-
-            sessionId = PrefUtil.getString(context, AppConstants.SESSION_ID);
+            sessionToken = PrefUtil.getString(context, AppConstants.SESSION_TOKEN);
         }
     }
 }

@@ -6,6 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 
 public class GroupRecords extends BaseRecord {
-    @JsonProperty("record")
+    @JsonProperty("resource")
     public ArrayList<GroupRecord> record = new ArrayList<>();
 }
