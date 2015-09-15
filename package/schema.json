@@ -104,7 +104,7 @@
                   "on_fail": "Not a valid information type."
                 }
               },
-              "value": [
+              "picklist": [
                 "work",
                 "home",
                 "mobile",
