@@ -77,12 +77,12 @@ public class EditGroupAdapter extends CreateGroupAdapter {
         protected void doSetup() throws ApiException, JSONException {
             callerName = "GetContactsInGroupTask";
 
-            serviceName = "db";
+            serviceName = AppConstants.DB_SVC;
             endPoint = "contact_group_relationship";
 
             verb = "GET";
-            applicationName = AppConstants.APP_NAME;
-            sessionId = PrefUtil.getString(context, AppConstants.SESSION_ID);
+            applicationApiKey = AppConstants.API_KEY;
+            sessionToken = PrefUtil.getString(context, AppConstants.SESSION_TOKEN);
 
             // filter to only get the group we want
             queryParams = new HashMap<>();

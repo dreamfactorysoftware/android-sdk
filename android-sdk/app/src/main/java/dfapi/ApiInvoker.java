@@ -127,12 +127,12 @@ public class ApiInvoker {
 
     /**
      * Send the REST request to the server
-     * @param host path to the DSP
+     * @param host path to the instance
      * @param path service name/endpoint
      * @param method HTTP verb
      * @param queryParams any query params to send with request, each pair forms a query
      * @param body request to send to server, every verb except GET can take a body
-     * @param headerParams Typically used to store session id and application name
+     * @param headerParams Typically used to store session token and API key
      * @param contentType format of request body
      * @param fileRequest
      * @return
@@ -156,7 +156,7 @@ public class ApiInvoker {
             }
         }
 
-        // build the full path, form is: <dsp url>/rest/<service name>/<end point>?[a params]
+        // build the full path, form is: <instance url>/api/v2/<service name>/<end point>?[a params]
         String url = host + path + b.toString();
 
         HashMap<String, String> headers = new HashMap<>();

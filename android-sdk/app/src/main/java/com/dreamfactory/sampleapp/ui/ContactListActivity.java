@@ -131,7 +131,7 @@ public class ContactListActivity extends Activity {
         protected void doSetup() throws ApiException, JSONException {
             callerName = "getContactsInGroup";
 
-            serviceName = "db";
+            serviceName = AppConstants.DB_SVC;
             endPoint = "contact_group_relationship";
             verb = "GET";
 
@@ -144,9 +144,9 @@ public class ContactListActivity extends Activity {
             // each contact_group_relationship record
             queryParams.put("related", "contact_by_contact_id");
 
-            // need to include the application name and session id
-            applicationName = AppConstants.APP_NAME;
-            sessionId = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_ID);
+            // need to include the API key and session token
+            applicationApiKey = AppConstants.API_KEY;
+            sessionToken = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_TOKEN);
         }
 
         @Override

@@ -145,16 +145,16 @@ public class GroupActivity extends Activity {
         protected void doSetup() throws ApiException, JSONException {
             callerName = "GetAllContactsTask";
             // Not providing any query params gets all records in the table
-            serviceName = "db";
+            serviceName = AppConstants.DB_SVC;
             endPoint = "contact";
             verb = "GET";
-            applicationName = AppConstants.APP_NAME;
-            sessionId = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_ID);
+            applicationApiKey = AppConstants.API_KEY;
+            sessionToken = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_TOKEN);
         }
 
         @Override
         protected void processResponse(String response) throws ApiException, JSONException {
-            // response is an array of contact records: { "record": [ {contactRecord}, {...} ] }
+            // response is an array of contact records: { "resource": [ {contactRecord}, {...} ] }
             records = (ContactRecords) ApiInvoker.deserialize(response, "", ContactRecords.class);
         }
 
@@ -194,11 +194,11 @@ public class GroupActivity extends Activity {
         @Override
         protected void doSetup() throws ApiException, JSONException {
             callerName = "CreateGroupTask";
-            serviceName = "db";
+            serviceName = AppConstants.DB_SVC;
             endPoint = "contact_group";
             verb = "POST";
-            applicationName = AppConstants.APP_NAME;
-            sessionId = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_ID);
+            applicationApiKey = AppConstants.API_KEY;
+            sessionToken = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_TOKEN);
             // only need to send the name in body
             // we don't have a group ID yet, so we can't provide one here
             requestString = "{\"name\":\"" + name + "\"}";
@@ -238,7 +238,7 @@ public class GroupActivity extends Activity {
         @Override
         protected void doSetup() throws ApiException, JSONException {
             callerName = "CreateContactGroupRelationships";
-            serviceName = "db";
+            serviceName = AppConstants.DB_SVC;
             endPoint = "contact_group_relationship";
 
             verb = "POST";
@@ -246,7 +246,7 @@ public class GroupActivity extends Activity {
             /*
              * Form of request is:
              *  {
-             *      "record":[
+             *      "resource":[
              *          {
              *              "contact_group_id":id,
              *              "contact_id":id
@@ -262,10 +262,10 @@ public class GroupActivity extends Activity {
                 relation.put("contact_id", contactId);
                 jsonArray.put(relation);
             }
-            requestString = "{\"record\":" + jsonArray.toString() + "}";
+            requestString = "{\"resource\":" + jsonArray.toString() + "}";
 
-            applicationName = AppConstants.APP_NAME;
-            sessionId = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_ID);
+            applicationApiKey = AppConstants.API_KEY;
+            sessionToken = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_TOKEN);
         }
     }
 
@@ -280,7 +280,7 @@ public class GroupActivity extends Activity {
         @Override
         protected void doSetup() throws ApiException, JSONException {
             callerName = "RemoveContactGroupRelationshipsTask";
-            serviceName = "db";
+            serviceName = AppConstants.DB_SVC;
             endPoint = "contact_group_relationship";
 
             verb = "DELETE";
@@ -293,7 +293,7 @@ public class GroupActivity extends Activity {
             /*
              * Form of request is:
              *  {
-             *      "record":[
+             *      "resource":[
              *          {
              *              "contact_group_id":id,
              *              "contact_id":id
@@ -309,10 +309,10 @@ public class GroupActivity extends Activity {
                 relation.put("contact_id", contactId);
                 jsonArray.put(relation);
             }
-            requestString = "{\"record\":" + jsonArray.toString() + "}";
+            requestString = "{\"resource\":" + jsonArray.toString() + "}";
 
-            applicationName = AppConstants.APP_NAME;
-            sessionId = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_ID);
+            applicationApiKey = AppConstants.API_KEY;
+            sessionToken = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_TOKEN);
         }
     }
 
@@ -324,7 +324,7 @@ public class GroupActivity extends Activity {
         protected void doSetup() throws ApiException, JSONException {
             callerName = "UpdateGroupTask";
 
-            serviceName = "db";
+            serviceName = AppConstants.DB_SVC;
             endPoint = "contact_group";
             verb = "PATCH";
 
@@ -334,8 +334,8 @@ public class GroupActivity extends Activity {
             // form is { "id": id, "name": name }
             requestString = ApiInvoker.serialize(record);
 
-            applicationName = AppConstants.APP_NAME;
-            sessionId = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_ID);
+            applicationApiKey = AppConstants.API_KEY;
+            sessionToken = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_TOKEN);
         }
     }
 }

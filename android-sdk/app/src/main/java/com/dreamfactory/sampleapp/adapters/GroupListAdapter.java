@@ -121,7 +121,7 @@ public class GroupListAdapter extends BaseAdapter{
         protected void doSetup() throws ApiException, JSONException {
             callerName = "removeGroupRelationships";
 
-            serviceName = "db";
+            serviceName = AppConstants.DB_SVC;
             endPoint = "contact_group_relationship";
             verb = "DELETE";
 
@@ -137,8 +137,8 @@ public class GroupListAdapter extends BaseAdapter{
             queryParams = new HashMap<>();
             queryParams.put("filter", builder.toString());
 
-            applicationName = AppConstants.APP_NAME;
-            sessionId = PrefUtil.getString(context, AppConstants.SESSION_ID);
+            applicationApiKey = AppConstants.API_KEY;
+            sessionToken = PrefUtil.getString(context, AppConstants.SESSION_TOKEN);
         }
 
         @Override
@@ -155,7 +155,7 @@ public class GroupListAdapter extends BaseAdapter{
         @Override
         protected void doSetup() throws ApiException, JSONException {
             callerName = "removeGroups";
-            serviceName = "db";
+            serviceName = AppConstants.DB_SVC;
             endPoint = "contact_group";
             verb = "DELETE";
 
@@ -172,8 +172,8 @@ public class GroupListAdapter extends BaseAdapter{
             queryParams = new HashMap<>();
             queryParams.put("ids", builder.toString());
 
-            applicationName = AppConstants.APP_NAME;
-            sessionId = PrefUtil.getString(context, AppConstants.SESSION_ID);
+            applicationApiKey = AppConstants.API_KEY;
+            sessionToken = PrefUtil.getString(context, AppConstants.SESSION_TOKEN);
         }
 
         @Override

@@ -192,7 +192,7 @@ public class CreateContactActivity extends Activity {
         protected void doSetup() throws ApiException {
             callerName = "AddContactTask";
 
-            serviceName = "db";
+            serviceName = AppConstants.DB_SVC;
             endPoint = "contact";
 
             verb = "POST";
@@ -204,14 +204,15 @@ public class CreateContactActivity extends Activity {
             contactRecord.skype = contactRecord.getNonNull(skypeEditText.getText().toString());
             contactRecord.twitter = contactRecord.getNonNull(twitterEditText.getText().toString());
             contactRecord.notes = contactRecord.getNonNull(notesEditText.getText().toString());
+            Log.w("profileImagePathtestuser1@dreamfactory.com", profileImagePath);
             if(profileImagePath != null && !profileImagePath.isEmpty()){
                 contactRecord.image_url = "testFile.png";
             }
 
             requestString = ApiInvoker.serialize(contactRecord);
 
-            applicationName = AppConstants.APP_NAME;
-            sessionId = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_ID);
+            applicationApiKey = AppConstants.API_KEY;
+            sessionToken = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_TOKEN);
         }
 
         @Override
@@ -269,7 +270,7 @@ public class CreateContactActivity extends Activity {
         protected void doSetup() throws ApiException {
             callerName = "AddContactInfoTask";
 
-            serviceName = "db";
+            serviceName = AppConstants.DB_SVC;
             endPoint = "contact_info";
 
             verb = "POST";
@@ -277,15 +278,15 @@ public class CreateContactActivity extends Activity {
             // body is an array of contact_info records to create
             // form is:
             // {
-            //      "record":[
+            //      "resource":[
             //          { ContactInfoRecord }
             //      ]
             // }
 
             requestString = ApiInvoker.serialize(contactInfoRecords);
 
-            applicationName = AppConstants.APP_NAME;
-            sessionId = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_ID);
+            applicationApiKey = AppConstants.API_KEY;
+            sessionToken = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_TOKEN);
         }
     }
 
@@ -302,7 +303,7 @@ public class CreateContactActivity extends Activity {
         protected void doSetup() throws ApiException, JSONException {
             callerName = "AddContactToGroup";
 
-            serviceName = "db";
+            serviceName = AppConstants.DB_SVC;
             endPoint = "contact_group_relationship";
 
             verb = "POST";
@@ -312,8 +313,8 @@ public class CreateContactActivity extends Activity {
             requestBody.put("contact_group_id", groupId);
             requestBody.put("contact_id", contactId);
 
-            applicationName = AppConstants.APP_NAME;
-            sessionId = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_ID);
+            applicationApiKey = AppConstants.API_KEY;
+            sessionToken = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_TOKEN);
         }
     }
 
@@ -323,21 +324,13 @@ public class CreateContactActivity extends Activity {
 
         @Override
         protected void doSetup() throws ApiException, JSONException {
+
             callerName = "CreateFolderTask";
-
             serviceName = "files";
-            applicationName = AppConstants.APP_NAME;
-
-            // build rest path for request, form is <url to DSP>/rest/files/container/application/<folder path>
-            // here the folder path is profile_images/contactId/
+            applicationApiKey = AppConstants.API_KEY;
             // the file path ends in a '/' because we are targeting a folder
-            String containerName = "applications";
-            String folderPath = "profile_images/" + contactId + "/";
-            endPoint = containerName + "/" + applicationName + "/" + folderPath;
-
-            verb = "POST";
-
-            sessionId = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_ID);
+            endPoint = "profile_images/" + contactId + "/";
+            sessionToken = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_TOKEN);
         }
 
         @Override
@@ -353,24 +346,17 @@ public class CreateContactActivity extends Activity {
         public UploadImageTask(int contactId){ this.contactId = contactId; }
         @Override
         protected void doSetup() throws ApiException, JSONException {
-            callerName = "createImageTask";
-
-            serviceName = "files";
-            applicationName = AppConstants.APP_NAME;
-
-            // build rest path for request, form is <url to DSP>/rest/files/container/application/<folder path>/<file name>
-            // here the folder path is profile_images/contactId
-            String containerName = "applications";
-            String folderPath = "profile_images/" + contactId + "/";
-            String fileName = "testFile.png";
-            endPoint = containerName + "/" + applicationName + "/" + folderPath + "/" + fileName;
 
             verb = "POST";
+            callerName = "createImageTask";
+            serviceName = "files";
+            applicationApiKey = AppConstants.API_KEY;
+            endPoint = "profile_images/" + contactId + "/testFile.png";
 
             fileRequest = new FileRequest();
             fileRequest.setPath(profileImagePath);
 
-            sessionId = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_ID);
+            sessionToken = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_TOKEN);
         }
     }
 }

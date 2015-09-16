@@ -6,6 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContactsRelationalRecords {
-    @JsonProperty("record")
+    @JsonProperty("resource")
     public List<ContactsRelationalRecord> record = new ArrayList<>();
 }

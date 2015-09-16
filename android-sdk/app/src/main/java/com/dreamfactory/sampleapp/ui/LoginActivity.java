@@ -294,25 +294,25 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
             verb = "POST";
 
-            // post email and password to get back session id
-            // need session id to make every call other than login and challenge
+            // post email and password to get back session token
+            // need session token to make every call other than login and challenge
             requestBody = new JSONObject();
             requestBody.put("email", mEmail);
             requestBody.put("password", mPassword);
 
-            // include application name
-            applicationName = AppConstants.APP_NAME;
+            // include API key
+            applicationApiKey = AppConstants.API_KEY;
         }
 
         @Override
         protected void processResponse(String response) throws ApiException, JSONException {
-            // store the session_id to be used later on
+            // store the session_token to be used later on
             JSONObject jsonObject = new JSONObject(response);
-            String session_id = jsonObject.getString("session_id");
-            if(session_id.length() == 0){
-                throw new ApiException(0, "did not get a valid session id in the response");
+            String session_token = jsonObject.getString("session_token");
+            if(session_token.length() == 0){
+                throw new ApiException(0, "did not get a valid session token in the response");
             }
-            PrefUtil.putString(getApplicationContext(), AppConstants.SESSION_ID, session_id);
+            PrefUtil.putString(getApplicationContext(), AppConstants.SESSION_TOKEN, session_token);
         }
 
         @Override
@@ -346,18 +346,21 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
             verb = "POST";
 
-            // post email and password to get back session id
-            // need session id to make every call other than login and challenge
+            // post email and password to get back session token
+            // need session token to make every call other than login and challenge
             requestBody = new JSONObject();
             requestBody.put("email", mEmail);
             requestBody.put("password", mPassword);
+            requestBody.put("first_name", "Address");
+            requestBody.put("last_name", "Book");
+            requestBody.put("name", "Address Book User");
 
-            // also log in (get session id) when registering
+            // also log in (get session token) when registering
             queryParams = new HashMap<>();
             queryParams.put("login", "1");
 
-            // include application name
-            applicationName = AppConstants.APP_NAME;
+            // include API key
+            applicationApiKey = AppConstants.API_KEY;
         }
     }
 }
