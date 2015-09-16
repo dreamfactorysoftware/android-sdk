@@ -56,7 +56,7 @@ The app uses the Apache client HTTP library to send REST requests. The request f
 
 The general form of a DreamFactory REST API call is:
 
-`<rest-verb> http[s]://<server-name>/rest/[<service-api-name>]/[<resource-path>][?<param-name>=<param-value>]`
+`<rest-verb> http[s]://<server-name>/api/v2/[<service-api-name>]/[<resource-path>][?<param-name>=<param-value>]`
 
 An Android call looks like this:
 
@@ -71,7 +71,7 @@ private String invokeAPIInternal(String host,
 ```
 
 Breaking down each parameter:
-   - **path** Holds the value of `http[s]://<server-name>/rest/[<service-api-name>]/[<resource-path>]` from the generic call. You can include the query parameters here. However, it is easier and cleaner to pass in the query parameters as a map than it is to format them into the url.
+   - **path** Holds the value of `http[s]://<server-name>/api/v2/[<service-api-name>]/[<resource-path>]` from the generic call. You can include the query parameters here. However, it is easier and cleaner to pass in the query parameters as a map than it is to format them into the url.
    - **method** The HTTP verb.
    - **queryParams** Holds the query parameters.
    - **body** Serialized request body, formatted as either a JSON or XML
