@@ -46,7 +46,13 @@ Almost there! Clone this repo to your local machine then open and run the projec
 
 Before running the project you need to edit API_KEY in the file AppConstants.java to match the key for your new app. This key can be found by selecting your app from the list on the Apps tab in the admin console.
 
-The default admin console URL is localhost:8080. If your admin console is not at that path, you can change the default path in AppConstants.java.
+If your DreamFactory instance is on localhost, make sure the INSTANCE_URL in AppConstants.java is set to the emulator localhost IP of 10.0.2.2. Make sure the port numbers match.
+
+```String INSTANCE_URL = "http://10.0.2.2:8080/api/v2";```
+
+If your instance is not on localhost, set INSTANCE_URL to point to the proper location.
+
+```String INSTANCE_URL = "http://my-df-instance.example.com/api/v2";```
 
 When the app starts up you can register a new user, or log in as an existing user. Currently the app does not support registering and logging in admin users.
 
