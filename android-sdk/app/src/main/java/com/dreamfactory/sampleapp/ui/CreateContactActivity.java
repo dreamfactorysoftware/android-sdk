@@ -68,7 +68,7 @@ public class CreateContactActivity extends Activity {
         twitterEditText = (EditText) findViewById(R.id.edit_contact_twitter);
         skypeEditText = (EditText) findViewById(R.id.edit_contact_skype);
         notesEditText = (EditText) findViewById(R.id.edit_contact_notes);
-        chooseImageButton = (Button) findViewById(R.id.edit_contact_info_change_photo);
+        //chooseImageButton = (Button) findViewById(R.id.edit_contact_info_change_photo);
 
         addContactInfoButton = (Button) findViewById(R.id.edit_contact_add_info);
         addContactInfoButton.setOnClickListener(new View.OnClickListener() {
@@ -130,14 +130,14 @@ public class CreateContactActivity extends Activity {
             }
         });
 
-        chooseImageButton.setTag(this);
-        chooseImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Activity activity = (Activity) v.getTag();
-                activity.startActivityForResult(Intent.createChooser(new Intent(Intent.ACTION_GET_CONTENT).setType("image/*"), "choose an image"), 1);
-            }
-        });
+//        chooseImageButton.setTag(this);
+//        chooseImageButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Activity activity = (Activity) v.getTag();
+//                activity.startActivityForResult(Intent.createChooser(new Intent(Intent.ACTION_GET_CONTENT).setType("image/*"), "choose an image"), 1);
+//            }
+//        });
     }
 
     protected void onActivityResult(int requestCode, int resultCode,
