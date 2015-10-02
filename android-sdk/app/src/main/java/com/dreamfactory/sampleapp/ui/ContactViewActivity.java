@@ -220,7 +220,7 @@ public class ContactViewActivity extends Activity {
             // results come back as an array of contact_info records
             // form is:
             // {
-            //      "records":[
+            //      "resource":[
             //          { contactInfoRecord }
             //      ]
             // }

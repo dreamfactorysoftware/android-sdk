@@ -46,7 +46,13 @@ Almost there! Clone this repo to your local machine then open and run the projec
 
 Before running the project you need to edit API_KEY in the file AppConstants.java to match the key for your new app. This key can be found by selecting your app from the list on the Apps tab in the admin console.
 
-The default admin console URL is localhost:8080. If your admin console is not at that path, you can change the default path in AppConstants.java.
+If your DreamFactory instance is on localhost, make sure the INSTANCE_URL in AppConstants.java is set to the emulator localhost IP of 10.0.2.2. Make sure the port numbers match.
+
+```String INSTANCE_URL = "http://10.0.2.2:8080/api/v2";```
+
+If your instance is not on localhost, set INSTANCE_URL to point to the proper location.
+
+```String INSTANCE_URL = "http://my-df-instance.example.com/api/v2";```
 
 When the app starts up you can register a new user, or log in as an existing user. Currently the app does not support registering and logging in admin users.
 
@@ -80,20 +86,50 @@ Breaking down each parameter:
 
 There is a lot of boilerplate code for Java because requests need to run asynchronously and you need to check for exceptions. To help keep things clean, we provide a base request class that extends AsyncTask. The light weight class handles boilerplate from error handling and request formatting with almost no extra overhead.
 
+###User login
+```Java
+{ // part of doSetup
+  serviceName = "user";
+  endPoint = "session";
+  
+  verb = "POST";
+  
+  // post email and password to get back session token
+  // need session token to make every call other than login and challenge
+  requestBody = new JSONObject();
+  requestBody.put("email", mEmail);
+  requestBody.put("password", mPassword);
+  
+  // include application API key
+  applicationApiKey = AppConstants.API_KEY;
+}
+
+@Override
+protected void processResponse(String response) throws ApiException, JSONException {
+// store the session_token to be used later on
+JSONObject jsonObject = new JSONObject(response);
+String session_token = jsonObject.getString("session_token");
+if(session_token.length() == 0){
+    throw new ApiException(0, "did not get a valid session token in the response");
+}
+PrefUtil.putString(getApplicationContext(), AppConstants.SESSION_TOKEN, session_token);
+}
+```
+
 ###Database
 #####Selecting records (to get or delete)
    - Using filters
     ```Java
     queryParams = new HashMap<>();
-    // filter to only the contact_info records related to the contact
-    queryParams.put("filter", "id=" + contactRecord.id);
+    // filter to only get the contact_info records related to the contact
+    queryParams.put("filter", "contact_id=" + contactRecord.id);
     ```        
 
    - Related records
     ```Java
-    // filter to only get the group we want
+    // filter to only get the contact_group_relationships we want
     queryParams = new HashMap<>();
-    queryParams.put("filter", "id=" + groupId);
+    queryParams.put("filter", "contact_group_id=" + groupId);
 
     // request without related would return just {id, contact_group_id, contact_id}
     // set the related field to go get the contact records referenced by
@@ -131,116 +167,9 @@ requestString = ApiInvoker.serialize(record);
 
 #####Creating records
 ```Java
-// only need to send the groupName in body
-// we don't have a groupID yet, so we can't provide one here
+// only need to send the group name in body
+// we don't have a group ID yet, so we can't provide one here
 requestString = "{\"name\":\"" + name + "\"}";
-```
-
-###Working with files
-#####creating files: 
-```Java
-serviceName = "files";
-applicationApiKey = AppConstants.API_KEY;
-
-// build rest path for request
-endPoint = "profile_images/" + contactId + "/testFile.png";
-
-verb = "POST";
-
-fileRequest = new FileRequest();
-fileRequest.setPath(profileImagePath);
-```
-
-#####creating folders: 
-```Java
-serviceName = "files";
-applicationApiKey = AppConstants.API_KEY;
-
-// build rest path for request
-endPoint = "profile_images/" + contactId + "/";
-
-verb = "POST";
-```
-
-#####getting files
-```Java
-{
-  ... part of doSetup ...
-  applicationApiKey = AppConstants.API_KEY; // API key used in file path
-  verb = "GET";
-  // build rest path for request
-  endPoint = "profile_images/" + contactRecord.id + "/" + contactRecord.image_url;
-  
-  queryParams = new HashMap<>();
-  // don't include the file properties
-  queryParams.put("include_properties", "1");
-  // include the content
-  queryParams.put("content", "1");
-  // give us a download
-  queryParams.put("download", "1");
-}
-@Override
-protected void processResponse(String response) throws ApiException, JSONException {
-    JSONObject jsonObject = new JSONObject(response);
-    String imageData = jsonObject.getString("content");
-
-    // files come back as Base64 strings
-    byte[] decodedString = Base64.decode(imageData, Base64.DEFAULT);
-    bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-}
-```
-
-#####getting folder contents
-```Java
-applicationApiKey = AppConstants.API_KEY;
-
-// build rest path for request
-endPoint = "profile_images/" + contactId + "/";
-
-// don't get any folders back in response, only get files
-queryParams = new HashMap<>();
-queryParams.put("include_folders", "0");
-queryParams.put("include_files", "1");
-```
-
-#####deleting files/folders
-```Java
-endPoint = "profile_images/" + contactId + "/";
-
-verb = "DELETE";
-// want to delete all the files and folders in the target folder
-queryParams = new HashMap<>();
-queryParams.put("force", "1");
-```
-
-###User login
-```Java
-{ // part of doSetup
-  serviceName = "user";
-  endPoint = "session";
-  
-  verb = "POST";
-  
-  // post email and password to get back session token
-  // need session token to make every call other than login and challenge
-  requestBody = new JSONObject();
-  requestBody.put("email", mEmail);
-  requestBody.put("password", mPassword);
-  
-  // include application API key
-  applicationApiKey = AppConstants.API_KEY;
-}
-
-@Override
-protected void processResponse(String response) throws ApiException, JSONException {
-// store the session_token to be used later on
-JSONObject jsonObject = new JSONObject(response);
-String session_token = jsonObject.getString("session_token");
-if(session_token.length() == 0){
-    throw new ApiException(0, "did not get a valid session token in the response");
-}
-PrefUtil.putString(getApplicationContext(), AppConstants.SESSION_TOKEN, session_token);
-}
 ```
 
 #Additional Resources

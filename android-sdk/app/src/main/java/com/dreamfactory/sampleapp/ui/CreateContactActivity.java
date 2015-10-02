@@ -19,6 +19,7 @@ import com.dreamfactory.sampleapp.R;
 import com.dreamfactory.sampleapp.models.ContactInfoRecord;
 import com.dreamfactory.sampleapp.models.ContactInfoRecords;
 import com.dreamfactory.sampleapp.models.ContactRecord;
+import com.dreamfactory.sampleapp.models.ContactRecords;
 import dfapi.BaseAsyncRequest;
 import com.dreamfactory.sampleapp.utils.AppConstants;
 import com.dreamfactory.sampleapp.utils.PrefUtil;
@@ -67,7 +68,7 @@ public class CreateContactActivity extends Activity {
         twitterEditText = (EditText) findViewById(R.id.edit_contact_twitter);
         skypeEditText = (EditText) findViewById(R.id.edit_contact_skype);
         notesEditText = (EditText) findViewById(R.id.edit_contact_notes);
-        chooseImageButton = (Button) findViewById(R.id.edit_contact_info_change_photo);
+        //chooseImageButton = (Button) findViewById(R.id.edit_contact_info_change_photo);
 
         addContactInfoButton = (Button) findViewById(R.id.edit_contact_add_info);
         addContactInfoButton.setOnClickListener(new View.OnClickListener() {
@@ -129,14 +130,14 @@ public class CreateContactActivity extends Activity {
             }
         });
 
-        chooseImageButton.setTag(this);
-        chooseImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Activity activity = (Activity) v.getTag();
-                activity.startActivityForResult(Intent.createChooser(new Intent(Intent.ACTION_GET_CONTENT).setType("image/*"), "choose an image"), 1);
-            }
-        });
+//        chooseImageButton.setTag(this);
+//        chooseImageButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Activity activity = (Activity) v.getTag();
+//                activity.startActivityForResult(Intent.createChooser(new Intent(Intent.ACTION_GET_CONTENT).setType("image/*"), "choose an image"), 1);
+//            }
+//        });
     }
 
     protected void onActivityResult(int requestCode, int resultCode,
@@ -204,8 +205,8 @@ public class CreateContactActivity extends Activity {
             contactRecord.skype = contactRecord.getNonNull(skypeEditText.getText().toString());
             contactRecord.twitter = contactRecord.getNonNull(twitterEditText.getText().toString());
             contactRecord.notes = contactRecord.getNonNull(notesEditText.getText().toString());
-            Log.w("profileImagePathtestuser1@dreamfactory.com", profileImagePath);
             if(profileImagePath != null && !profileImagePath.isEmpty()){
+                Log.w("profileImagePathtestuser1@dreamfactory.com", profileImagePath);
                 contactRecord.image_url = "testFile.png";
             }
 
@@ -218,7 +219,8 @@ public class CreateContactActivity extends Activity {
         @Override
         protected void processResponse(String response) throws ApiException, org.json.JSONException {
             // response has whole contact record, but we just want the id
-            contactId = new JSONObject(response).getInt("id");
+            ContactRecords records = (ContactRecords) ApiInvoker.deserialize(response, "", ContactRecords.class);
+            contactId = records.record.get(0).id;
         }
 
         @Override

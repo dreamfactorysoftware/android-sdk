@@ -90,16 +90,16 @@ public class EditContactActivity extends CreateContactActivity {
             }
         });
 
-        chooseImageButton.setTag(this);
-        chooseImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Activity activity = (Activity) v.getTag();
-                Intent intent = new Intent(activity, ChooseImageActivity.class);
-                intent.putExtra("contactId", contactRecord.id);
-                activity.startActivityForResult(intent, 2);
-            }
-        });
+//        chooseImageButton.setTag(this);
+//        chooseImageButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Activity activity = (Activity) v.getTag();
+//                Intent intent = new Intent(activity, ChooseImageActivity.class);
+//                intent.putExtra("contactId", contactRecord.id);
+//                activity.startActivityForResult(intent, 2);
+//            }
+//        });
     }
 
     @Override

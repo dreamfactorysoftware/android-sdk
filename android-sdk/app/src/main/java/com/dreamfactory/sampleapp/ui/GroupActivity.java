@@ -14,6 +14,7 @@ import com.dreamfactory.sampleapp.adapters.CreateGroupAdapter;
 import com.dreamfactory.sampleapp.adapters.EditGroupAdapter;
 import com.dreamfactory.sampleapp.models.ContactRecords;
 import com.dreamfactory.sampleapp.models.GroupRecord;
+import com.dreamfactory.sampleapp.models.GroupRecords;
 import dfapi.BaseAsyncRequest;
 import com.dreamfactory.sampleapp.utils.AppConstants;
 import com.dreamfactory.sampleapp.utils.PrefUtil;
@@ -207,8 +208,8 @@ public class GroupActivity extends Activity {
         @Override
         protected void processResponse(String response) throws ApiException, JSONException {
             // need to get the groupId from the response to give to relational records
-            GroupRecord record = (GroupRecord) ApiInvoker.deserialize(response, "", GroupRecord.class);
-            groupId = record.id;
+            GroupRecords records = (GroupRecords) ApiInvoker.deserialize(response, "", GroupRecords.class);
+            groupId = records.record.get(0).id;
         }
 
         @Override
