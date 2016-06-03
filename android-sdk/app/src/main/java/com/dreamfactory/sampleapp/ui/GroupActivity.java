@@ -14,8 +14,10 @@ import com.dreamfactory.sampleapp.adapters.CreateGroupAdapter;
 import com.dreamfactory.sampleapp.adapters.EditGroupAdapter;
 import com.dreamfactory.sampleapp.models.ContactRecords;
 import com.dreamfactory.sampleapp.models.GroupRecord;
-import com.dreamfactory.sampleapp.models.GroupRecords;
+
 import dfapi.BaseAsyncRequest;
+
+import com.dreamfactory.sampleapp.models.GroupRecords;
 import com.dreamfactory.sampleapp.utils.AppConstants;
 import com.dreamfactory.sampleapp.utils.PrefUtil;
 
@@ -57,9 +59,9 @@ public class GroupActivity extends Activity {
         if(intent.getIntExtra("contactGroupId", 0) != 0){
             editingGroup = true;
             groupRecord = new GroupRecord();
-            groupRecord.id = intent.getIntExtra("contactGroupId", 0);
-            groupRecord.name = intent.getStringExtra("groupName");
-            groupName.setText(groupRecord.name);
+            groupRecord.setId(intent.getIntExtra("contactGroupId", 0));
+            groupRecord.setName(intent.getStringExtra("groupName"));
+            groupName.setText(groupRecord.getName());
         }
         else{
             editingGroup = false;
@@ -103,9 +105,9 @@ public class GroupActivity extends Activity {
 
     protected void handleCompletion (){
         if(editingGroup){
-            if(!groupName.getText().toString().equals(groupRecord.name)){
+            if(!groupName.getText().toString().equals(groupRecord.getName())){
 
-                groupRecord.name = groupName.getText().toString();
+                groupRecord.setName(groupName.getText().toString());
                 UpdateGroupName updateGroupName = new UpdateGroupName(groupRecord);
                 updateGroupName.execute();
                 setResult(Activity.RESULT_OK);
@@ -122,12 +124,12 @@ public class GroupActivity extends Activity {
             if(((EditGroupAdapter) createGroupAdapter).didGroupChange()){
                 // only update group members if the group changed
                 CreateContactGroupRelationships createContactGroupRelationships =
-                        new CreateContactGroupRelationships(groupRecord.id,
+                        new CreateContactGroupRelationships(groupRecord.getId(),
                                 createGroupAdapter.getSelectedContacts());
                 createContactGroupRelationships.execute();
 
                 RemoveContactGroupRelationships removeContactGroupRelationships =
-                        new RemoveContactGroupRelationships(groupRecord.id,
+                        new RemoveContactGroupRelationships(groupRecord.getId(),
                                 ((EditGroupAdapter)createGroupAdapter).getContactsToRemove());
                 removeContactGroupRelationships.execute();
             }
@@ -209,7 +211,7 @@ public class GroupActivity extends Activity {
         protected void processResponse(String response) throws ApiException, JSONException {
             // need to get the groupId from the response to give to relational records
             GroupRecords records = (GroupRecords) ApiInvoker.deserialize(response, "", GroupRecords.class);
-            groupId = records.record.get(0).id;
+            groupId = records.record.get(0).getId();
         }
 
         @Override

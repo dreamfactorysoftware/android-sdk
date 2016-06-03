@@ -13,8 +13,10 @@ import com.dreamfactory.sampleapp.R;
 import com.dreamfactory.sampleapp.adapters.DeletableGroupListAdapter;
 import com.dreamfactory.sampleapp.adapters.GroupListAdapter;
 import com.dreamfactory.sampleapp.models.GroupRecord;
-import com.dreamfactory.sampleapp.models.GroupRecords;
+
 import dfapi.BaseAsyncRequest;
+
+import com.dreamfactory.sampleapp.models.GroupRecords;
 import com.dreamfactory.sampleapp.utils.AppConstants;
 import com.dreamfactory.sampleapp.utils.PrefUtil;
 
