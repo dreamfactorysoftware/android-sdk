@@ -34,7 +34,7 @@ public class EditGroupAdapter extends CreateGroupAdapter {
 
         inGroupSet = new BitSet(selectedSet.size());
 
-        getContactsInGroupTask = new GetContactsInGroupTask(this.record.id);
+        getContactsInGroupTask = new GetContactsInGroupTask(this.record.getId());
         getContactsInGroupTask.execute();
     }
 

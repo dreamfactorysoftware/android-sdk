@@ -75,7 +75,7 @@ public class GroupListAdapter extends BaseAdapter{
         // fill data
         GroupListHolder holder = (GroupListHolder) rowView.getTag();
         GroupRecord record = records.get(position);
-        holder.text.setText(record.name);
+        holder.text.setText(record.getName());
         holder.record = record;
 
         return rowView;
@@ -88,7 +88,7 @@ public class GroupListAdapter extends BaseAdapter{
 
     public void handleClick(int position){
         GroupRecord record = (GroupRecord) getItem(position);
-        showContactList(record.id, record.name);
+        showContactList(record.getId(), record.getName());
     }
 
     public void set(int position, boolean value){
@@ -129,9 +129,9 @@ public class GroupListAdapter extends BaseAdapter{
             StringBuilder builder = new StringBuilder();
             int i = deleteSet.nextSetBit(0);
 
-            builder.append("contact_group_id=").append(records.get(i).id);
+            builder.append("contact_group_id=").append(records.get(i).getId());
             for(i = deleteSet.nextSetBit(i+1);i >=0; i = deleteSet.nextSetBit(i + 1)){
-                builder.append("||contact_group_id=").append(records.get(i).id);
+                builder.append("||contact_group_id=").append(records.get(i).getId());
             }
 
             queryParams = new HashMap<>();
@@ -163,9 +163,9 @@ public class GroupListAdapter extends BaseAdapter{
             StringBuilder builder = new StringBuilder();
             int i = deleteSet.nextSetBit(0);
 
-            builder.append(records.get(i).id);
+            builder.append(records.get(i).getId());
             for(i = deleteSet.nextSetBit(i + 1);i >=0; i = deleteSet.nextSetBit(i + 1)){
-                builder.append(",").append(records.get(i).id);
+                builder.append(",").append(records.get(i).getId());
             }
 
             // ids is a comma separated list of contact_group record ids
