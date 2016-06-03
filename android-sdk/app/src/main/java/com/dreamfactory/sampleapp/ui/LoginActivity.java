@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,18 +27,15 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.dreamfactory.sampleapp.R;
-import dfapi.BaseAsyncRequest;
+import com.dreamfactory.sampleapp.handlers.AuthHandler;
+import com.dreamfactory.sampleapp.models.ErrorMessage;
+import com.dreamfactory.sampleapp.models.RegisterResponse;
+import com.dreamfactory.sampleapp.models.User;
 import com.dreamfactory.sampleapp.utils.AppConstants;
 import com.dreamfactory.sampleapp.utils.PrefUtil;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-
-import dfapi.ApiException;
 
 /**
  * A login screen that offers login via email/password.
@@ -47,7 +45,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private UserLoginTask mAuthTask = null;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -119,10 +116,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
      * errors are presented and no actual login attempt is made.
      */
     public void attemptLogin(boolean isLogin) {
-        if (mAuthTask != null) {
-            return;
-        }
-
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
@@ -160,14 +153,68 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
+
+            AuthHandler authHandler = new AuthHandler();
+
             if(isLogin) {
-                mAuthTask = new UserLoginTask(email, password);
+                authHandler.logIn(this, email, password, new AuthHandler.OnLogin() {
+                    @Override
+                    public void onLogin(User user) {
+                        showProgress(false);
+
+                        if(user.getSessionToken() == null){
+                            Log.e(LoginActivity.class.getSimpleName(), "There is no session token in response");
+                        } else {
+                            PrefUtil.putString(getApplicationContext(), AppConstants.SESSION_TOKEN, user.getSessionToken());
+
+                            showGroupListActivity();
+                        }
+                    }
+
+                    @Override
+                    public void onError(ErrorMessage.Error e) {
+                        showProgress(false);
+
+                        if(e.getCode() == 401L) {
+                            mPasswordView.setError(e.getMessage());
+                            mPasswordView.requestFocus();
+                        }
+                    }
+                });
             }
             else{
-                mAuthTask = new RegisterTask(email, password);
-            }
+                authHandler.register(this, email, password, new AuthHandler.OnRegister() {
+                    @Override
+                    public void onRegister(RegisterResponse response) {
+                        showProgress(false);
 
-            mAuthTask.execute((Void) null);
+                        if(response.getSessionToken() == null){
+                            Log.e(LoginActivity.class.getSimpleName(), "There is no session token in response");
+                        } else {
+                            PrefUtil.putString(getApplicationContext(), AppConstants.SESSION_TOKEN, response.getSessionToken());
+
+                            showGroupListActivity();
+                        }
+                    }
+
+                    @Override
+                    public void onError(ErrorMessage.Error e) {
+                        showProgress(false);
+
+                        if(e.getCode() == 400L) {
+                            if(e.getContext() != null && e.getContext().getEmail().length > 0) {
+                                mEmailView.setError(e.getContext().getEmail()[0]);
+                                mEmailView.requestFocus();
+                            }
+
+                            if(e.getContext() != null && e.getContext().getPassword().length > 0) {
+                                mPasswordView.setError(e.getContext().getPassword()[0]);
+                                mPasswordView.requestFocus();
+                            }
+                        }
+                    }
+                });
+            }
         }
     }
 
@@ -236,6 +283,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         List<String> emails = new ArrayList<>();
         cursor.moveToFirst();
+
         while (!cursor.isAfterLast()) {
             emails.add(cursor.getString(ProfileQuery.ADDRESS));
             cursor.moveToNext();
@@ -246,7 +294,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
     }
 
     private interface ProfileQuery {
@@ -256,9 +303,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         };
 
         int ADDRESS = 0;
-        int IS_PRIMARY = 1;
     }
-
 
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
@@ -268,99 +313,9 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
         mEmailView.setAdapter(adapter);
     }
+
     private void showGroupListActivity (){
         Intent intent = new Intent(this, GroupListActivity.class);
         startActivity(intent);
-    }
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    public class UserLoginTask extends BaseAsyncRequest {
-
-        protected final String mEmail;
-        protected final String mPassword;
-
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
-        }
-
-        @Override
-        protected void doSetup() throws ApiException, JSONException {
-            callerName = "loginActivity";
-            serviceName = "user";
-            endPoint = "session";
-
-            verb = "POST";
-
-            // post email and password to get back session token
-            // need session token to make every call other than login and challenge
-            requestBody = new JSONObject();
-            requestBody.put("email", mEmail);
-            requestBody.put("password", mPassword);
-
-            // include API key
-            applicationApiKey = AppConstants.API_KEY;
-        }
-
-        @Override
-        protected void processResponse(String response) throws ApiException, JSONException {
-            // store the session_token to be used later on
-            JSONObject jsonObject = new JSONObject(response);
-            String session_token = jsonObject.getString("session_token");
-            if(session_token.length() == 0){
-                throw new ApiException(0, "did not get a valid session token in the response");
-            }
-            PrefUtil.putString(getApplicationContext(), AppConstants.SESSION_TOKEN, session_token);
-        }
-
-        @Override
-        protected void onCompletion(boolean success) {
-            mAuthTask = null;
-
-            showProgress(false);
-            if(success){
-                showGroupListActivity();
-            }
-            else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
-        }
-    }
-
-    private class RegisterTask extends UserLoginTask {
-
-        RegisterTask(String email, String password) {
-            super(email, password);
-        }
-
-        @Override
-        protected void doSetup() throws ApiException, JSONException {
-            // register goes to user/register while login goes to user/session
-            use_logging = true;
-            callerName = "registerActivity";
-            serviceName = "user";
-            endPoint = "register";
-
-            verb = "POST";
-
-            // post email and password to get back session token
-            // need session token to make every call other than login and challenge
-            requestBody = new JSONObject();
-            requestBody.put("email", mEmail);
-            requestBody.put("password", mPassword);
-            requestBody.put("first_name", "Address");
-            requestBody.put("last_name", "Book");
-            requestBody.put("name", "Address Book User");
-
-            // also log in (get session token) when registering
-            queryParams = new HashMap<>();
-            queryParams.put("login", "1");
-
-            // include API key
-            applicationApiKey = AppConstants.API_KEY;
-        }
     }
 }

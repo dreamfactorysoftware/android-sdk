@@ -1,13 +1,23 @@
 package com.dreamfactory.sampleapp.api;
 
+import android.util.Log;
+
+import com.dreamfactory.sampleapp.DreamFactoryApp;
+import com.dreamfactory.sampleapp.models.ErrorMessage;
+import com.dreamfactory.sampleapp.utils.AppConstants;
+import com.dreamfactory.sampleapp.utils.PrefUtil;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.ResponseBody;
+import retrofit2.Converter;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
@@ -20,29 +30,53 @@ public class DreamFactoryAPI {
 
     private Retrofit retrofit;
 
-    private String baseUrl = "https://df-ft-nirmel-murtic452.enterprise.dreamfactory.com/api/v2/";
-
-    private String apiKey = "405b6f4da730ca78933654842be162024911a4250dc8e67a615e342dd2903eaf";
-
     private OkHttpClient httpClient;
+
+    private static Converter<ResponseBody, ErrorMessage> errorConverter;
 
     private DreamFactoryAPI() {
         httpClient = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
             @Override
-            public Response intercept(Chain chain) throws IOException {
+            public okhttp3.Response intercept(Chain chain) throws IOException {
                 Request.Builder ongoing = chain.request().newBuilder();
-                ongoing.addHeader("X-DreamFactory-Api-Key", apiKey);
+
+                if(DreamFactoryApp.API_KEY == null) {
+                    Log.w(DreamFactoryAPI.class.getSimpleName(), "API key not provided");
+                } else {
+                    ongoing.addHeader("X-DreamFactory-Api-Key", DreamFactoryApp.API_KEY);
+                }
+
+                ongoing.addHeader("X-DreamFactory-Session-Token",
+                        PrefUtil.getString(DreamFactoryApp.getAppContext(), AppConstants.SESSION_TOKEN));
 
                 return chain.proceed(ongoing.build());
             }
         }).build();
 
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+
         retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
+                .baseUrl(DreamFactoryApp.INSTANCE_URL)
                 .client(httpClient)
                 .addConverterFactory(JacksonConverterFactory.create(objectMapper))
                 .build();
+
+        errorConverter = retrofit.responseBodyConverter(ErrorMessage.class, new Annotation[0]);
+    }
+
+    public static ErrorMessage getErrorMessage(Response response) {
+        ErrorMessage error = null;
+
+        try {
+            error = errorConverter.convert(response.errorBody());
+        } catch (IOException e) {
+            error = new ErrorMessage("Unexpected error");
+
+            Log.e("ERROR", "Unexpected error while serialising error message", e);
+        }
+
+        return error;
     }
 
     public synchronized static DreamFactoryAPI getInstance() {
