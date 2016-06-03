@@ -10,13 +10,14 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
+        android:name=".DreamFactoryApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
 
         <meta-data android:name="sessionToken" android:value="session_token" />
-        <meta-data android:name="instanceUrl" android:value="https://df-ft-nirmel-murtic452.enterprise.dreamfactory.com/api/v2" />
+        <meta-data android:name="instanceUrl" android:value="https://df-ft-nirmel-murtic452.enterprise.dreamfactory.com/api/v2/" />
         <meta-data android:name="dbSvc" android:value="db/_table" />
         <meta-data android:name="apiKey" android:value="405b6f4da730ca78933654842be162024911a4250dc8e67a615e342dd2903eaf" />
 
