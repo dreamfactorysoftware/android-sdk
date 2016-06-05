@@ -81,7 +81,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        final Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -89,7 +89,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             }
         });
 
-        Button mEmailRegisterButton = (Button) findViewById(R.id.register_button);
+        final Button mEmailRegisterButton = (Button) findViewById(R.id.register_button);
         mEmailRegisterButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -100,12 +100,12 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
-        ImageButton back_button = (ImageButton) findViewById(R.id.persistent_back_button);
-        ImageButton edit_button = (ImageButton) findViewById(R.id.persistent_edit_button);
-        ImageButton save_button = (ImageButton) findViewById(R.id.persistent_save_button);
-        ImageButton add_button = (ImageButton) findViewById(R.id.persistent_add_button);
-        add_button.setVisibility(View.INVISIBLE);
+        final ImageButton back_button = (ImageButton) findViewById(R.id.persistent_back_button);
+        final ImageButton edit_button = (ImageButton) findViewById(R.id.persistent_edit_button);
+        final ImageButton save_button = (ImageButton) findViewById(R.id.persistent_save_button);
+        final ImageButton add_button = (ImageButton) findViewById(R.id.persistent_add_button);
 
+        add_button.setVisibility(View.INVISIBLE);
         back_button.setVisibility(View.INVISIBLE);
         edit_button.setVisibility(View.INVISIBLE);
         save_button.setVisibility(View.INVISIBLE);
@@ -162,7 +162,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             showProgress(true);
 
             if(isLogin) {
-                AuthService service = DreamFactoryAPI.getInstance().getService(AuthService.class);
+                final AuthService service = DreamFactoryAPI.getInstance().getService(AuthService.class);
 
                 LoginRequest loginRequest = new LoginRequest();
                 loginRequest.setEmail(email);
@@ -210,9 +210,9 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 });
             }
             else{
-                AuthService service = DreamFactoryAPI.getInstance().getService(AuthService.class);
+                final AuthService service = DreamFactoryAPI.getInstance().getService(AuthService.class);
 
-                RegisterRequest registerRequest = new RegisterRequest();
+                final RegisterRequest registerRequest = new RegisterRequest();
                 registerRequest.setEmail(email);
                 registerRequest.setPassword(password);
                 registerRequest.setLastName("Book");
@@ -244,6 +244,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
                     @Override
                     public void onFailure(Call<RegisterResponse> call, Throwable t) {
+                        Log.e(LoginActivity.class.getSimpleName(), "Error while registering user", t);
+
                         showProgress(false);
 
                         if (t instanceof ErrorMessage.ErrorException) {
@@ -330,7 +332,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        List<String> emails = new ArrayList<>();
+        final List<String> emails = new ArrayList<>();
         cursor.moveToFirst();
 
         while (!cursor.isAfterLast()) {
@@ -356,7 +358,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
-        ArrayAdapter<String> adapter =
+        final ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(LoginActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
@@ -364,7 +366,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     }
 
     private void showGroupListActivity (){
-        Intent intent = new Intent(this, GroupListActivity.class);
+        final Intent intent = new Intent(this, GroupListActivity.class);
         startActivity(intent);
     }
 }
