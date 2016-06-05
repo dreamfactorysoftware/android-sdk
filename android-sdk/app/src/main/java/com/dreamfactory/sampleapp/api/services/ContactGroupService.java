@@ -11,7 +11,6 @@ import retrofit2.http.GET;
  */
 public interface ContactGroupService {
 
-    //TODO: Remove temporary email & password
-    @GET("db/_table/contact_group?email=nirmel.murtic+1@gmail.com&password=testtest")
+    @GET("db/_table/contact_group")
     Call<Resource<GroupRecord>> getGroupList();
 }

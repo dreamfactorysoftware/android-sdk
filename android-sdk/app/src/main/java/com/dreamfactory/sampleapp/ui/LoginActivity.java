@@ -27,15 +27,22 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.dreamfactory.sampleapp.R;
-import com.dreamfactory.sampleapp.handlers.AuthHandler;
+import com.dreamfactory.sampleapp.api.DreamFactoryAPI;
+import com.dreamfactory.sampleapp.api.services.AuthService;
 import com.dreamfactory.sampleapp.models.ErrorMessage;
 import com.dreamfactory.sampleapp.models.RegisterResponse;
 import com.dreamfactory.sampleapp.models.User;
+import com.dreamfactory.sampleapp.models.requests.LoginRequest;
+import com.dreamfactory.sampleapp.models.requests.RegisterRequest;
 import com.dreamfactory.sampleapp.utils.AppConstants;
 import com.dreamfactory.sampleapp.utils.PrefUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A login screen that offers login via email/password.
@@ -74,7 +81,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        final Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -82,7 +89,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             }
         });
 
-        Button mEmailRegisterButton = (Button) findViewById(R.id.register_button);
+        final Button mEmailRegisterButton = (Button) findViewById(R.id.register_button);
         mEmailRegisterButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,12 +100,12 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
-        ImageButton back_button = (ImageButton) findViewById(R.id.persistent_back_button);
-        ImageButton edit_button = (ImageButton) findViewById(R.id.persistent_edit_button);
-        ImageButton save_button = (ImageButton) findViewById(R.id.persistent_save_button);
-        ImageButton add_button = (ImageButton) findViewById(R.id.persistent_add_button);
-        add_button.setVisibility(View.INVISIBLE);
+        final ImageButton back_button = (ImageButton) findViewById(R.id.persistent_back_button);
+        final ImageButton edit_button = (ImageButton) findViewById(R.id.persistent_edit_button);
+        final ImageButton save_button = (ImageButton) findViewById(R.id.persistent_save_button);
+        final ImageButton add_button = (ImageButton) findViewById(R.id.persistent_add_button);
 
+        add_button.setVisibility(View.INVISIBLE);
         back_button.setVisibility(View.INVISIBLE);
         edit_button.setVisibility(View.INVISIBLE);
         save_button.setVisibility(View.INVISIBLE);
@@ -154,62 +161,106 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             // perform the user login attempt.
             showProgress(true);
 
-            AuthHandler authHandler = new AuthHandler();
-
             if(isLogin) {
-                authHandler.logIn(this, email, password, new AuthHandler.OnLogin() {
+                final AuthService service = DreamFactoryAPI.getInstance().getService(AuthService.class);
+
+                LoginRequest loginRequest = new LoginRequest();
+                loginRequest.setEmail(email);
+                loginRequest.setPassword(password);
+
+                final Call<User> call = service.userLogin(loginRequest);
+
+                call.enqueue(new Callback<User>() {
                     @Override
-                    public void onLogin(User user) {
-                        showProgress(false);
+                    public void onResponse(Call<User> call, Response<User> response) {
+                        if (response.isSuccessful()) {
+                            User user= response.body();
 
-                        if(user.getSessionToken() == null){
-                            Log.e(LoginActivity.class.getSimpleName(), "There is no session token in response");
+                            showProgress(false);
+
+                            if(user.getSessionToken() == null){
+                                Log.e(LoginActivity.class.getSimpleName(), "There is no session token in response");
+                            } else {
+                                PrefUtil.putString(getApplicationContext(), AppConstants.SESSION_TOKEN, user.getSessionToken());
+
+                                showGroupListActivity();
+                            }
                         } else {
-                            PrefUtil.putString(getApplicationContext(), AppConstants.SESSION_TOKEN, user.getSessionToken());
+                            ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
 
-                            showGroupListActivity();
+                            onFailure(call, e.toException());
                         }
                     }
 
                     @Override
-                    public void onError(ErrorMessage.Error e) {
+                    public void onFailure(Call<User> call, Throwable t) {
+                        Log.e(LoginActivity.class.getSimpleName(), "Error while logging user", t);
+
                         showProgress(false);
 
-                        if(e.getCode() == 401L) {
-                            mPasswordView.setError(e.getMessage());
-                            mPasswordView.requestFocus();
+                        if(t instanceof ErrorMessage.ErrorException) {
+                            ErrorMessage.Error e = ((ErrorMessage.ErrorException) t).getErrorMessage().getError();
+
+                            if (e.getCode() == 401L) {
+                                mPasswordView.setError(e.getMessage());
+                                mPasswordView.requestFocus();
+                            }
                         }
                     }
                 });
             }
             else{
-                authHandler.register(this, email, password, new AuthHandler.OnRegister() {
+                final AuthService service = DreamFactoryAPI.getInstance().getService(AuthService.class);
+
+                final RegisterRequest registerRequest = new RegisterRequest();
+                registerRequest.setEmail(email);
+                registerRequest.setPassword(password);
+                registerRequest.setLastName("Book");
+                registerRequest.setFirstName("Address");
+                registerRequest.setName("Address Book User");
+
+                // Second param means that user will be logged in automatically
+                final Call<RegisterResponse> call = service.userRegister(registerRequest, 1L);
+
+                call.enqueue(new Callback<RegisterResponse>() {
                     @Override
-                    public void onRegister(RegisterResponse response) {
-                        showProgress(false);
+                    public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
+                        if (response.isSuccessful()) {
+                            showProgress(false);
 
-                        if(response.getSessionToken() == null){
-                            Log.e(LoginActivity.class.getSimpleName(), "There is no session token in response");
+                            if (response.body().getSessionToken() == null) {
+                                Log.e(LoginActivity.class.getSimpleName(), "There is no session token in response");
+                            } else {
+                                PrefUtil.putString(getApplicationContext(), AppConstants.SESSION_TOKEN, response.body().getSessionToken());
+
+                                showGroupListActivity();
+                            }
                         } else {
-                            PrefUtil.putString(getApplicationContext(), AppConstants.SESSION_TOKEN, response.getSessionToken());
+                            ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
 
-                            showGroupListActivity();
+                            onFailure(call, e.toException());
                         }
                     }
 
                     @Override
-                    public void onError(ErrorMessage.Error e) {
+                    public void onFailure(Call<RegisterResponse> call, Throwable t) {
+                        Log.e(LoginActivity.class.getSimpleName(), "Error while registering user", t);
+
                         showProgress(false);
 
-                        if(e.getCode() == 400L) {
-                            if(e.getContext() != null && e.getContext().getEmail().length > 0) {
-                                mEmailView.setError(e.getContext().getEmail()[0]);
-                                mEmailView.requestFocus();
-                            }
+                        if (t instanceof ErrorMessage.ErrorException) {
+                            ErrorMessage.Error e = ((ErrorMessage.ErrorException) t).getErrorMessage().getError();
 
-                            if(e.getContext() != null && e.getContext().getPassword().length > 0) {
-                                mPasswordView.setError(e.getContext().getPassword()[0]);
-                                mPasswordView.requestFocus();
+                            if (e.getCode() == 400L) {
+                                if (e.getContext() != null && e.getContext().getEmail().length > 0) {
+                                    mEmailView.setError(e.getContext().getEmail()[0]);
+                                    mEmailView.requestFocus();
+                                }
+
+                                if (e.getContext() != null && e.getContext().getPassword().length > 0) {
+                                    mPasswordView.setError(e.getContext().getPassword()[0]);
+                                    mPasswordView.requestFocus();
+                                }
                             }
                         }
                     }
@@ -281,7 +332,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        List<String> emails = new ArrayList<>();
+        final List<String> emails = new ArrayList<>();
         cursor.moveToFirst();
 
         while (!cursor.isAfterLast()) {
@@ -307,7 +358,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
-        ArrayAdapter<String> adapter =
+        final ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(LoginActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
@@ -315,7 +366,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     }
 
     private void showGroupListActivity (){
-        Intent intent = new Intent(this, GroupListActivity.class);
+        final Intent intent = new Intent(this, GroupListActivity.class);
         startActivity(intent);
     }
 }

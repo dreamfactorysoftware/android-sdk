@@ -7,7 +7,7 @@ import java.io.Serializable;
  */
 public class ErrorMessage implements Serializable {
 
-    private Error error;
+    private Error error = new Error();
 
     public ErrorMessage() {}
 
@@ -21,6 +21,10 @@ public class ErrorMessage implements Serializable {
 
     public void setError(Error error) {
         this.error = error;
+    }
+
+    public ErrorException toException() {
+        return new ErrorException(this);
     }
 
     public static class Error implements Serializable {
@@ -94,6 +98,23 @@ public class ErrorMessage implements Serializable {
             public void setPassword(String[] password) {
                 this.password = password;
             }
+        }
+    }
+
+    public static class ErrorException extends Exception {
+        private ErrorMessage errorMessage;
+
+        public ErrorException() {
+        }
+
+        public ErrorException(ErrorMessage errorMessage) {
+            super(errorMessage.getError().getMessage());
+
+            this.errorMessage = errorMessage != null ? errorMessage : new ErrorMessage("Unexpected error");
+        }
+
+        public ErrorMessage getErrorMessage() {
+            return errorMessage;
         }
     }
 }

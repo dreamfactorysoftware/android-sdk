@@ -46,8 +46,11 @@ public class DreamFactoryAPI {
                     ongoing.addHeader("X-DreamFactory-Api-Key", DreamFactoryApp.API_KEY);
                 }
 
-                ongoing.addHeader("X-DreamFactory-Session-Token",
-                        PrefUtil.getString(DreamFactoryApp.getAppContext(), AppConstants.SESSION_TOKEN));
+                String token = PrefUtil.getString(DreamFactoryApp.getAppContext(), AppConstants.SESSION_TOKEN);
+
+                if(token != null && !token.isEmpty()) {
+                    ongoing.addHeader("X-DreamFactory-Session-Token", token);
+                }
 
                 return chain.proceed(ongoing.build());
             }

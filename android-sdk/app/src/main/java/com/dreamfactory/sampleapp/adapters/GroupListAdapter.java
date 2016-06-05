@@ -25,7 +25,7 @@ import dfapi.ApiException;
 
 public class GroupListAdapter extends BaseAdapter{
     private Activity context;
-    public List<GroupRecord> records;
+    private List<GroupRecord> records;
     private BitSet deleteSet;
 
     private RemoveContactGroupRelationshipsTask removeContactGroupRelationTask;
@@ -113,6 +113,12 @@ public class GroupListAdapter extends BaseAdapter{
             records.remove(i - delete_offset);
             delete_offset++;
         }
+        notifyDataSetChanged();
+    }
+
+    public void setRecords(List<GroupRecord> records) {
+        this.records = records;
+
         notifyDataSetChanged();
     }
 
