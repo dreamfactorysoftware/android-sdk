@@ -36,21 +36,21 @@ public class EditInfoViewGroup extends LinearLayout {
             return;
         }
 
-        if(!record.info_type.isEmpty()){
-            type.setText(record.info_type);
+        if(!record.getInfoType().isEmpty()){
+            type.setText(record.getInfoType());
         }
 
-        if(!record.email.isEmpty()){
-            email.setText(record.email);
+        if(!record.getEmail().isEmpty()){
+            email.setText(record.getEmail());
         }
 
-        if(!record.phone.isEmpty()){
-            phone.setText(record.phone);
+        if(!record.getPhone().isEmpty()){
+            phone.setText(record.getPhone());
         }
 
-        if(!record.address.isEmpty() && !record.city.isEmpty()){
-            address.setText(record.address);
-            city.setText(record.city);
+        if(!record.getAddress().isEmpty() && !record.getCity().isEmpty()){
+            address.setText(record.getAddress());
+            city.setText(record.getCity());
         }
     }
 
@@ -64,15 +64,15 @@ public class EditInfoViewGroup extends LinearLayout {
 
         ContactInfoRecord record = new ContactInfoRecord();
 
-        record.info_type = type.getText().toString();
-        record.email = email.getText().toString();
-        record.phone = phone.getText().toString();
-        record.address = address.getText().toString();
-        record.city = city.getText().toString();
+        record.setInfoType(type.getText().toString());
+        record.setEmail(email.getText().toString());
+        record.setPhone(phone.getText().toString());
+        record.setAddress(address.getText().toString());
+        record.setCity(city.getText().toString());
 
         if (contactInfoRecord != null) {
-            record.id = contactInfoRecord.id;
-            record.contact_id = contactInfoRecord.contact_id;
+            record.setId(contactInfoRecord.getId());
+            record.setContactId(contactInfoRecord.getContactId());
         }
 
         return record;

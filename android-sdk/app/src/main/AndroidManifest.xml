@@ -20,7 +20,6 @@
         <meta-data android:name="instanceUrl" android:value="http://10.0.2.2:8080/api/v2/" />
         <meta-data android:name="dbSvc" android:value="db/_table" />
         <meta-data android:name="apiKey" android:value="55d7ad6d21915e8539b7939f8604b4c096eff005bc2d431abd9b427a45d55e22" />
-
         <activity
             android:name=".ui.LoginActivity"
             android:label="@string/app_name"

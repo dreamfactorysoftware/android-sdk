@@ -34,6 +34,10 @@ public class DreamFactoryAPI {
 
     private static Converter<ResponseBody, ErrorMessage> errorConverter;
 
+    public static String testToken;
+
+    public static Boolean runningFromTest = false;
+
     private DreamFactoryAPI() {
         httpClient = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
             @Override
@@ -46,10 +50,14 @@ public class DreamFactoryAPI {
                     ongoing.addHeader("X-DreamFactory-Api-Key", DreamFactoryApp.API_KEY);
                 }
 
-                String token = PrefUtil.getString(DreamFactoryApp.getAppContext(), AppConstants.SESSION_TOKEN);
+                if(!runningFromTest) {
+                    String token = PrefUtil.getString(DreamFactoryApp.getAppContext(), AppConstants.SESSION_TOKEN);
 
-                if(token != null && !token.isEmpty()) {
-                    ongoing.addHeader("X-DreamFactory-Session-Token", token);
+                    if (token != null && !token.isEmpty()) {
+                        ongoing.addHeader("X-DreamFactory-Session-Token", token);
+                    }
+                } else if(testToken != null){
+                    ongoing.addHeader("X-DreamFactory-Session-Token", testToken);
                 }
 
                 return chain.proceed(ongoing.build());

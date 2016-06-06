@@ -20,30 +20,30 @@ public class InfoViewGroup extends RelativeLayout {
 
         inflater.inflate(R.layout.contact_info_layout, this, true);
         TextView type = (TextView) findViewById(R.id.type_label);
-        type.setText(record.info_type);
+        type.setText(record.getInfoType());
 
-        if (record.phone.isEmpty()) {
+        if (record.getPhone().isEmpty()) {
             RelativeLayout layout = (RelativeLayout) findViewById(R.id.info_phone_layout);
             layout.setVisibility(GONE);
         } else {
             TextView phone_label = (TextView) findViewById(R.id.phone_label);
-            phone_label.setText(record.phone);
+            phone_label.setText(record.getPhone());
         }
 
-        if (record.email.isEmpty()) {
+        if (record.getEmail().isEmpty()) {
             RelativeLayout layout = (RelativeLayout) findViewById(R.id.info_email_layout);
             layout.setVisibility(GONE);
         } else {
             TextView email_label = (TextView) findViewById(R.id.email_label);
-            email_label.setText(record.email);
+            email_label.setText(record.getEmail());
         }
 
-        if (record.address.isEmpty() || record.city.isEmpty()) {
+        if (record.getAddress().isEmpty() || record.getCity().isEmpty()) {
             RelativeLayout layout = (RelativeLayout) findViewById(R.id.info_address_layout);
             layout.setVisibility(GONE);
         } else {
             TextView address_label = (TextView) findViewById(R.id.address_label);
-            address_label.setText(record.address + " " + record.city);
+            address_label.setText(record.getAddress() + " " + record.getCity());
         }
     }
 

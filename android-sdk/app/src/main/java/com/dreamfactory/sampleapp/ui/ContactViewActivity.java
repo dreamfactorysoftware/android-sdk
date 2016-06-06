@@ -111,7 +111,7 @@ public class ContactViewActivity extends Activity {
 
         save_button.setVisibility(View.INVISIBLE);
 
-        if(contactRecord.image_url != null && !contactRecord.image_url.isEmpty()){
+        if(!contactRecord.getImageUrl().isEmpty()){
             // only fetch the profile image if the user has one
             getProfileImageFromServerTask = new GetProfileImageFromServerTask();
             getProfileImageFromServerTask.execute();
@@ -142,7 +142,7 @@ public class ContactViewActivity extends Activity {
                 updateContactTask = new UpdateContactTask();
                 updateContactTask.execute();
 
-                if(contactRecord.image_url != null && !contactRecord.image_url.isEmpty()) {
+                if(!contactRecord.getImageUrl().isEmpty()) {
                     // re-get the contact profile image
                     getProfileImageFromServerTask = new GetProfileImageFromServerTask();
                     getProfileImageFromServerTask.execute();
@@ -173,16 +173,16 @@ public class ContactViewActivity extends Activity {
 
     private void buildContactView(){
         TextView nameLabel = (TextView) findViewById(R.id.contactName);
-        nameLabel.setText(contactRecord.first_name + " " + contactRecord.last_name);
+        nameLabel.setText(contactRecord.getFirstName() + " " + contactRecord.getLastName());
 
         TextView skypeLabel = (TextView) findViewById(R.id.skypeLabel);
-        skypeLabel.setText(contactRecord.skype);
+        skypeLabel.setText(contactRecord.getSkype());
 
         TextView twitterLabel = (TextView) findViewById(R.id.twitterLabel);
-        twitterLabel.setText(contactRecord.twitter);
+        twitterLabel.setText(contactRecord.getTwitter());
 
         TextView notesLabel = (TextView) findViewById(R.id.notesLabel);
-        notesLabel.setText(contactRecord.notes);
+        notesLabel.setText(contactRecord.getNotes());
     }
 
     private void buildContactInfoViews(){
@@ -208,7 +208,7 @@ public class ContactViewActivity extends Activity {
 
             queryParams = new HashMap<>();
             // filter to only the contact_info records related to the contact
-            queryParams.put("filter", "contact_id=" + contactRecord.id);
+            queryParams.put("filter", "contact_id=" + contactRecord.getId());
 
             // include API key and sessionToken
             applicationApiKey = AppConstants.API_KEY;
@@ -231,17 +231,6 @@ public class ContactViewActivity extends Activity {
         protected void onCompletion(boolean success) {
             getContactInfoTask = null;
             if(success){
-                for(ContactInfoRecord record : records.record) {
-                    // make sure none of the fields are null
-                    record.info_type = record.getNonNull(record.info_type);
-
-                    record.city = record.getNonNull(record.city);
-                    record.address = record.getNonNull(record.address);
-
-                    record.phone = record.getNonNull(record.phone);
-                    record.email = record.getNonNull(record.email);
-                }
-
                 contactInfoRecords = new ContactInfoRecords();
                 contactInfoRecords.record = records.record;
 
@@ -317,7 +306,7 @@ public class ContactViewActivity extends Activity {
             callerName = "getImageFromFile";
             serviceName = "files";
             applicationApiKey = AppConstants.API_KEY;
-            endPoint = "profile_images/" + contactRecord.id + "/" + contactRecord.image_url;
+            endPoint = "profile_images/" + contactRecord.getId() + "/" + contactRecord.getImageUrl();
             queryParams = new HashMap<>();
             // don't include the file properties
             queryParams.put("include_properties", "1");

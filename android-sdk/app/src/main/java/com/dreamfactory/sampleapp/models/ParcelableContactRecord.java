@@ -7,35 +7,35 @@ import android.os.Parcelable;
 public class ParcelableContactRecord implements Parcelable {
 
     private int id;
-    private String first_name;
-    private String last_name;
-    private String image_url;
+    private String firstName;
+    private String lastName;
+    private String imageUrl;
     private String twitter;
     private String skype;
     private String notes;
 
     public ParcelableContactRecord(ContactRecord record) {
 
-        id = record.id;
-        first_name = record.first_name;
-        last_name = record.last_name;
-        image_url = record.image_url;
-        twitter = record.twitter;
-        skype = record.skype;
-        notes = record.notes;
+        id = record.getId();
+        firstName = record.getFirstName();
+        lastName = record.getLastName();
+        imageUrl = record.getImageUrl();
+        twitter = record.getTwitter();
+        skype = record.getSkype();
+        notes = record.getNotes();
     }
 
     public ContactRecord buildContactRecord () {
 
         ContactRecord record = new ContactRecord();
 
-        record.id = id;
-        record.first_name = first_name;
-        record.last_name = last_name;
-        record.image_url = image_url;
-        record.twitter = twitter;
-        record.skype = skype;
-        record.notes = notes;
+        record.setId(id);
+        record.setFirstName(firstName);
+        record.setLastName(lastName);
+        record.setImageUrl(imageUrl);
+        record.setTwitter(twitter);
+        record.setSkype(skype);
+        record.setNotes(notes);
 
         return record;
     }
@@ -49,9 +49,9 @@ public class ParcelableContactRecord implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
 
         dest.writeInt(id);
-        dest.writeString(first_name);
-        dest.writeString(last_name);
-        dest.writeString(image_url);
+        dest.writeString(firstName);
+        dest.writeString(lastName);
+        dest.writeString(imageUrl);
         dest.writeString(twitter);
         dest.writeString(skype);
         dest.writeString(notes);
@@ -71,9 +71,9 @@ public class ParcelableContactRecord implements Parcelable {
     private ParcelableContactRecord(Parcel in) {
 
         id = in.readInt();
-        first_name = in.readString();
-        last_name = in.readString();
-        image_url = in.readString();
+        firstName = in.readString();
+        lastName = in.readString();
+        imageUrl = in.readString();
         twitter = in.readString();
         skype = in.readString();
         notes = in.readString();

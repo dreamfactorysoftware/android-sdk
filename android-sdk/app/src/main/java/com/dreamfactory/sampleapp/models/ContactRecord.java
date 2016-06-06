@@ -1,41 +1,83 @@
 package com.dreamfactory.sampleapp.models;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 // make it parcelable for passing from contactListActivity to contactViewActivity
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ContactRecord extends BaseRecord {
 
-    @JsonProperty("id")
-    public int id;
+    private int id;
 
     @JsonProperty("first_name")
-    public String first_name;
+    private String firstName;
 
     @JsonProperty("last_name")
-    public String last_name;
+    private String lastName;
 
     @JsonProperty("image_url")
-    public String image_url;
+    private String imageUrl;
 
-    @JsonProperty("twitter")
-    public String twitter;
+    private String twitter;
 
-    @JsonProperty("skype")
-    public String skype;
+    private String skype;
 
-    @JsonProperty("notes")
-    public String notes;
+    private String notes;
 
-    @Override
-    public void setAllNonNull() {
+    public ContactRecord() {
+    }
 
-        first_name = getNonNull(first_name);
-        last_name = getNonNull(last_name);
-        image_url = getNonNull(image_url);
-        twitter = getNonNull(twitter);
-        skype = getNonNull(skype);
-        notes = getNonNull(notes);
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getFirstName() {
+        return firstName != null ? firstName : "";
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName != null ? lastName : "";
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getImageUrl() {
+        return imageUrl != null ? imageUrl : "";
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getTwitter() {
+        return twitter != null ? twitter : "";
+    }
+
+    public void setTwitter(String twitter) {
+        this.twitter = twitter;
+    }
+
+    public String getSkype() {
+        return skype != null ? skype : "";
+    }
+
+    public void setSkype(String skype) {
+        this.skype = skype;
+    }
+
+    public String getNotes() {
+        return notes != null ? notes : "";
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 }
