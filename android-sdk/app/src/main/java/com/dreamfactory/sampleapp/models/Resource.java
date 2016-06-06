@@ -18,4 +18,8 @@ public class Resource<T extends BaseRecord> implements Serializable {
     public void setResource(List<T> resource) {
         this.resource = resource;
     }
+
+    public void addResource(T value) {
+        resource.add(value);
+    }
 }

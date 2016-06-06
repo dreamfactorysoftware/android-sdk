@@ -70,10 +70,10 @@ public class ContactListAdapter extends BaseAdapter{
         String previous = "";
         for(int i = 0; i < this.mRecordsList.size(); i++){
             // insert headers at first letter of last name
-            if(!mRecordsList.get(i).last_name.substring(0,1).equalsIgnoreCase(previous)){
+            if(!mRecordsList.get(i).getLastName().substring(0,1).equalsIgnoreCase(previous)){
                 // index of header is at index of actual + cardinality of mainset
                 mainSet.set(i + mainSet.cardinality());
-                previous = mRecordsList.get(i).last_name.substring(0,1).toUpperCase();
+                previous = mRecordsList.get(i).getLastName().substring(0,1).toUpperCase();
             }
         }
     }
@@ -82,10 +82,10 @@ public class ContactListAdapter extends BaseAdapter{
         @Override
         public int compare(ContactRecord lhs, ContactRecord rhs) {
 
-            if(lhs.last_name.equalsIgnoreCase(rhs.last_name)){
-                return lhs.first_name.compareTo(rhs.first_name);
+            if(lhs.getLastName().equalsIgnoreCase(rhs.getLastName())){
+                return lhs.getFirstName().compareTo(rhs.getFirstName());
             }
-            return lhs.last_name.compareToIgnoreCase(rhs.last_name);
+            return lhs.getLastName().compareToIgnoreCase(rhs.getLastName());
         }
     }
 
@@ -126,13 +126,13 @@ public class ContactListAdapter extends BaseAdapter{
             rowView.setClickable(true);
             // set the header as the first char of the last name
             ContactRecord record = mRecordsList.get(position - num_headers);
-            holder.text.setText(record.last_name.substring(0, 1).toUpperCase());
+            holder.text.setText(record.getLastName().substring(0, 1).toUpperCase());
             holder.text.setBackgroundColor(context.getResources().getColor(R.color.contact_list_header));
         }
         else {
             rowView.setClickable(false);
             ContactRecord record = mRecordsList.get(position - num_headers);
-            holder.text.setText(record.first_name + " " + record.last_name);
+            holder.text.setText(record.getFirstName() + " " + record.getLastName());
             holder.text.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));
         }
 
@@ -185,13 +185,13 @@ public class ContactListAdapter extends BaseAdapter{
         try{
             for(int i = deleteSet.nextSetBit(0); i >= 0; i = deleteSet.nextSetBit(i + 1)){
                 JSONObject tmp = new JSONObject();
-                jsonArray.put(mRecordsList.get(i-getNumHeaders(i)).id);
-                tmp.put("id", mRecordsList.get(i-getNumHeaders(i)).id);
+                jsonArray.put(mRecordsList.get(i-getNumHeaders(i)).getId());
+                tmp.put("id", mRecordsList.get(i-getNumHeaders(i)).getId());
                 bodyArray.put(tmp);
-                if(mRecordsList.get(i-getNumHeaders(i)).image_url != null &&
-                        !mRecordsList.get(i-getNumHeaders(i)).image_url.isEmpty()){
+                if(mRecordsList.get(i-getNumHeaders(i)).getImageUrl() != null &&
+                        !mRecordsList.get(i-getNumHeaders(i)).getImageUrl().isEmpty()){
                     RemoveContactFoldersTask removeContactFoldersTask =
-                            new RemoveContactFoldersTask(mRecordsList.get(i-getNumHeaders(i)).id);
+                            new RemoveContactFoldersTask(mRecordsList.get(i-getNumHeaders(i)).getId());
                     removeContactFoldersTask.execute();
                 }
             }

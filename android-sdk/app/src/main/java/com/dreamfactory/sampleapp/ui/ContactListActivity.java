@@ -162,7 +162,7 @@ public class ContactListActivity extends Activity {
                     (ContactsRelationalRecords) ApiInvoker.deserialize(response, "", ContactsRelationalRecords.class);
             contactRecords = new ArrayList<>();
             for(ContactsRelationalRecord record : relationalRecords.record){
-                contactRecords.add(record.contact_by_contact_id);
+                contactRecords.add(record.getContact());
             }
 
         }

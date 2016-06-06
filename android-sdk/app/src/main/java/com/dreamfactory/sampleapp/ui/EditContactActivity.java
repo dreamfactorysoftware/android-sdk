@@ -40,11 +40,11 @@ public class EditContactActivity extends CreateContactActivity {
 
     @Override
     protected void buildViews(){
-        firstNameEditText.setText(contactRecord.first_name);
-        lastNameEditText.setText(contactRecord.last_name);
-        twitterEditText.setText(contactRecord.twitter);
-        skypeEditText.setText(contactRecord.skype);
-        notesEditText.setText(contactRecord.notes);
+        firstNameEditText.setText(contactRecord.getFirstName());
+        lastNameEditText.setText(contactRecord.getLastName());
+        twitterEditText.setText(contactRecord.getTwitter());
+        skypeEditText.setText(contactRecord.getSkype());
+        notesEditText.setText(contactRecord.getNotes());
 
 
         editInfoViewGroupList = new ArrayList<>();
@@ -106,7 +106,7 @@ public class EditContactActivity extends CreateContactActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == Activity.RESULT_OK){
-            contactRecord.image_url = data.getStringExtra("imageUrl");
+            contactRecord.setImageUrl(data.getStringExtra("imageUrl"));
         }
     }
 
@@ -129,11 +129,11 @@ public class EditContactActivity extends CreateContactActivity {
         // just to keep onCreate a little cleaner
         Intent intent = new Intent();
 
-        contactRecord.first_name = firstNameEditText.getText().toString();
-        contactRecord.last_name = lastNameEditText.getText().toString();
-        contactRecord.twitter = twitterEditText.getText().toString();
-        contactRecord.skype = skypeEditText.getText().toString();
-        contactRecord.notes = notesEditText.getText().toString();
+        contactRecord.setFirstName(firstNameEditText.getText().toString());
+        contactRecord.setLastName(lastNameEditText.getText().toString());
+        contactRecord.setTwitter(twitterEditText.getText().toString());
+        contactRecord.setSkype(skypeEditText.getText().toString());
+        contactRecord.setNotes(notesEditText.getText().toString());
 
         ParcelableContactRecord parcelableContactRecord =
                 new ParcelableContactRecord(contactRecord);
@@ -144,9 +144,9 @@ public class EditContactActivity extends CreateContactActivity {
         ContactInfoRecords contactInfoRecords = new ContactInfoRecords();
         for(EditInfoViewGroup editInfoViewGroup : editInfoViewGroupList){
             ContactInfoRecord tmp = editInfoViewGroup.buildToContactInfoRecord();
-            if(tmp.id == 0){
+            if(tmp.getId() == 0){
                 // new records don't have an id
-                tmp.id = contactRecord.id;
+                tmp.setId(contactRecord.getId());
                 contactInfoRecords.record.add(tmp);
             }
             tmpContactInfoRecord.record.add(tmp);

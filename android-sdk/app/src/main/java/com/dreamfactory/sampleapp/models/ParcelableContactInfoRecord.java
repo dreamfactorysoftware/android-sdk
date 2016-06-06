@@ -7,8 +7,8 @@ public class ParcelableContactInfoRecord implements Parcelable {
 
     private int id;
     private int ordinal;
-    private int contact_id;
-    private String info_type;
+    private int contactId;
+    private String infoIype;
     private String phone;
     private String email;
     private String address;
@@ -19,34 +19,34 @@ public class ParcelableContactInfoRecord implements Parcelable {
 
     public ParcelableContactInfoRecord(ContactInfoRecord record) {
 
-        id = record.id;
-        ordinal = record.ordinal;
-        contact_id = record.contact_id;
-        info_type = record.info_type;
-        phone = record.phone;
-        email = record.email;
-        address = record.address;
-        city = record.city;
-        state = record.state;
-        zip = record.zip;
-        country = record.country;
+        id = record.getId();
+        ordinal = record.getOrdinal();
+        contactId = record.getContactId();
+        infoIype = record.getInfoType();
+        phone = record.getPhone();
+        email = record.getEmail();
+        address = record.getAddress();
+        city = record.getCity();
+        state = record.getState();
+        zip = record.getZip();
+        country = record.getCountry();
     }
 
     public ContactInfoRecord buildContactInfoRecord() {
 
         ContactInfoRecord record = new ContactInfoRecord();
 
-        record.id = id;
-        record.ordinal = ordinal;
-        record.contact_id = contact_id;
-        record.info_type = info_type;
-        record.phone = phone;
-        record.email = email;
-        record.address = address;
-        record.city = city;
-        record.state = state;
-        record.zip = zip;
-        record.country = country;
+        record.setId(id);
+        record.setOrdinal(ordinal);
+        record.setContactId(contactId);
+        record.setInfoType(infoIype);
+        record.setPhone(phone);
+        record.setEmail(email);
+        record.setAddress(address);
+        record.setCity(city);
+        record.setState(state);
+        record.setZip(zip);
+        record.setCountry(country);
 
         return record;
     }
@@ -61,8 +61,8 @@ public class ParcelableContactInfoRecord implements Parcelable {
 
         dest.writeInt(id);
         dest.writeInt(ordinal);
-        dest.writeInt(contact_id);
-        dest.writeString(info_type);
+        dest.writeInt(contactId);
+        dest.writeString(infoIype);
         dest.writeString(phone);
         dest.writeString(email);
         dest.writeString(address);
@@ -76,8 +76,8 @@ public class ParcelableContactInfoRecord implements Parcelable {
 
         id = in.readInt();
         ordinal = in.readInt();
-        contact_id = in.readInt();
-        info_type = in.readString();
+        contactId = in.readInt();
+        infoIype = in.readString();
         phone = in.readString();
         email = in.readString();
         address = in.readString();

@@ -109,7 +109,7 @@ public class EditGroupAdapter extends CreateGroupAdapter {
 
             List<ContactRecord> contactRecords = new ArrayList<>();
             for(ContactsRelationalRecord record : relationalRecords.record){
-                contactRecords.add(record.contact_by_contact_id);
+                contactRecords.add(record.getContact());
             }
 
 
@@ -118,7 +118,7 @@ public class EditGroupAdapter extends CreateGroupAdapter {
 
             int j = 0;
             for(int i = 0; i < mRecordsList.size() && j < contactRecords.size(); i++){
-                if(mRecordsList.get(i).id == contactRecords.get(j).id){
+                if(mRecordsList.get(i).getId() == contactRecords.get(j).getId()){
                     // mark the contacts already in the group
                     // use inGroupSet so we can tell how things changed later
                     inGroupSet.set(i);

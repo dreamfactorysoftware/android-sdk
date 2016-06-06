@@ -200,14 +200,14 @@ public class CreateContactActivity extends Activity {
 
             // build contact record, don't have id yet so can't provide one
             ContactRecord contactRecord = new ContactRecord();
-            contactRecord.first_name = contactRecord.getNonNull(firstNameEditText.getText().toString());
-            contactRecord.last_name = contactRecord.getNonNull(lastNameEditText.getText().toString());
-            contactRecord.skype = contactRecord.getNonNull(skypeEditText.getText().toString());
-            contactRecord.twitter = contactRecord.getNonNull(twitterEditText.getText().toString());
-            contactRecord.notes = contactRecord.getNonNull(notesEditText.getText().toString());
+            contactRecord.setFirstName(firstNameEditText.getText().toString());
+            contactRecord.setLastName(lastNameEditText.getText().toString());
+            contactRecord.setSkype(skypeEditText.getText().toString());
+            contactRecord.setTwitter(twitterEditText.getText().toString());
+            contactRecord.setNotes(notesEditText.getText().toString());
+
             if(profileImagePath != null && !profileImagePath.isEmpty()){
-                Log.w("profileImagePathtestuser1@dreamfactory.com", profileImagePath);
-                contactRecord.image_url = "testFile.png";
+                contactRecord.setImageUrl("testFile.png");
             }
 
             requestString = ApiInvoker.serialize(contactRecord);
@@ -220,7 +220,7 @@ public class CreateContactActivity extends Activity {
         protected void processResponse(String response) throws ApiException, org.json.JSONException {
             // response has whole contact record, but we just want the id
             ContactRecords records = (ContactRecords) ApiInvoker.deserialize(response, "", ContactRecords.class);
-            contactId = records.record.get(0).id;
+            contactId = records.record.get(0).getId();
         }
 
         @Override
@@ -233,7 +233,7 @@ public class CreateContactActivity extends Activity {
                     for (EditInfoViewGroup viewGroup : editInfoViewGroupList) {
                         ContactInfoRecord contactInfoRecord = viewGroup.buildToContactInfoRecord();
                         // need to include the contactId
-                        contactInfoRecord.contact_id = contactId;
+                        contactInfoRecord.setContactId(contactId);
                         contactInfoRecords.record.add(contactInfoRecord);
                     }
 
