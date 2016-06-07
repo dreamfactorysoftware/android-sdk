@@ -16,6 +16,7 @@ import com.dreamfactory.sampleapp.models.Resource;
 import com.dreamfactory.sampleapp.models.User;
 import com.dreamfactory.sampleapp.models.requests.LoginRequest;
 import com.dreamfactory.sampleapp.models.requests.RegisterRequest;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Assert;
@@ -156,6 +157,19 @@ public class DreamFactoryAPITest {
     }
 
     @Test
+    public void testGetAllContacts() throws Exception {
+        ContactService service = api.getService(ContactService.class);
+
+        Response<Resource<ContactRecord>> response = service.getAllContacts().execute();
+
+        Assert.assertTrue(response.isSuccessful());
+
+        List<ContactRecord> list = response.body().getResource();
+
+        Assert.assertTrue(list.size() > 0);
+    }
+
+    @Test
     public void testUpdateContact() throws Exception {
         ContactService service = api.getService(ContactService.class);
 
@@ -168,7 +182,7 @@ public class DreamFactoryAPITest {
         Resource<ContactRecord> updateRecords = new Resource<>();
         updateRecords.addResource(record);
 
-        Response<Resource<ContactRecord>> resp = service.updateContact(updateRecords).execute();
+        Response<Resource<ContactRecord>> resp = service.updateContacts(updateRecords).execute();
 
         Assert.assertTrue(resp.isSuccessful());
 
@@ -181,7 +195,7 @@ public class DreamFactoryAPITest {
         updateRecords = new Resource<>();
         updateRecords.addResource(record);
 
-        resp = service.updateContact(updateRecords).execute();
+        resp = service.updateContacts(updateRecords).execute();
 
         Assert.assertTrue(resp.isSuccessful());
 
@@ -201,7 +215,7 @@ public class DreamFactoryAPITest {
         Resource<ContactInfoRecord> updateRecords = new Resource<>();
         updateRecords.addResource(contactInfo);
 
-        Response<Resource<ContactInfoRecord>> resp = service.updateContactInfo(updateRecords).execute();
+        Response<Resource<ContactInfoRecord>> resp = service.updateContactInfos(updateRecords).execute();
 
         Assert.assertTrue(resp.isSuccessful());
 
@@ -214,10 +228,121 @@ public class DreamFactoryAPITest {
         updateRecords = new Resource<>();
         updateRecords.addResource(contactInfo);
 
-        resp = service.updateContactInfo(updateRecords).execute();
+        resp = service.updateContactInfos(updateRecords).execute();
 
         Assert.assertTrue(resp.isSuccessful());
 
         Assert.assertTrue(resp.body().getResource().size() > 0 && resp.body().getResource().get(0).getId() == 1L);
+    }
+
+    @Test
+    public void testUpdateContactGroup() throws Exception {
+        ContactGroupService service = api.getService(ContactGroupService.class);
+
+        GroupRecord contactGroup = service.getContactGroup(1L).execute().body();
+
+        String oldName = contactGroup.getName();
+
+        contactGroup.setName("NEW NAME");
+
+        Resource<GroupRecord> updateRecords = new Resource<>();
+        updateRecords.addResource(contactGroup);
+
+        Response<Resource<GroupRecord>> resp = service.updateContactGroups(updateRecords).execute();
+
+        Assert.assertTrue(resp.isSuccessful());
+
+        Assert.assertTrue(resp.body().getResource().size() > 0 && resp.body().getResource().get(0).getId() == 1L);
+
+        contactGroup = service.getContactGroup(1L).execute().body();
+
+        contactGroup.setName(oldName);
+
+        updateRecords = new Resource<>();
+        updateRecords.addResource(contactGroup);
+
+        resp = service.updateContactGroups(updateRecords).execute();
+
+        Assert.assertTrue(resp.isSuccessful());
+
+        Assert.assertTrue(resp.body().getResource().size() > 0 && resp.body().getResource().get(0).getId() == 1L);
+    }
+
+    @Test
+    public void testDeleteAndAddGroupContacts() throws Exception {
+        ContactGroupService service = api.getService(ContactGroupService.class);
+
+        ContactsRelationalRecord recordToDelete = new ContactsRelationalRecord();
+        recordToDelete.setContactGroupId(2L);
+        recordToDelete.setContactId(7L);
+
+        Resource<ContactsRelationalRecord> resource = new Resource<>();
+        resource.addResource(recordToDelete);
+
+        Response<Resource<ContactsRelationalRecord>> response = service.deleteGroupContacts(resource).execute();
+
+        if(response.isSuccessful()) {
+            response = service.addGroupContacts(response.body()).execute();
+
+            Assert.assertTrue(response.isSuccessful());
+        } else {
+            ErrorMessage errorMessage = DreamFactoryAPI.getErrorMessage(response);
+
+            // Already deleted, add it
+            Assert.assertEquals(errorMessage.getError().getCode().longValue(), 404L);
+
+            response = service.addGroupContacts(resource).execute();
+
+            Assert.assertTrue(response.isSuccessful());
+
+            response = service.deleteGroupContacts(response.body()).execute();
+
+            Assert.assertTrue(response.isSuccessful());
+        }
+    }
+
+    @Test
+    public void testCreateContactGroup() throws Exception {
+        ContactGroupService service = api.getService(ContactGroupService.class);
+
+        GroupRecord contactGroup = new GroupRecord();
+        contactGroup.setName("NEW NAME 3");
+
+        Resource<GroupRecord> createRecords = new Resource<>();
+        createRecords.addResource(contactGroup);
+
+        Response<Resource<GroupRecord>> resp = service.createContactGroups(createRecords).execute();
+
+        if(resp.isSuccessful()) {
+            Assert.assertTrue(resp.body().getResource().size() > 0 && resp.body().getResource().get(0).getId() != 0L);
+        } else {
+            ErrorMessage error = DreamFactoryAPI.getErrorMessage(resp);
+
+            // Group already exist
+            Assert.assertEquals(error.getError().getCode().longValue(), 500L);
+        }
+    }
+
+    @Test
+    public void testCreateContact() throws Exception {
+        ContactService service = api.getService(ContactService.class);
+
+        ContactRecord contact = new ContactRecord();
+        contact.setFirstName("John");
+        contact.setLastName("Doe");
+
+        Resource<ContactRecord> createRecords = new Resource<>();
+        createRecords.addResource(contact);
+
+        Response<Resource<ContactRecord>> resp = service.createContacts(createRecords).execute();
+
+        if(resp.isSuccessful()) {
+            Assert.assertTrue(resp.body().getResource().size() > 0 && resp.body().getResource().get(0).getId() != 0L);
+        } else {
+            ErrorMessage error = DreamFactoryAPI.getErrorMessage(resp);
+
+            // Group already exist
+            Assert.assertEquals(error.getError().getCode().longValue(), 500L);
+        }
     }
 }

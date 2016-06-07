@@ -50,7 +50,7 @@ public class CreateContactActivity extends Activity {
     protected List<EditInfoViewGroup> editInfoViewGroupList;
 
     private AddContactTask addContactTask;
-    private int groupId;
+    private Long groupId;
 
     private String profileImagePath;
 
@@ -98,7 +98,7 @@ public class CreateContactActivity extends Activity {
 
     protected void handleIntent(Intent intent) {
         // contacts are created from contactListActivity as part of a group
-        groupId = intent.getIntExtra("contactGroupId", 0);
+        groupId = intent.getLongExtra("contactGroupId", 0);
     }
 
     protected void handleButtons() {
@@ -186,7 +186,7 @@ public class CreateContactActivity extends Activity {
 
     private class AddContactTask extends BaseAsyncRequest {
         private CreateContactActivity createContactActivity;
-        private int contactId;
+        private Long contactId;
         // once you add the contact and get back the contact id, finish the activity
         public AddContactTask(CreateContactActivity activity){ createContactActivity = activity; }
         @Override
@@ -293,10 +293,10 @@ public class CreateContactActivity extends Activity {
     }
 
     private class AddContactToGroupTask extends BaseAsyncRequest{
-        private int groupId;
-        private int contactId;
+        private Long groupId;
+        private Long contactId;
 
-        public AddContactToGroupTask(int groupId, int contactId){
+        public AddContactToGroupTask(Long groupId, Long contactId){
             this.groupId = groupId;
             this.contactId = contactId;
         }
@@ -321,8 +321,8 @@ public class CreateContactActivity extends Activity {
     }
 
     private class CreateFolderTask extends BaseAsyncRequest {
-        private int contactId;
-        public CreateFolderTask(int contactId){ this.contactId = contactId; }
+        private Long contactId;
+        public CreateFolderTask(Long contactId){ this.contactId = contactId; }
 
         @Override
         protected void doSetup() throws ApiException, JSONException {
@@ -344,8 +344,8 @@ public class CreateContactActivity extends Activity {
     }
 
     private class UploadImageTask extends BaseAsyncRequest{
-        private int contactId;
-        public UploadImageTask(int contactId){ this.contactId = contactId; }
+        private Long contactId;
+        public UploadImageTask(Long contactId){ this.contactId = contactId; }
         @Override
         protected void doSetup() throws ApiException, JSONException {
 

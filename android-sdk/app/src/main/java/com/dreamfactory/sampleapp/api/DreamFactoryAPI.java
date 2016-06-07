@@ -6,6 +6,7 @@ import com.dreamfactory.sampleapp.DreamFactoryApp;
 import com.dreamfactory.sampleapp.models.ErrorMessage;
 import com.dreamfactory.sampleapp.utils.AppConstants;
 import com.dreamfactory.sampleapp.utils.PrefUtil;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -66,6 +67,7 @@ public class DreamFactoryAPI {
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
         retrofit = new Retrofit.Builder()
                 .baseUrl(DreamFactoryApp.INSTANCE_URL)

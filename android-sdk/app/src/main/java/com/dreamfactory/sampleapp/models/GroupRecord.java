@@ -2,15 +2,15 @@ package com.dreamfactory.sampleapp.models;
 
 public class GroupRecord extends BaseRecord {
 
-    private int id = 0;
+    private Long id;
 
     private String name = "";
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

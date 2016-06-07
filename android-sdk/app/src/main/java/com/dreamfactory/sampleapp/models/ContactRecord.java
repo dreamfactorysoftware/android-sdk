@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 // make it parcelable for passing from contactListActivity to contactViewActivity
 public class ContactRecord extends BaseRecord {
 
-    private int id;
+    private Long id;
 
     @JsonProperty("first_name")
     private String firstName;
@@ -25,11 +25,11 @@ public class ContactRecord extends BaseRecord {
     public ContactRecord() {
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

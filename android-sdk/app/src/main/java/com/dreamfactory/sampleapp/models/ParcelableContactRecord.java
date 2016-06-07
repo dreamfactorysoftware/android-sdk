@@ -6,7 +6,7 @@ import android.os.Parcelable;
 
 public class ParcelableContactRecord implements Parcelable {
 
-    private int id;
+    private Long id;
     private String firstName;
     private String lastName;
     private String imageUrl;
@@ -48,7 +48,7 @@ public class ParcelableContactRecord implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
 
-        dest.writeInt(id);
+        dest.writeLong(id);
         dest.writeString(firstName);
         dest.writeString(lastName);
         dest.writeString(imageUrl);
@@ -70,7 +70,7 @@ public class ParcelableContactRecord implements Parcelable {
 
     private ParcelableContactRecord(Parcel in) {
 
-        id = in.readInt();
+        id = in.readLong();
         firstName = in.readString();
         lastName = in.readString();
         imageUrl = in.readString();

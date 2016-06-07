@@ -5,9 +5,9 @@ import android.os.Parcelable;
 
 public class ParcelableContactInfoRecord implements Parcelable {
 
-    private int id;
-    private int ordinal;
-    private int contactId;
+    private Long id;
+    private Long ordinal;
+    private Long contactId;
     private String infoIype;
     private String phone;
     private String email;
@@ -59,9 +59,9 @@ public class ParcelableContactInfoRecord implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
 
-        dest.writeInt(id);
-        dest.writeInt(ordinal);
-        dest.writeInt(contactId);
+        dest.writeLong(id);
+        dest.writeLong(ordinal);
+        dest.writeLong(contactId);
         dest.writeString(infoIype);
         dest.writeString(phone);
         dest.writeString(email);
@@ -74,9 +74,9 @@ public class ParcelableContactInfoRecord implements Parcelable {
 
     private ParcelableContactInfoRecord(Parcel in) {
 
-        id = in.readInt();
-        ordinal = in.readInt();
-        contactId = in.readInt();
+        id = in.readLong();
+        ordinal = in.readLong();
+        contactId = in.readLong();
         infoIype = in.readString();
         phone = in.readString();
         email = in.readString();
