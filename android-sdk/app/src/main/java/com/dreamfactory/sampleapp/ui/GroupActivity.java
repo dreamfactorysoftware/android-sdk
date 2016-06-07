@@ -59,7 +59,7 @@ public class GroupActivity extends Activity {
         if(intent.getIntExtra("contactGroupId", 0) != 0){
             editingGroup = true;
             groupRecord = new GroupRecord();
-            groupRecord.setId(intent.getIntExtra("contactGroupId", 0));
+            groupRecord.setId(intent.getLongExtra("contactGroupId", 0));
             groupRecord.setName(intent.getStringExtra("groupName"));
             groupName.setText(groupRecord.getName());
         }
@@ -185,7 +185,7 @@ public class GroupActivity extends Activity {
     }
 
     protected class CreateGroupTask extends BaseAsyncRequest {
-        protected int groupId;
+        protected Long groupId;
         protected Activity activity;
         protected String name;
 
@@ -231,9 +231,9 @@ public class GroupActivity extends Activity {
     }
 
     protected class CreateContactGroupRelationships extends BaseAsyncRequest{
-        protected int groupId;
-        protected List<Integer> contactIdList;
-        public CreateContactGroupRelationships(int id, List<Integer> toAdd){
+        protected Long groupId;
+        protected List<Long> contactIdList;
+        public CreateContactGroupRelationships(Long id, List<Long> toAdd){
             groupId = id;
             contactIdList = toAdd;
         }
@@ -259,7 +259,7 @@ public class GroupActivity extends Activity {
              *  }
              */
             JSONArray jsonArray = new JSONArray();
-            for(int contactId : contactIdList){
+            for(Long contactId : contactIdList){
                 JSONObject relation = new JSONObject();
                 relation.put("contact_group_id", groupId);
                 relation.put("contact_id", contactId);
@@ -273,9 +273,9 @@ public class GroupActivity extends Activity {
     }
 
     protected class RemoveContactGroupRelationships extends BaseAsyncRequest{
-        protected int groupId;
-        protected List<Integer> contactIdList;
-        public RemoveContactGroupRelationships(int id, List<Integer> toAdd){
+        protected Long groupId;
+        protected List<Long> contactIdList;
+        public RemoveContactGroupRelationships(Long id, List<Long> toAdd){
             groupId = id;
             contactIdList = toAdd;
         }
@@ -306,7 +306,7 @@ public class GroupActivity extends Activity {
              *  }
              */
             JSONArray jsonArray = new JSONArray();
-            for(int contactId : contactIdList){
+            for(Long contactId : contactIdList){
                 JSONObject relation = new JSONObject();
                 relation.put("contact_group_id", groupId);
                 relation.put("contact_id", contactId);

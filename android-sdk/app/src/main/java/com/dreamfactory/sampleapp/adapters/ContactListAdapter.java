@@ -345,8 +345,8 @@ public class ContactListAdapter extends BaseAdapter{
     }
 
     private class RemoveContactFoldersTask extends BaseAsyncRequest{
-        private int contactId;
-        public RemoveContactFoldersTask(int contactId){ this.contactId = contactId; }
+        private Long contactId;
+        public RemoveContactFoldersTask(Long contactId){ this.contactId = contactId; }
 
         @Override
         protected void doSetup() throws ApiException, JSONException {

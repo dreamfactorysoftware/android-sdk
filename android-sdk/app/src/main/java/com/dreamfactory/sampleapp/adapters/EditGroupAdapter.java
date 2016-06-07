@@ -39,7 +39,7 @@ public class EditGroupAdapter extends CreateGroupAdapter {
     }
 
     @Override
-    public List<Integer> getSelectedContacts() {
+    public List<Long> getSelectedContacts() {
         // deselect the contacts already in group first
         BitSet tmp = selectedSet.get(0, selectedSet.size());
         selectedSet.andNot(inGroupSet);
@@ -49,7 +49,7 @@ public class EditGroupAdapter extends CreateGroupAdapter {
         return super.getSelectedContacts();
     }
 
-    public List<Integer> getContactsToRemove() {
+    public List<Long> getContactsToRemove() {
         // called by groupActivity to delete contacts
         selectedSet = inGroupSet;
         return super.getSelectedContacts();
@@ -70,8 +70,8 @@ public class EditGroupAdapter extends CreateGroupAdapter {
 
 
     protected class GetContactsInGroupTask extends BaseAsyncRequest{
-        protected int groupId;
-        public GetContactsInGroupTask(int groupId){ this.groupId = groupId; }
+        protected Long groupId;
+        public GetContactsInGroupTask(Long groupId){ this.groupId = groupId; }
 
         @Override
         protected void doSetup() throws ApiException, JSONException {

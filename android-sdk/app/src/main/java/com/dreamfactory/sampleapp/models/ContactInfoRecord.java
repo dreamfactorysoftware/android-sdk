@@ -4,12 +4,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ContactInfoRecord extends BaseRecord {
 
-    private int id = 0;
+    private Long id = 0L;
 
-    private int ordinal = 0;
+    private Long ordinal = 0L;
 
     @JsonProperty("contact_id")
-    private int contactId = 0;
+    private Long contactId = 0L;
 
     @JsonProperty("info_type")
     private String infoType = "";
@@ -28,27 +28,27 @@ public class ContactInfoRecord extends BaseRecord {
 
     private String country = "";
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public int getOrdinal() {
+    public Long getOrdinal() {
         return ordinal;
     }
 
-    public void setOrdinal(int ordinal) {
+    public void setOrdinal(Long ordinal) {
         this.ordinal = ordinal;
     }
 
-    public int getContactId() {
+    public Long getContactId() {
         return contactId;
     }
 
-    public void setContactId(int contactId) {
+    public void setContactId(Long contactId) {
         this.contactId = contactId;
     }
 

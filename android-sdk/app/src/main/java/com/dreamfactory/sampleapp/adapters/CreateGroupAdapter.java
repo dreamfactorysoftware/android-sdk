@@ -73,9 +73,9 @@ public class CreateGroupAdapter extends ContactListAdapter {
         groupHolder.checkBox.setChecked(selectedSet.get(groupHolder.position));
     }
 
-    public List<Integer> getSelectedContacts() {
+    public List<Long> getSelectedContacts() {
         // returns list of contacts selected to be in group
-        List<Integer> selectedContacts = new ArrayList<>();
+        List<Long> selectedContacts = new ArrayList<>();
 
         for(int i = selectedSet.nextSetBit(0); i >= 0; i = selectedSet.nextSetBit(i + 1)){
             selectedContacts.add(mRecordsList.get(i).getId());

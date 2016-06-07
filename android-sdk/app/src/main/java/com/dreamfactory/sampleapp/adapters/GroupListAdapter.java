@@ -52,7 +52,7 @@ public class GroupListAdapter extends BaseAdapter{
         return 0;
     }
 
-    public void showContactList(int groupId, String groupName) {
+    public void showContactList(Long groupId, String groupName) {
         Intent intent = new Intent(context, ContactListActivity.class);
         intent.putExtra("groupRecordId", groupId);
         intent.putExtra("groupName", groupName);
