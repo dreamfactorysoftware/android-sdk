@@ -14,24 +14,22 @@ import android.widget.ListView;
 import com.dreamfactory.sampleapp.R;
 import com.dreamfactory.sampleapp.adapters.ContactListAdapter;
 import com.dreamfactory.sampleapp.adapters.DeletableContactListAdapter;
+import com.dreamfactory.sampleapp.api.DreamFactoryAPI;
+import com.dreamfactory.sampleapp.api.services.ContactGroupService;
 import com.dreamfactory.sampleapp.models.ContactRecord;
 import com.dreamfactory.sampleapp.models.ContactsRelationalRecord;
-import com.dreamfactory.sampleapp.models.ContactsRelationalRecords;
-import dfapi.BaseAsyncRequest;
-import com.dreamfactory.sampleapp.utils.AppConstants;
-import com.dreamfactory.sampleapp.utils.PrefUtil;
 
-import org.json.JSONException;
-
+import com.dreamfactory.sampleapp.models.ErrorMessage;
+import com.dreamfactory.sampleapp.models.Resource;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-import dfapi.ApiException;
-import dfapi.ApiInvoker;
+public class ContactListActivity extends BaseActivity {
+    private Call<Resource<ContactsRelationalRecord>> getContactsInGroupCall;
 
-public class ContactListActivity extends Activity {
-    private GetContactsInGroupTask getContactsInGroupTask;
     private ListView listView;
     private ContactListAdapter contactListAdapter;
 
@@ -52,8 +50,7 @@ public class ContactListActivity extends Activity {
         contactGroupId = intent.getIntExtra("groupRecordId", 0);
         groupName = intent.getStringExtra("groupName");
 
-        getContactsInGroupTask = new GetContactsInGroupTask(contactGroupId);
-        getContactsInGroupTask.execute();
+        loadGroupContacts(contactGroupId);
 
         listView = (ListView) findViewById(R.id.contactList);
         registerForContextMenu(listView);
@@ -101,16 +98,73 @@ public class ContactListActivity extends Activity {
         save_button.setVisibility(View.INVISIBLE);
     }
 
+    private void loadGroupContacts(int contactGroupId) {
+        if(getContactsInGroupCall != null) {
+            getContactsInGroupCall.cancel();
+        }
+
+        final ContactGroupService service = DreamFactoryAPI.getInstance().getService(ContactGroupService.class);
+
+        getContactsInGroupCall = service.getGroupContacts("contact_group_id=" + contactGroupId);
+
+        getContactsInGroupCall.enqueue(new Callback<Resource<ContactsRelationalRecord>>() {
+            @Override
+            public void onResponse(Call<Resource<ContactsRelationalRecord>> call, Response<Resource<ContactsRelationalRecord>> response) {
+                if(response.isSuccessful()){
+                    List<ContactsRelationalRecord> contactRecordRelationships = response.body().getResource();
+
+                    List<ContactRecord> contactRecords = new ArrayList<>();
+
+                    for(ContactsRelationalRecord rel : contactRecordRelationships) {
+                        contactRecords.add(rel.getContact());
+                    }
+
+                    if(contactListAdapter == null) {
+                        // if there is no adapter, create a new one
+                        contactListAdapter = new ContactListAdapter(ContactListActivity.this, contactRecords);
+                        listView.setAdapter(contactListAdapter);
+                        listView.setMultiChoiceModeListener(new DeletableContactListAdapter(contactListAdapter));
+                        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                            @Override
+                            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                                ((ListView) view).setItemChecked(position, true);
+                                contactListAdapter.set(position, true);
+                                return true;
+                            }
+                        });
+
+                        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                contactListAdapter.handleClick(position);
+                            }
+                        });
+                    } else{
+                        // update the adapter data
+                        contactListAdapter.mRecordsList = contactRecords;
+                        contactListAdapter.notifyDataSetChanged();
+                    }
+                } else {
+                    ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
+
+                    onFailure(call, e.toException());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Resource<ContactsRelationalRecord>> call, Throwable t) {
+                if(!call.isCanceled()) {
+                    showError("Error while loading group contacts.", t);
+                }
+            }
+        });
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == Activity.RESULT_OK){
-            // if a child activity changed the contacts or the relationships, reload
-            if(getContactsInGroupTask != null){
-                getContactsInGroupTask.cancel(true);
-            }
-            getContactsInGroupTask = new GetContactsInGroupTask(contactGroupId);
-            getContactsInGroupTask.execute();
+            loadGroupContacts(contactGroupId);
         }
     }
 
@@ -118,86 +172,5 @@ public class ContactListActivity extends Activity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_contact_list, menu);
-    }
-
-    public class GetContactsInGroupTask extends BaseAsyncRequest {
-        private int groupId;
-        private List<ContactRecord> contactRecords;
-        public GetContactsInGroupTask(int id){
-            groupId = id;
-        }
-
-        @Override
-        protected void doSetup() throws ApiException, JSONException {
-            callerName = "getContactsInGroup";
-
-            serviceName = AppConstants.DB_SVC;
-            endPoint = "contact_group_relationship";
-            verb = "GET";
-
-            // filter to only select the contacts in this group
-            queryParams = new HashMap<>();
-            queryParams.put("filter", "contact_group_id=" + groupId);
-
-            // request without related would return just {id, contact_group_id, contact_id}
-            // set the related field to go get the contact mRecordsList referenced by
-            // each contact_group_relationship record
-            queryParams.put("related", "contact_by_contact_id");
-
-            // need to include the API key and session token
-            applicationApiKey = AppConstants.API_KEY;
-            sessionToken = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_TOKEN);
-        }
-
-        @Override
-        protected void processResponse(String response) throws ApiException, JSONException {
-            // response is in form
-            // {
-            //      <group info>,
-            //      "contact_by_contact_id": [
-            //          { <contact record> }
-            //      ]
-            //  }
-            ContactsRelationalRecords relationalRecords =
-                    (ContactsRelationalRecords) ApiInvoker.deserialize(response, "", ContactsRelationalRecords.class);
-            contactRecords = new ArrayList<>();
-            for(ContactsRelationalRecord record : relationalRecords.record){
-                contactRecords.add(record.getContact());
-            }
-
-        }
-
-        @Override
-        protected void onCompletion(boolean success) {
-            getContactsInGroupTask = null;
-            if(success && contactRecords != null && contactRecords.size() > 0){
-                if(contactListAdapter == null) {
-                    // if there is no adapter, create a new one
-                    contactListAdapter = new ContactListAdapter(ContactListActivity.this, contactRecords);
-                    listView.setAdapter(contactListAdapter);
-                    listView.setMultiChoiceModeListener(new DeletableContactListAdapter(contactListAdapter));
-                    listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                        @Override
-                        public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                            ((ListView) view).setItemChecked(position, true);
-                            contactListAdapter.set(position, true);
-                            return true;
-                        }
-                    });
-
-                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            contactListAdapter.handleClick(position);
-                        }
-                    });
-                }
-                else{
-                    // update the adapter data
-                    contactListAdapter.mRecordsList = contactRecords;
-                    contactListAdapter.notifyDataSetChanged();
-                }
-            }
-        }
     }
 }

@@ -12,36 +12,28 @@ import android.widget.ListView;
 import com.dreamfactory.sampleapp.R;
 import com.dreamfactory.sampleapp.adapters.CreateGroupAdapter;
 import com.dreamfactory.sampleapp.adapters.EditGroupAdapter;
-import com.dreamfactory.sampleapp.models.ContactRecords;
+import com.dreamfactory.sampleapp.api.DreamFactoryAPI;
+import com.dreamfactory.sampleapp.api.services.ContactGroupService;
+import com.dreamfactory.sampleapp.api.services.ContactService;
+import com.dreamfactory.sampleapp.models.ContactRecord;
+import com.dreamfactory.sampleapp.models.ContactsRelationalRecord;
+import com.dreamfactory.sampleapp.models.ErrorMessage;
 import com.dreamfactory.sampleapp.models.GroupRecord;
+import com.dreamfactory.sampleapp.models.Resource;
 
-import dfapi.BaseAsyncRequest;
-
-import com.dreamfactory.sampleapp.models.GroupRecords;
-import com.dreamfactory.sampleapp.utils.AppConstants;
-import com.dreamfactory.sampleapp.utils.PrefUtil;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
 import java.util.List;
 
-import dfapi.ApiException;
-import dfapi.ApiInvoker;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-public class GroupActivity extends Activity {
+public class GroupActivity extends BaseActivity {
 
     protected EditText groupName;
-
-    protected GetAllContactsTask getAllContactsTask;
 
     protected CreateGroupAdapter createGroupAdapter;
 
     protected ListView listView;
-
-    protected CreateGroupTask createGroupTask;
 
     protected boolean editingGroup;
     protected GroupRecord groupRecord;
@@ -69,10 +61,42 @@ public class GroupActivity extends Activity {
 
         handleButtons();
 
+        final ContactService service = DreamFactoryAPI.getInstance().getService(ContactService.class);
 
+        service.getAllContacts().enqueue(new Callback<Resource<ContactRecord>>() {
+            @Override
+            public void onResponse(Call<Resource<ContactRecord>> call, Response<Resource<ContactRecord>> response) {
+                if(response.isSuccessful()){
+                    Resource<ContactRecord> data = response.body();
 
-        getAllContactsTask = new GetAllContactsTask();
-        getAllContactsTask.execute();
+                    if(editingGroup){
+                        createGroupAdapter = new EditGroupAdapter(GroupActivity.this, data.getResource(), groupRecord);
+                        listView.setAdapter(createGroupAdapter);
+
+                    }
+                    else {
+                        createGroupAdapter = new CreateGroupAdapter(GroupActivity.this, data.getResource());
+                        listView.setAdapter(createGroupAdapter);
+                    }
+
+                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            createGroupAdapter.handle_click(view);
+                        }
+                    });
+                } else {
+                    ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
+
+                    onFailure(call, e.toException());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Resource<ContactRecord>> call, Throwable t) {
+                showError("Error while loading contacts.", t);
+            }
+        });
     }
 
     protected void handleButtons(){
@@ -104,241 +128,144 @@ public class GroupActivity extends Activity {
     }
 
     protected void handleCompletion (){
+
+        final ContactGroupService service = DreamFactoryAPI.getInstance().getService(ContactGroupService.class);
+
         if(editingGroup){
             if(!groupName.getText().toString().equals(groupRecord.getName())){
-
                 groupRecord.setName(groupName.getText().toString());
-                UpdateGroupName updateGroupName = new UpdateGroupName(groupRecord);
-                updateGroupName.execute();
-                setResult(Activity.RESULT_OK);
-            }
-            else if(((EditGroupAdapter) createGroupAdapter).didGroupChange()){
+
+                Resource<GroupRecord> resource = new Resource<>();
+                resource.addResource(groupRecord);
+
+                service.updateContactGroups(resource).enqueue(new Callback<Resource<GroupRecord>>() {
+                    @Override
+                    public void onResponse(Call<Resource<GroupRecord>> call, Response<Resource<GroupRecord>> response) {
+                        if(response.isSuccessful()) {
+                            setResult(Activity.RESULT_OK);
+                        } else {
+                            ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
+
+                            onFailure(call, e.toException());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Resource<GroupRecord>> call, Throwable t) {
+                        showError("Error while updating contact group name.", t);
+                    }
+                });
+            } else if(((EditGroupAdapter) createGroupAdapter).didGroupChange()){
                 // if the group is different now
                 setResult(Activity.RESULT_OK);
-            }
-            else{
+            } else{
                 // don't update calling activity
                 setResult(Activity.RESULT_CANCELED);
             }
 
             if(((EditGroupAdapter) createGroupAdapter).didGroupChange()){
                 // only update group members if the group changed
-                CreateContactGroupRelationships createContactGroupRelationships =
-                        new CreateContactGroupRelationships(groupRecord.getId(),
-                                createGroupAdapter.getSelectedContacts());
-                createContactGroupRelationships.execute();
+                assignContactsToGroup(createGroupAdapter.getSelectedContacts());
 
-                RemoveContactGroupRelationships removeContactGroupRelationships =
-                        new RemoveContactGroupRelationships(groupRecord.getId(),
-                                ((EditGroupAdapter)createGroupAdapter).getContactsToRemove());
-                removeContactGroupRelationships.execute();
-            }
-            this.finish();
-        }
-        else {
-            createGroupTask = new CreateGroupTask(this);
-            createGroupTask.execute();
-        }
-    }
+                List<Long> contactsToRemove = ((EditGroupAdapter)createGroupAdapter).getContactsToRemove();
 
-    protected class GetAllContactsTask extends BaseAsyncRequest {
-        protected ContactRecords records;
+                Resource<ContactsRelationalRecord> resourcesToRemove = new Resource<>();
 
-        @Override
-        protected void doSetup() throws ApiException, JSONException {
-            callerName = "GetAllContactsTask";
-            // Not providing any query params gets all records in the table
-            serviceName = AppConstants.DB_SVC;
-            endPoint = "contact";
-            verb = "GET";
-            applicationApiKey = AppConstants.API_KEY;
-            sessionToken = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_TOKEN);
-        }
+                for(Long contactId : contactsToRemove) {
+                    ContactsRelationalRecord record = new ContactsRelationalRecord();
+                    record.setContactId(contactId);
+                    record.setContactGroupId(groupRecord.getId());
 
-        @Override
-        protected void processResponse(String response) throws ApiException, JSONException {
-            // response is an array of contact records: { "resource": [ {contactRecord}, {...} ] }
-            records = (ContactRecords) ApiInvoker.deserialize(response, "", ContactRecords.class);
-        }
-
-        @Override
-        protected void onCompletion(boolean success) {
-            if(success){
-                if(editingGroup){
-                    createGroupAdapter = new EditGroupAdapter(GroupActivity.this, records.record, groupRecord);
-                    listView.setAdapter(createGroupAdapter);
-
+                    resourcesToRemove.addResource(record);
                 }
-                else {
-                    createGroupAdapter = new CreateGroupAdapter(GroupActivity.this, records.record);
-                    listView.setAdapter(createGroupAdapter);
-                }
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                service.deleteGroupContacts(resourcesToRemove).enqueue(new Callback<Resource<ContactsRelationalRecord>>() {
                     @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        createGroupAdapter.handle_click(view);
+                    public void onResponse(Call<Resource<ContactsRelationalRecord>> call, Response<Resource<ContactsRelationalRecord>> response) {
+                        if(response.isSuccessful()) {
+                            GroupActivity.this.finish();
+                        } else {
+                            ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
+
+                            onFailure(call, e.toException());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Resource<ContactsRelationalRecord>> call, Throwable t) {
+                        showError("Error while removing contacts from group.", t);
                     }
                 });
             }
-            getAllContactsTask = null;
+        } else {
+            final Resource<GroupRecord> resource = new Resource<>();
+
+            GroupRecord groupRecord = new GroupRecord();
+            groupRecord.setName(groupName.getText().toString());
+
+            resource.addResource(groupRecord);
+
+            service.createContactGroups(resource).enqueue(new Callback<Resource<GroupRecord>>() {
+                @Override
+                public void onResponse(Call<Resource<GroupRecord>> call, Response<Resource<GroupRecord>> response) {
+                    if(response.isSuccessful()){
+                        GroupRecord groupRecord = response.body().getResource().get(0);
+
+                        List<Long> contactsToAssign = createGroupAdapter.getSelectedContacts();
+
+                        assignContactsToGroup(contactsToAssign);
+                    } else{
+                        setResult(Activity.RESULT_CANCELED);
+
+                        ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
+
+                        onFailure(call, e.toException());
+
+                        finish();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Resource<GroupRecord>> call, Throwable t) {
+                    showError("Error while creating contact group.", t);
+                }
+            });
         }
     }
 
-    protected class CreateGroupTask extends BaseAsyncRequest {
-        protected Long groupId;
-        protected Activity activity;
-        protected String name;
+    private void assignContactsToGroup(List<Long> contactsToAssign) {
+        final ContactGroupService service = DreamFactoryAPI.getInstance().getService(ContactGroupService.class);
 
-        public CreateGroupTask(Activity tmp){
-            activity = tmp;
-            name = groupName.getText().toString();
+        Resource<ContactsRelationalRecord> resourcesToCreate = new Resource<>();
+
+        for(Long contactId : contactsToAssign) {
+            ContactsRelationalRecord record = new ContactsRelationalRecord();
+            record.setContactId(contactId);
+            record.setContactGroupId(groupRecord.getId());
+
+            resourcesToCreate.addResource(record);
         }
 
-        @Override
-        protected void doSetup() throws ApiException, JSONException {
-            callerName = "CreateGroupTask";
-            serviceName = AppConstants.DB_SVC;
-            endPoint = "contact_group";
-            verb = "POST";
-            applicationApiKey = AppConstants.API_KEY;
-            sessionToken = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_TOKEN);
-            // only need to send the name in body
-            // we don't have a group ID yet, so we can't provide one here
-            requestString = "{\"name\":\"" + name + "\"}";
-        }
+        service.addGroupContacts(resourcesToCreate).enqueue(new Callback<Resource<ContactsRelationalRecord>>() {
+            @Override
+            public void onResponse(Call<Resource<ContactsRelationalRecord>> call, Response<Resource<ContactsRelationalRecord>> response) {
+                if(response.isSuccessful()) {
+                    setResult(Activity.RESULT_OK);
+                } else {
+                    setResult(Activity.RESULT_CANCELED);
 
-        @Override
-        protected void processResponse(String response) throws ApiException, JSONException {
-            // need to get the groupId from the response to give to relational records
-            GroupRecords records = (GroupRecords) ApiInvoker.deserialize(response, "", GroupRecords.class);
-            groupId = records.record.get(0).getId();
-        }
+                    ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
 
-        @Override
-        protected void onCompletion(boolean success) {
-            if(success){
-                CreateContactGroupRelationships createContactGroupRelationships =
-                        new CreateContactGroupRelationships(groupId, createGroupAdapter.getSelectedContacts());
-                createContactGroupRelationships.execute();
-                activity.setResult(Activity.RESULT_OK);
+                    onFailure(call, e.toException());
+                }
+
+                finish();
             }
-            else{
-                activity.setResult(Activity.RESULT_CANCELED);
+
+            @Override
+            public void onFailure(Call<Resource<ContactsRelationalRecord>> call, Throwable t) {
+                showError("Error while assigning contacts to contact group.", t);
             }
-            createGroupTask = null;
-            activity.finish();
-        }
-    }
-
-    protected class CreateContactGroupRelationships extends BaseAsyncRequest{
-        protected Long groupId;
-        protected List<Long> contactIdList;
-        public CreateContactGroupRelationships(Long id, List<Long> toAdd){
-            groupId = id;
-            contactIdList = toAdd;
-        }
-
-        @Override
-        protected void doSetup() throws ApiException, JSONException {
-            callerName = "CreateContactGroupRelationships";
-            serviceName = AppConstants.DB_SVC;
-            endPoint = "contact_group_relationship";
-
-            verb = "POST";
-
-            /*
-             * Form of request is:
-             *  {
-             *      "resource":[
-             *          {
-             *              "contact_group_id":id,
-             *              "contact_id":id
-             *          },
-             *          {...}
-             *      ]
-             *  }
-             */
-            JSONArray jsonArray = new JSONArray();
-            for(Long contactId : contactIdList){
-                JSONObject relation = new JSONObject();
-                relation.put("contact_group_id", groupId);
-                relation.put("contact_id", contactId);
-                jsonArray.put(relation);
-            }
-            requestString = "{\"resource\":" + jsonArray.toString() + "}";
-
-            applicationApiKey = AppConstants.API_KEY;
-            sessionToken = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_TOKEN);
-        }
-    }
-
-    protected class RemoveContactGroupRelationships extends BaseAsyncRequest{
-        protected Long groupId;
-        protected List<Long> contactIdList;
-        public RemoveContactGroupRelationships(Long id, List<Long> toAdd){
-            groupId = id;
-            contactIdList = toAdd;
-        }
-
-        @Override
-        protected void doSetup() throws ApiException, JSONException {
-            callerName = "RemoveContactGroupRelationshipsTask";
-            serviceName = AppConstants.DB_SVC;
-            endPoint = "contact_group_relationship";
-
-            verb = "DELETE";
-
-            // do not know the ID of the record to remove
-            // one value for groupId, but many values for contactId
-            // instead of making a long SQL query, change what we use as identifiers
-            queryParams = new HashMap<>();
-            queryParams.put("id_field", "contact_group_id,contact_id");
-            /*
-             * Form of request is:
-             *  {
-             *      "resource":[
-             *          {
-             *              "contact_group_id":id,
-             *              "contact_id":id
-             *          },
-             *          {...}
-             *      ]
-             *  }
-             */
-            JSONArray jsonArray = new JSONArray();
-            for(Long contactId : contactIdList){
-                JSONObject relation = new JSONObject();
-                relation.put("contact_group_id", groupId);
-                relation.put("contact_id", contactId);
-                jsonArray.put(relation);
-            }
-            requestString = "{\"resource\":" + jsonArray.toString() + "}";
-
-            applicationApiKey = AppConstants.API_KEY;
-            sessionToken = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_TOKEN);
-        }
-    }
-
-    protected class UpdateGroupName extends BaseAsyncRequest {
-        private GroupRecord record;
-        public UpdateGroupName(GroupRecord record){ this.record = record; }
-
-        @Override
-        protected void doSetup() throws ApiException, JSONException {
-            callerName = "UpdateGroupTask";
-
-            serviceName = AppConstants.DB_SVC;
-            endPoint = "contact_group";
-            verb = "PATCH";
-
-            // send the record to patch, need to include record id
-            //requestString = "{\"name\":\"" + record.name + "\",\"id\":" +
-                    //record.id + "}";
-            // form is { "id": id, "name": name }
-            requestString = ApiInvoker.serialize(record);
-
-            applicationApiKey = AppConstants.API_KEY;
-            sessionToken = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_TOKEN);
-        }
+        });
     }
 }
