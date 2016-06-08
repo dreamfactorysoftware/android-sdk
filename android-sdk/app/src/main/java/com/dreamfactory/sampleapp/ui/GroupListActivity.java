@@ -3,7 +3,6 @@ package com.dreamfactory.sampleapp.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -17,26 +16,12 @@ import com.dreamfactory.sampleapp.api.DreamFactoryAPI;
 import com.dreamfactory.sampleapp.api.services.ContactGroupService;
 import com.dreamfactory.sampleapp.models.ErrorMessage;
 import com.dreamfactory.sampleapp.models.GroupRecord;
-
-import dfapi.BaseAsyncRequest;
-
-import com.dreamfactory.sampleapp.models.GroupRecords;
 import com.dreamfactory.sampleapp.models.Resource;
-import com.dreamfactory.sampleapp.utils.AppConstants;
-import com.dreamfactory.sampleapp.utils.PrefUtil;
-
-import org.json.JSONException;
-
-import java.util.ArrayList;
-
-import dfapi.ApiException;
-import dfapi.ApiInvoker;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-
-public class GroupListActivity extends Activity {
+public class GroupListActivity extends BaseActivity {
 
     private GroupListAdapter groupListAdapter;
     private ListView listView;
@@ -86,9 +71,7 @@ public class GroupListActivity extends Activity {
 
         final ContactGroupService service = DreamFactoryAPI.getInstance().getService(ContactGroupService.class);
 
-        final Call<Resource<GroupRecord>> call = service.getGroupList();
-
-        call.enqueue(new Callback<Resource<GroupRecord>>() {
+        service.getGroupList().enqueue(new Callback<Resource<GroupRecord>>() {
             @Override
             public void onResponse(Call<Resource<GroupRecord>> call, Response<Resource<GroupRecord>> response) {
                 if(response.isSuccessful()) {
@@ -128,7 +111,7 @@ public class GroupListActivity extends Activity {
 
             @Override
             public void onFailure(Call<Resource<GroupRecord>> call, Throwable t) {
-                Log.e(LoginActivity.class.getSimpleName(), "Error while loading contact groups", t);
+                showError("Error while loading contact groups.", t);
             }
         });
     }

@@ -3,7 +3,6 @@ package com.dreamfactory.sampleapp.ui;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -47,7 +46,7 @@ import retrofit2.Response;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends BaseActivity implements LoaderCallbacks<Cursor> {
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -168,9 +167,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 loginRequest.setEmail(email);
                 loginRequest.setPassword(password);
 
-                final Call<User> call = service.userLogin(loginRequest);
-
-                call.enqueue(new Callback<User>() {
+                service.userLogin(loginRequest).enqueue(new Callback<User>() {
                     @Override
                     public void onResponse(Call<User> call, Response<User> response) {
                         if (response.isSuccessful()) {
@@ -220,9 +217,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 registerRequest.setName("Address Book User");
 
                 // Second param means that user will be logged in automatically
-                final Call<RegisterResponse> call = service.userRegister(registerRequest, 1L);
-
-                call.enqueue(new Callback<RegisterResponse>() {
+                service.userRegister(registerRequest, 1L).enqueue(new Callback<RegisterResponse>() {
                     @Override
                     public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
                         if (response.isSuccessful()) {

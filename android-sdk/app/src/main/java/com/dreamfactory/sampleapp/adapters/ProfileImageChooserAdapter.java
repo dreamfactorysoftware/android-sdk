@@ -9,14 +9,16 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.dreamfactory.sampleapp.R;
+import com.dreamfactory.sampleapp.models.FileRecord;
 
+import java.io.File;
 import java.util.List;
 
 public class ProfileImageChooserAdapter extends BaseAdapter {
     private Activity context;
-    private List<String> imageList;
+    private List<FileRecord> imageList;
 
-    public ProfileImageChooserAdapter(Activity context, List<String> imageList){
+    public ProfileImageChooserAdapter(Activity context, List<FileRecord> imageList){
         this.context = context;
         this.imageList = imageList;
     }
@@ -52,7 +54,7 @@ public class ProfileImageChooserAdapter extends BaseAdapter {
         rowView.setClickable(false);
         // fill data
         FileHolder holder = (FileHolder) rowView.getTag();
-        String fileName = imageList.get(position);
+        String fileName = imageList.get(position).getName();
         holder.text.setText(fileName);
         holder.fileName = fileName;
         rowView.setOnClickListener(new View.OnClickListener() {

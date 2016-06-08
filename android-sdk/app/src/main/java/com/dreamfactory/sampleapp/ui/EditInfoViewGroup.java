@@ -9,6 +9,7 @@ import com.dreamfactory.sampleapp.R;
 import com.dreamfactory.sampleapp.models.ContactInfoRecord;
 
 public class EditInfoViewGroup extends LinearLayout {
+
     private EditText type;
     private EditText email;
     private EditText phone;
