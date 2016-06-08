@@ -5,11 +5,15 @@ import com.dreamfactory.sampleapp.api.services.ContactGroupService;
 import com.dreamfactory.sampleapp.api.services.AuthService;
 import com.dreamfactory.sampleapp.api.services.ContactInfoService;
 import com.dreamfactory.sampleapp.api.services.ContactService;
+
+import com.dreamfactory.sampleapp.api.services.ImageService;
+
 import com.dreamfactory.sampleapp.models.ContactInfoRecord;
 import com.dreamfactory.sampleapp.models.ContactInfoRecords;
 import com.dreamfactory.sampleapp.models.ContactRecord;
 import com.dreamfactory.sampleapp.models.ContactsRelationalRecord;
 import com.dreamfactory.sampleapp.models.ErrorMessage;
+import com.dreamfactory.sampleapp.models.FileRecord;
 import com.dreamfactory.sampleapp.models.GroupRecord;
 import com.dreamfactory.sampleapp.models.RegisterResponse;
 import com.dreamfactory.sampleapp.models.Resource;
@@ -25,7 +29,10 @@ import org.junit.Test;
 
 import java.util.List;
 
-import retrofit2.Response;
+
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+>>>>>>> developimport retrofit2.Response;
 
 /**
  * To work on unit tests, switch the Test Artifact in the Build Variants view.
@@ -37,6 +44,7 @@ public class DreamFactoryAPITest {
     @Before
     public void init() throws Exception {
         DreamFactoryApp.SESSION_TOKEN = "session_token";
+
         DreamFactoryApp.INSTANCE_URL = "https://ft-nirmel.vz2.dreamfactory.com/api/v2/";
         DreamFactoryApp.DB_SVC = "db/_table";
         DreamFactoryApp.API_KEY = "6498a8ad1beb9d84d63035c5d1120c007fad6de706734db9689f8996707e0f7d";
@@ -345,4 +353,56 @@ public class DreamFactoryAPITest {
             Assert.assertEquals(error.getError().getCode().longValue(), 500L);
         }
     }
+<<<<<<< HEAD
+=======
+
+    @Test
+    public void testCreateFolder() throws Exception {
+        ImageService service = api.getService(ImageService.class);
+
+        Response<FileRecord> response = service.addFolder(7L).execute();
+
+        if(response.isSuccessful()) {
+            Assert.assertEquals("priofile_images/7/", response.body().getPath());
+        } else {
+            ErrorMessage error = DreamFactoryAPI.getErrorMessage(response);
+
+            // Folder already exist
+            Assert.assertEquals(error.getError().getCode().longValue(), 400L);
+        }
+    }
+
+    @Test
+    public void testAddProfileImage() throws Exception {
+        ImageService service = api.getService(ImageService.class);
+
+        RequestBody requestBody = RequestBody.create(MediaType.parse("image/*"),  "R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7");
+
+        Response<FileRecord> response = service.addProfileImage(7L, "test.jpg", requestBody).execute();
+
+        Assert.assertTrue(response.isSuccessful());
+
+        Assert.assertEquals(response.body().getName(), "test.jpg");
+    }
+
+    @Test
+    public void testGetProfileImage() throws Exception {
+        ImageService service = api.getService(ImageService.class);
+
+        Response<FileRecord> response = service.getProfileImage(7L, "test.jpg").execute();
+
+        Assert.assertTrue(response.isSuccessful());
+
+        Assert.assertEquals(response.body().getName(), "test.jpg");
+    }
+
+    @Test
+    public void testGetProfileImages() throws Exception {
+        ImageService service = api.getService(ImageService.class);
+
+        Response<Resource<FileRecord>> response = service.getProfileImages(7L).execute();
+
+        Assert.assertTrue(response.isSuccessful());
+    }
+>>>>>>> develop
 }
