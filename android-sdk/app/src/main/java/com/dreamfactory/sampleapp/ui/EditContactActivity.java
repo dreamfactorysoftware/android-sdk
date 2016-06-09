@@ -3,6 +3,7 @@ package com.dreamfactory.sampleapp.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -12,16 +13,16 @@ import com.dreamfactory.sampleapp.R;
 import com.dreamfactory.sampleapp.models.ContactInfoRecord;
 import com.dreamfactory.sampleapp.models.ContactInfoRecords;
 import com.dreamfactory.sampleapp.models.ContactRecord;
-import com.dreamfactory.sampleapp.models.ParcelableContactInfoRecords;
-import com.dreamfactory.sampleapp.models.ParcelableContactRecord;
+import com.dreamfactory.sampleapp.models.Resource;
 
 import java.util.ArrayList;
 
 public class EditContactActivity extends CreateContactActivity {
 
-    private ContactInfoRecords contactInfoRecords;
+    private Resource.Parcelable<ContactInfoRecord.Parcelable> contactInfoRecords;
 
-    private ContactRecord contactRecord;
+    private ContactRecord.Parcelable contactRecord;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // CreateContactActivity calls handleIntent, buildViews, handleButtons
@@ -30,12 +31,8 @@ public class EditContactActivity extends CreateContactActivity {
 
     @Override
     protected void handleIntent(Intent intent){
-        ParcelableContactRecord parcelable = intent.getParcelableExtra("contactRecord");
-        contactRecord = parcelable.buildContactRecord();
-
-        ParcelableContactInfoRecords parcelableContactInfoRecords =
-                intent.getParcelableExtra("contactInfoRecords");
-        contactInfoRecords = parcelableContactInfoRecords.buildContactInfoRecords();
+        contactRecord = intent.getParcelableExtra("contactRecord");
+        contactInfoRecords = intent.getParcelableExtra("contactInfoRecords");
     }
 
     @Override
@@ -48,7 +45,7 @@ public class EditContactActivity extends CreateContactActivity {
 
 
         editInfoViewGroupList = new ArrayList<>();
-        for(ContactInfoRecord record : contactInfoRecords.record){
+        for(ContactInfoRecord record : contactInfoRecords.getResource()){
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(linearLayout.getLayoutParams());
             EditInfoViewGroup editInfoViewGroup = new EditInfoViewGroup(this, record);
             linearLayout.addView(editInfoViewGroup, params);
@@ -135,21 +132,20 @@ public class EditContactActivity extends CreateContactActivity {
         contactRecord.setSkype(skypeEditText.getText().toString());
         contactRecord.setNotes(notesEditText.getText().toString());
 
-        ParcelableContactRecord parcelableContactRecord =
-                new ParcelableContactRecord(contactRecord);
 
         // build the info view
-        ContactInfoRecords tmpContactInfoRecord = new ContactInfoRecords();
+        Resource.Parcelable<ContactInfoRecord.Parcelable> tmpContactInfoRecord = new Resource.Parcelable<>();
 
         ContactInfoRecords contactInfoRecords = new ContactInfoRecords();
         for(EditInfoViewGroup editInfoViewGroup : editInfoViewGroupList){
-            ContactInfoRecord tmp = editInfoViewGroup.buildToContactInfoRecord();
+            ContactInfoRecord.Parcelable tmp = editInfoViewGroup.buildToContactInfoRecord();
+
             if(tmp.getId() == 0){
                 // new records don't have an id
                 tmp.setId(contactRecord.getId());
                 contactInfoRecords.record.add(tmp);
             }
-            tmpContactInfoRecord.record.add(tmp);
+            tmpContactInfoRecord.addResource(tmp);
         }
 
         if(contactInfoRecords.record.size() > 0) {
@@ -158,11 +154,8 @@ public class EditContactActivity extends CreateContactActivity {
             addContactInfoTask.execute();
         }
 
-        ParcelableContactInfoRecords parcelableContactInfoRecords =
-                new ParcelableContactInfoRecords(tmpContactInfoRecord);
-
-        intent.putExtra("contactInfoRecords", parcelableContactInfoRecords);
-        intent.putExtra("contactRecord", parcelableContactRecord);
+        intent.putExtra("contactInfoRecords", (Parcelable) tmpContactInfoRecord);
+        intent.putExtra("contactRecord", (Parcelable) contactRecord);
         return intent;
     }
 }

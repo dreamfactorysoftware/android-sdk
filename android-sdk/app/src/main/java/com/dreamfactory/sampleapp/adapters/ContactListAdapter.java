@@ -2,6 +2,7 @@ package com.dreamfactory.sampleapp.adapters;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,8 +11,8 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.dreamfactory.sampleapp.R;
+import com.dreamfactory.sampleapp.models.ContactInfoRecord;
 import com.dreamfactory.sampleapp.models.ContactRecord;
-import com.dreamfactory.sampleapp.models.ParcelableContactRecord;
 import com.dreamfactory.sampleapp.ui.ContactViewActivity;
 import dfapi.BaseAsyncRequest;
 import com.dreamfactory.sampleapp.utils.AppConstants;
@@ -154,8 +155,7 @@ public class ContactListAdapter extends BaseAdapter{
 
     private void showContactView(ContactRecord contactRecord){
         Intent intent = new Intent(context, ContactViewActivity.class);
-        ParcelableContactRecord parcelable = new ParcelableContactRecord(contactRecord);
-        intent.putExtra("contactRecord", parcelable);
+        intent.putExtra("contactRecord", (Parcelable) new ContactRecord.Parcelable(contactRecord));
         // need to start for result so contact view can tell contact list if contact list
         // should reload the contact list
         context.startActivityForResult(intent, 2);

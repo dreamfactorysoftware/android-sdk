@@ -1,32 +1,37 @@
 package com.dreamfactory.sampleapp.models;
 
+import android.os.Parcel;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ContactInfoRecord extends BaseRecord {
 
-    private Long id = 0L;
+    protected Long id = 0L;
 
-    private Long ordinal = 0L;
+    protected Long ordinal = 0L;
 
     @JsonProperty("contact_id")
-    private Long contactId = 0L;
+    protected Long contactId = 0L;
 
     @JsonProperty("info_type")
-    private String infoType = "";
+    protected String infoType = "";
 
-    private String phone = "";
+    protected String phone = "";
 
-    private String email = "";
+    protected String email = "";
 
-    private String address = "";
+    protected String address = "";
 
-    private String city = "";
+    protected String city = "";
 
-    private String state = "";
+    protected String state = "";
 
-    private String zip = "";
+    protected String zip = "";
 
-    private String country = "";
+    protected String country = "";
+
+    public ContactInfoRecord(){
+    }
 
     public Long getId() {
         return id;
@@ -114,5 +119,56 @@ public class ContactInfoRecord extends BaseRecord {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public static class Parcelable extends ContactInfoRecord implements android.os.Parcelable {
+
+        public Parcelable() {
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeLong(id);
+            dest.writeLong(ordinal);
+            dest.writeLong(contactId);
+            dest.writeString(infoType);
+            dest.writeString(phone);
+            dest.writeString(email);
+            dest.writeString(address);
+            dest.writeString(city);
+            dest.writeString(state);
+            dest.writeString(zip);
+            dest.writeString(country);
+        }
+
+        public static final Parcelable.Creator<Parcelable> CREATOR = new Parcelable.Creator<Parcelable>() {
+            public Parcelable createFromParcel(Parcel in) {
+                return new Parcelable(in);
+            }
+
+            @Override
+            public Parcelable[] newArray(int size) {
+                return new Parcelable[size];
+            }
+        };
+
+        private Parcelable(Parcel in) {
+            id = in.readLong();
+            ordinal = in.readLong();
+            contactId = in.readLong();
+            infoType = in.readString();
+            phone = in.readString();
+            email = in.readString();
+            address = in.readString();
+            city = in.readString();
+            state = in.readString();
+            zip = in.readString();
+            country = in.readString();
+        }
     }
 }

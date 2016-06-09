@@ -151,11 +151,11 @@ public class DreamFactoryAPITest {
     public void testGetContactInfo() throws Exception {
         ContactInfoService service = api.getService(ContactInfoService.class);
 
-        Response<Resource<ContactInfoRecord>> response = service.getContactInfo("contact_id=1").execute();
+        Response<Resource.Parcelable<ContactInfoRecord.Parcelable>> response = service.getContactInfo("contact_id=1").execute();
 
         Assert.assertTrue(response.isSuccessful());
 
-        List<ContactInfoRecord> list = response.body().getResource();
+        List<ContactInfoRecord.Parcelable> list = response.body().getResource();
 
         Assert.assertTrue(list.size() > 0);
     }
