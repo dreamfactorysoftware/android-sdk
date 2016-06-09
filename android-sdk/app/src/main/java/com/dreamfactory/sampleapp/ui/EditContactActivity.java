@@ -11,7 +11,6 @@ import android.widget.LinearLayout;
 
 import com.dreamfactory.sampleapp.R;
 import com.dreamfactory.sampleapp.models.ContactInfoRecord;
-import com.dreamfactory.sampleapp.models.ContactInfoRecords;
 import com.dreamfactory.sampleapp.models.ContactRecord;
 import com.dreamfactory.sampleapp.models.Resource;
 
@@ -136,22 +135,21 @@ public class EditContactActivity extends CreateContactActivity {
         // build the info view
         Resource.Parcelable<ContactInfoRecord.Parcelable> tmpContactInfoRecord = new Resource.Parcelable<>();
 
-        ContactInfoRecords contactInfoRecords = new ContactInfoRecords();
+        Resource<ContactInfoRecord> contactInfoRecords = new Resource<>();
         for(EditInfoViewGroup editInfoViewGroup : editInfoViewGroupList){
             ContactInfoRecord.Parcelable tmp = editInfoViewGroup.buildToContactInfoRecord();
 
             if(tmp.getId() == 0){
                 // new records don't have an id
                 tmp.setId(contactRecord.getId());
-                contactInfoRecords.record.add(tmp);
+                contactInfoRecords.addResource(tmp);
             }
             tmpContactInfoRecord.addResource(tmp);
         }
 
-        if(contactInfoRecords.record.size() > 0) {
+        if(contactInfoRecords.getResource().size() > 0) {
             // create any new contact info records
-            AddContactInfoTask addContactInfoTask = new AddContactInfoTask(contactInfoRecords);
-            addContactInfoTask.execute();
+            createInfoGroups(contactInfoRecords);
         }
 
         intent.putExtra("contactInfoRecords", (Parcelable) tmpContactInfoRecord);

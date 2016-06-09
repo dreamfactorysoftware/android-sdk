@@ -21,7 +21,7 @@ public class BaseActivity extends Activity {
         Log.e(this.getClass().getSimpleName(), message, t);
     }
 
-    protected void showError(String message, Throwable t) {
+    public void showError(String message, Throwable t) {
         showError(message + " " + (t.getMessage() != null ? t.getMessage() : ""));
 
         logError(message, t);

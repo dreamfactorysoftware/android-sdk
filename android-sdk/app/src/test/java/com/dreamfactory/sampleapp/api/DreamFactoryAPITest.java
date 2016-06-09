@@ -7,7 +7,6 @@ import com.dreamfactory.sampleapp.api.services.ContactInfoService;
 import com.dreamfactory.sampleapp.api.services.ContactService;
 import com.dreamfactory.sampleapp.api.services.ImageService;
 import com.dreamfactory.sampleapp.models.ContactInfoRecord;
-import com.dreamfactory.sampleapp.models.ContactInfoRecords;
 import com.dreamfactory.sampleapp.models.ContactRecord;
 import com.dreamfactory.sampleapp.models.ContactsRelationalRecord;
 import com.dreamfactory.sampleapp.models.ErrorMessage;
@@ -18,8 +17,6 @@ import com.dreamfactory.sampleapp.models.Resource;
 import com.dreamfactory.sampleapp.models.User;
 import com.dreamfactory.sampleapp.models.requests.LoginRequest;
 import com.dreamfactory.sampleapp.models.requests.RegisterRequest;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Assert;
 import org.junit.Before;

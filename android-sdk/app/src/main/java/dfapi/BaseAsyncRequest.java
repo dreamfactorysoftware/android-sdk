@@ -3,6 +3,7 @@ package dfapi;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.dreamfactory.sampleapp.models.FileRequest;
 import com.dreamfactory.sampleapp.utils.AppConstants;
 
 import org.json.JSONException;

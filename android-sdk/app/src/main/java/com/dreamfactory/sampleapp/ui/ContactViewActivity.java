@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Base64;
@@ -70,12 +71,16 @@ public class ContactViewActivity extends BaseActivity {
                     contactInfoRecords = response.body();
                     // build the views once you have the data
                     buildContactInfoViews();
+                } else {
+                    ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
+
+                    onFailure(call, e.toException());
                 }
             }
 
             @Override
             public void onFailure(Call<Resource.Parcelable<ContactInfoRecord.Parcelable>> call, Throwable t) {
-
+                showError("Error while loading contact info.", t);
             }
         });
 
@@ -220,12 +225,8 @@ public class ContactViewActivity extends BaseActivity {
                 if(response.isSuccessful()){
                     FileRecord fileRecord = response.body();
 
-                    //TODO: Move to task
-                    byte[] decodedString = Base64.decode(fileRecord.getContent(), Base64.DEFAULT);
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-
-                    ImageView imageView = (ImageView) findViewById(R.id.contact_view_profile_image);
-                    imageView.setImageBitmap(bitmap);
+                    ConvertToBitmap convertToBitmapTask = new ConvertToBitmap();
+                    convertToBitmapTask.execute(fileRecord.getContent());
                 } else {
                     ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
 
@@ -260,6 +261,24 @@ public class ContactViewActivity extends BaseActivity {
             InfoViewGroup infoViewGroup = new InfoViewGroup(ContactViewActivity.this, record);
             linearLayout.addView(infoViewGroup, params);
             infoViewGroupList.add(infoViewGroup);
+        }
+    }
+
+    private class ConvertToBitmap extends AsyncTask<String, Integer, Bitmap> {
+        protected Bitmap doInBackground(String... contents) {
+            byte[] decodedString = Base64.decode(contents[0], Base64.DEFAULT);
+
+            Bitmap bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+            return bitmap;
+        }
+
+        protected void onPostExecute(Bitmap bitmap) {
+            ImageView imageView = (ImageView) findViewById(R.id.contact_view_profile_image);
+
+            if(imageView != null) {
+                imageView.setImageBitmap(bitmap);
+            }
         }
     }
 }

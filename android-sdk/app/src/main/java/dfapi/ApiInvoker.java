@@ -36,6 +36,7 @@ import org.apache.http.impl.conn.SingleClientConnManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.util.EntityUtils;
 
+import com.dreamfactory.sampleapp.models.FileRequest;
 import com.fasterxml.jackson.databind.JavaType;
 
 public class ApiInvoker {
