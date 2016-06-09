@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Base64;
 import android.view.View;
 import android.widget.ImageButton;
@@ -13,38 +14,33 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dreamfactory.sampleapp.R;
+import com.dreamfactory.sampleapp.api.DreamFactoryAPI;
+import com.dreamfactory.sampleapp.api.services.ContactInfoService;
+import com.dreamfactory.sampleapp.api.services.ContactService;
+import com.dreamfactory.sampleapp.api.services.ImageService;
 import com.dreamfactory.sampleapp.models.ContactInfoRecord;
-import com.dreamfactory.sampleapp.models.ContactInfoRecords;
 import com.dreamfactory.sampleapp.models.ContactRecord;
-import com.dreamfactory.sampleapp.models.ParcelableContactInfoRecords;
-import com.dreamfactory.sampleapp.models.ParcelableContactRecord;
-import dfapi.BaseAsyncRequest;
-import com.dreamfactory.sampleapp.utils.AppConstants;
-import com.dreamfactory.sampleapp.utils.PrefUtil;
+import com.dreamfactory.sampleapp.models.ErrorMessage;
+import com.dreamfactory.sampleapp.models.FileRecord;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.dreamfactory.sampleapp.models.Resource;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import dfapi.ApiException;
-import dfapi.ApiInvoker;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-public class ContactViewActivity extends Activity {
+public class ContactViewActivity extends BaseActivity {
 
     private ContactRecord contactRecord;
-    private ContactInfoRecords contactInfoRecords;
+
+    private Resource.Parcelable<ContactInfoRecord.Parcelable> contactInfoRecords;
 
     private LinearLayout linearLayout;
 
     private List<InfoViewGroup> infoViewGroupList;
-
-    private GetContactInfoTask getContactInfoTask;
-    private UpdateContactTask updateContactTask;
-    private UpdateContactInfoTask updateContactInfoTask;
-    private GetProfileImageFromServerTask getProfileImageFromServerTask;
 
     private boolean changedContact;
 
@@ -57,8 +53,7 @@ public class ContactViewActivity extends Activity {
 
         final Intent intent = getIntent();
 
-        ParcelableContactRecord parcelable = intent.getParcelableExtra("contactRecord");
-        contactRecord = parcelable.buildContactRecord();
+        final ContactRecord.Parcelable contactRecord = intent.getParcelableExtra("contactRecord");
 
         // put the data in the view
         buildContactView();
@@ -66,9 +61,23 @@ public class ContactViewActivity extends Activity {
         linearLayout = (LinearLayout) findViewById(R.id.contactViewTable);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
 
-        getContactInfoTask = new GetContactInfoTask();
+        final ContactInfoService service = DreamFactoryAPI.getInstance().getService(ContactInfoService.class);
 
-        getContactInfoTask.execute();
+        service.getContactInfo("contact_id=" + contactRecord.getId()).enqueue(new Callback<Resource.Parcelable<ContactInfoRecord.Parcelable>>() {
+            @Override
+            public void onResponse(Call<Resource.Parcelable<ContactInfoRecord.Parcelable>> call, Response<Resource.Parcelable<ContactInfoRecord.Parcelable>> response) {
+                if(response.isSuccessful()){
+                    contactInfoRecords = response.body();
+                    // build the views once you have the data
+                    buildContactInfoViews();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Resource.Parcelable<ContactInfoRecord.Parcelable>> call, Throwable t) {
+
+            }
+        });
 
         infoViewGroupList = new ArrayList<>();
 
@@ -98,13 +107,8 @@ public class ContactViewActivity extends Activity {
             public void onClick(View v) {
                 Activity tmp = (Activity) v.getTag();
                 Intent intent = new Intent(tmp, EditContactActivity.class);
-                ParcelableContactRecord parcelableContactRecord =
-                        new ParcelableContactRecord(contactRecord);
-
-                ParcelableContactInfoRecords parcelableContactInfoRecords =
-                        new ParcelableContactInfoRecords(contactInfoRecords);
-                intent.putExtra("contactRecord", parcelableContactRecord);
-                intent.putExtra("contactInfoRecords", parcelableContactInfoRecords);
+                intent.putExtra("contactRecord", (Parcelable) contactRecord);
+                intent.putExtra("contactInfoRecords", (Parcelable) contactInfoRecords);
                 tmp.startActivityForResult(intent, 1);
             }
         });
@@ -113,8 +117,7 @@ public class ContactViewActivity extends Activity {
 
         if(!contactRecord.getImageUrl().isEmpty()){
             // only fetch the profile image if the user has one
-            getProfileImageFromServerTask = new GetProfileImageFromServerTask();
-            getProfileImageFromServerTask.execute();
+            getProfileImage();
         }
     }
 
@@ -122,14 +125,11 @@ public class ContactViewActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 1 && resultCode == Activity.RESULT_OK){
-            ParcelableContactRecord parcelableContactRecord =
+            ContactRecord.Parcelable tmpRecord =
                     data.getParcelableExtra("contactRecord");
-            ContactRecord tmpRecord = parcelableContactRecord.buildContactRecord();
 
-            ParcelableContactInfoRecords parcelableContactInfoRecords =
+            Resource.Parcelable<ContactInfoRecord.Parcelable> tmpContactInfoRecords =
                     data.getParcelableExtra("contactInfoRecords");
-            ContactInfoRecords tmpContactInfoRecords =
-                    parcelableContactInfoRecords.buildContactInfoRecords();
 
             // refresh the view with the new data
             for(InfoViewGroup infoViewGroup : infoViewGroupList){
@@ -139,36 +139,105 @@ public class ContactViewActivity extends Activity {
             if(!tmpRecord.equals(contactRecord)){
                 // only update the contact view if it changed
                 contactRecord = tmpRecord;
-                updateContactTask = new UpdateContactTask();
-                updateContactTask.execute();
+
+                final ContactService service = DreamFactoryAPI.getInstance().getService(ContactService.class);
+
+                Resource<ContactRecord> resource = new Resource<>();
+                resource.addResource(contactRecord);
+
+                service.updateContacts(resource).enqueue(new Callback<Resource<ContactRecord>>() {
+                    @Override
+                    public void onResponse(Call<Resource<ContactRecord>> call, Response<Resource<ContactRecord>> response) {
+                        if(response.isSuccessful()){
+                            changedContact = true;
+                        } else {
+                            ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
+
+                            onFailure(call, e.toException());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Resource<ContactRecord>> call, Throwable t) {
+                        showError("Error while updating contact.", t);
+                    }
+                });
 
                 if(!contactRecord.getImageUrl().isEmpty()) {
                     // re-get the contact profile image
-                    getProfileImageFromServerTask = new GetProfileImageFromServerTask();
-                    getProfileImageFromServerTask.execute();
+                    getProfileImage();
                 }
             }
 
-            ContactInfoRecords toUpdate = new ContactInfoRecords();
-            for(int i = 0; i < contactInfoRecords.record.size(); i++){
+            final Resource<ContactInfoRecord> resource = new Resource<>();
+
+            for(int i = 0; i < contactInfoRecords.getResource().size(); i++){
                 // contactInfo only grows
-                if(!tmpContactInfoRecords.record.get(i).equals(contactInfoRecords.record.get(i))) {
+                if(!tmpContactInfoRecords.getResource().get(i).equals(contactInfoRecords.getResource().get(i))) {
                     // if any element changed, add it
-                    toUpdate.record.add(tmpContactInfoRecords.record.get(i));
+                    resource.addResource(tmpContactInfoRecords.getResource().get(i));
                 }
             }
-            if(tmpContactInfoRecords.record.size() != contactInfoRecords.record.size()
-                    || toUpdate.record.size() > 0){
+
+            if(tmpContactInfoRecords.getResource().size() != contactInfoRecords.getResource().size()
+                    || resource.getResource().size() > 0){
                 contactInfoRecords = tmpContactInfoRecords;
                 infoViewGroupList.clear();
                 buildContactView();
                 buildContactInfoViews();
             }
-            if(toUpdate.record.size() > 0){
-                updateContactInfoTask = new UpdateContactInfoTask(toUpdate);
-                updateContactInfoTask.execute();
+
+            if(resource.getResource().size() > 0) {
+                final ContactInfoService service = DreamFactoryAPI.getInstance().getService(ContactInfoService.class);
+
+                service.updateContactInfos(resource).enqueue(new Callback<Resource<ContactInfoRecord>>() {
+                    @Override
+                    public void onResponse(Call<Resource<ContactInfoRecord>> call, Response<Resource<ContactInfoRecord>> response) {
+                        if(response.isSuccessful()){
+                            changedContact = true;
+                        } else {
+                            ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
+
+                            onFailure(call, e.toException());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Resource<ContactInfoRecord>> call, Throwable t) {
+                        showError("Error while updating contact info.", t);
+                    }
+                });
             }
         }
+    }
+
+    private void getProfileImage() {
+        final ImageService service = DreamFactoryAPI.getInstance().getService(ImageService.class);
+
+        service.getProfileImage(contactRecord.getId(), contactRecord.getImageUrl()).enqueue(new Callback<FileRecord>() {
+            @Override
+            public void onResponse(Call<FileRecord> call, Response<FileRecord> response) {
+                if(response.isSuccessful()){
+                    FileRecord fileRecord = response.body();
+
+                    //TODO: Move to task
+                    byte[] decodedString = Base64.decode(fileRecord.getContent(), Base64.DEFAULT);
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+                    ImageView imageView = (ImageView) findViewById(R.id.contact_view_profile_image);
+                    imageView.setImageBitmap(bitmap);
+                } else {
+                    ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
+
+                    onFailure(call, e.toException());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FileRecord> call, Throwable t) {
+                showError("Error while loading profile image.", t);
+            }
+        });
     }
 
     private void buildContactView(){
@@ -187,154 +256,10 @@ public class ContactViewActivity extends Activity {
 
     private void buildContactInfoViews(){
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(linearLayout.getLayoutParams());
-        for(ContactInfoRecord record : contactInfoRecords.record){
+        for(ContactInfoRecord record : contactInfoRecords.getResource()){
             InfoViewGroup infoViewGroup = new InfoViewGroup(ContactViewActivity.this, record);
             linearLayout.addView(infoViewGroup, params);
             infoViewGroupList.add(infoViewGroup);
-        }
-    }
-
-    public class GetContactInfoTask extends BaseAsyncRequest{
-
-        private ContactInfoRecords records;
-
-        public GetContactInfoTask() {
-            callerName = "getContactInfoTask";
-
-            serviceName = AppConstants.DB_SVC;
-            endPoint = "contact_info";
-
-            verb = "GET";
-
-            queryParams = new HashMap<>();
-            // filter to only the contact_info records related to the contact
-            queryParams.put("filter", "contact_id=" + contactRecord.getId());
-
-            // include API key and sessionToken
-            applicationApiKey = AppConstants.API_KEY;
-            sessionToken = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_TOKEN);
-        }
-
-        @Override
-        protected void processResponse(String response) throws ApiException {
-            // results come back as an array of contact_info records
-            // form is:
-            // {
-            //      "resource":[
-            //          { contactInfoRecord }
-            //      ]
-            // }
-           records = (ContactInfoRecords) ApiInvoker.deserialize(response, "", ContactInfoRecords.class);
-        }
-
-        @Override
-        protected void onCompletion(boolean success) {
-            getContactInfoTask = null;
-            if(success){
-                contactInfoRecords = new ContactInfoRecords();
-                contactInfoRecords.record = records.record;
-
-                // build the views once you have the data
-                buildContactInfoViews();
-            }
-        }
-    }
-
-    private class UpdateContactTask extends BaseAsyncRequest {
-        @Override
-        protected void doSetup() throws ApiException{
-            callerName = "updateContactTask";
-
-            serviceName = AppConstants.DB_SVC;
-            endPoint = "contact";
-
-            verb = "PATCH";
-
-            // send the contact record in the body
-            requestString = ApiInvoker.serialize(contactRecord);
-
-            // include sessionToken
-            applicationApiKey = AppConstants.API_KEY;
-            sessionToken = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_TOKEN);
-        }
-
-        @Override
-        protected void onCompletion(boolean success) {
-            if(success){
-                changedContact = true;
-            }
-            updateContactTask = null;
-        }
-    }
-
-    private class UpdateContactInfoTask extends BaseAsyncRequest {
-        private ContactInfoRecords records;
-        public UpdateContactInfoTask(ContactInfoRecords toUpdate){ records = toUpdate; }
-
-        @Override
-        protected void doSetup() throws ApiException {
-            callerName = "updateContactInfoTask";
-
-            serviceName = AppConstants.DB_SVC;
-            endPoint = "contact_info";
-
-            verb = "PATCH";
-
-            // body is array of records to patch
-            requestString = ApiInvoker.serialize(records);
-
-            // include API key and session_token
-            applicationApiKey = AppConstants.API_KEY;
-            sessionToken = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_TOKEN);
-        }
-
-        @Override
-        protected void onCompletion(boolean success) {
-            if(success){
-                changedContact = true;
-            }
-            updateContactInfoTask = null;
-        }
-    }
-
-    private class GetProfileImageFromServerTask extends BaseAsyncRequest {
-        private Bitmap bitmap;
-        @Override
-        protected void doSetup() throws ApiException, JSONException {
-
-            verb = "GET";
-            callerName = "getImageFromFile";
-            serviceName = "files";
-            applicationApiKey = AppConstants.API_KEY;
-            endPoint = "profile_images/" + contactRecord.getId() + "/" + contactRecord.getImageUrl();
-            queryParams = new HashMap<>();
-            // don't include the file properties
-            queryParams.put("include_properties", "1");
-            // include the content
-            queryParams.put("content", "1");
-            // give us a download
-            queryParams.put("download", "1");
-            // need to include session_token
-            sessionToken = PrefUtil.getString(getApplicationContext(), AppConstants.SESSION_TOKEN);
-        }
-
-        @Override
-        protected void processResponse(String response) throws ApiException, JSONException {
-            JSONObject jsonObject = new JSONObject(response);
-            String imageData = jsonObject.getString("content");
-
-            // files come back as Base64 strings
-            byte[] decodedString = Base64.decode(imageData, Base64.DEFAULT);
-            bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-        }
-
-        @Override
-        protected void onCompletion(boolean success) {
-            if(success){
-                ImageView imageView = (ImageView) findViewById(R.id.contact_view_profile_image);
-                imageView.setImageBitmap(bitmap);
-            }
-            getProfileImageFromServerTask = null;
         }
     }
 }

@@ -59,11 +59,11 @@ public class EditInfoViewGroup extends LinearLayout {
         return !type.getText().toString().isEmpty();
     }
 
-    public ContactInfoRecord buildToContactInfoRecord() {
+    public ContactInfoRecord.Parcelable buildToContactInfoRecord() {
 
         // build record and send it back up
 
-        ContactInfoRecord record = new ContactInfoRecord();
+        ContactInfoRecord.Parcelable record = new ContactInfoRecord.Parcelable();
 
         record.setInfoType(type.getText().toString());
         record.setEmail(email.getText().toString());

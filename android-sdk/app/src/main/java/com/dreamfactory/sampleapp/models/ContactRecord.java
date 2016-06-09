@@ -1,26 +1,29 @@
 package com.dreamfactory.sampleapp.models;
 
+import android.os.Parcel;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.beanutils.PropertyUtils;
 
 // make it parcelable for passing from contactListActivity to contactViewActivity
 public class ContactRecord extends BaseRecord {
 
-    private Long id;
+    protected Long id;
 
     @JsonProperty("first_name")
-    private String firstName;
+    protected String firstName;
 
     @JsonProperty("last_name")
-    private String lastName;
+    protected String lastName;
 
     @JsonProperty("image_url")
-    private String imageUrl;
+    protected String imageUrl;
 
-    private String twitter;
+    protected String twitter;
 
-    private String skype;
+    protected String skype;
 
-    private String notes;
+    protected String notes;
 
     public ContactRecord() {
     }
@@ -79,5 +82,54 @@ public class ContactRecord extends BaseRecord {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public static class Parcelable extends ContactRecord implements android.os.Parcelable {
+
+        public Parcelable() {
+        }
+
+        public Parcelable(ContactRecord record) {
+            try {
+                PropertyUtils.copyProperties(this, record);
+            } catch (Exception e) { }
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeLong(id);
+            dest.writeString(firstName);
+            dest.writeString(lastName);
+            dest.writeString(imageUrl);
+            dest.writeString(twitter);
+            dest.writeString(skype);
+            dest.writeString(notes);
+        }
+
+        public static final Parcelable.Creator<Parcelable> CREATOR = new Parcelable.Creator<Parcelable>() {
+            public Parcelable createFromParcel(Parcel in) {
+                return new Parcelable(in);
+            }
+
+            @Override
+            public Parcelable[] newArray(int size) {
+                return new Parcelable[size];
+            }
+        };
+
+        private Parcelable(Parcel in) {
+            id = in.readLong();
+            firstName = in.readString();
+            lastName = in.readString();
+            imageUrl = in.readString();
+            twitter = in.readString();
+            skype = in.readString();
+            notes = in.readString();
+        }
     }
 }

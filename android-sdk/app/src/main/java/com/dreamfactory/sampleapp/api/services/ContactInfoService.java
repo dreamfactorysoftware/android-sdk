@@ -21,7 +21,7 @@ public interface ContactInfoService {
     Call<ContactInfoRecord> getContactInfo(@Path(value = "id") Long contactInfoId);
 
     @GET("db/_table/contact_info")
-    Call<Resource<ContactInfoRecord>> getContactInfo(@Query(value = "filter") String filter);
+    Call<Resource.Parcelable<ContactInfoRecord.Parcelable>> getContactInfo(@Query(value = "filter") String filter);
 
     @POST("db/_table/contact_info")
     Call<Resource<ContactInfoRecord>> createContactInfos(@Body Resource<ContactInfoRecord> records);
