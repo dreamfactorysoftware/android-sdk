@@ -1,4 +1,4 @@
-package dfapi;
+package com.dreamfactory.sampleapp.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.*;

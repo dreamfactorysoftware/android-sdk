@@ -1,41 +1,75 @@
 package com.dreamfactory.sampleapp.adapters;
 
-import android.app.Activity;
-
+import com.dreamfactory.sampleapp.api.DreamFactoryAPI;
+import com.dreamfactory.sampleapp.api.services.ContactGroupService;
 import com.dreamfactory.sampleapp.models.ContactRecord;
 import com.dreamfactory.sampleapp.models.ContactsRelationalRecord;
-import com.dreamfactory.sampleapp.models.ContactsRelationalRecords;
+import com.dreamfactory.sampleapp.models.ErrorMessage;
 import com.dreamfactory.sampleapp.models.GroupRecord;
-import dfapi.BaseAsyncRequest;
-import com.dreamfactory.sampleapp.utils.AppConstants;
-import com.dreamfactory.sampleapp.utils.PrefUtil;
 
-import org.json.JSONException;
+import com.dreamfactory.sampleapp.models.Resource;
+import com.dreamfactory.sampleapp.ui.BaseActivity;
+
 
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-
-import dfapi.ApiException;
-import dfapi.ApiInvoker;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class EditGroupAdapter extends CreateGroupAdapter {
 
     protected GroupRecord record;
-    protected BitSet inGroupSet;
-    protected GetContactsInGroupTask getContactsInGroupTask;
 
-    public EditGroupAdapter(Activity context, List<ContactRecord> records, GroupRecord record) {
-        super(context, records);
+    protected BitSet inGroupSet;
+
+    public EditGroupAdapter(final BaseActivity activity, List<ContactRecord> records, GroupRecord record) {
+        super(activity, records);
 
         this.record = record;
 
         inGroupSet = new BitSet(selectedSet.size());
 
-        getContactsInGroupTask = new GetContactsInGroupTask(this.record.getId());
-        getContactsInGroupTask.execute();
+        final ContactGroupService contactGroupService = DreamFactoryAPI.getInstance().getService(ContactGroupService.class);
+
+        contactGroupService.getGroupContacts("contact_group_id=" + record.getId()).enqueue(new Callback<Resource<ContactsRelationalRecord>>() {
+            @Override
+            public void onResponse(Call<Resource<ContactsRelationalRecord>> call, Response<Resource<ContactsRelationalRecord>> response) {
+                if(response.isSuccessful()) {
+                    List<ContactRecord> contactRecords = new ArrayList<>();
+                    for(ContactsRelationalRecord record : response.body().getResource()){
+                        contactRecords.add(record.getContact());
+                    }
+
+                    // sort so we can find these guys in the big contacts list in ~ linear time
+                    Collections.sort(contactRecords, new SortByLastName());
+
+                    int j = 0;
+                    for(int i = 0; i < mRecordsList.size() && j < contactRecords.size(); i++){
+                        if(mRecordsList.get(i).getId() == contactRecords.get(j).getId()){
+                            // mark the contacts already in the group
+                            // use inGroupSet so we can tell how things changed later
+                            inGroupSet.set(i);
+                            j++;
+                        }
+                    }
+
+                    selectedSet.or(inGroupSet);
+                    notifyDataSetChanged();
+                } else {
+                    ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
+
+                    onFailure(call, e.toException());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Resource<ContactsRelationalRecord>> call, Throwable t) {
+                activity.showError("Error while updating contact info.", t);
+            }
+        });
     }
 
     @Override
@@ -66,75 +100,5 @@ public class EditGroupAdapter extends CreateGroupAdapter {
 
         // true if a contact is in the group set but not selected
         return compareSet.cardinality() != inGroupSet.cardinality();
-    }
-
-
-    protected class GetContactsInGroupTask extends BaseAsyncRequest{
-        protected Long groupId;
-        public GetContactsInGroupTask(Long groupId){ this.groupId = groupId; }
-
-        @Override
-        protected void doSetup() throws ApiException, JSONException {
-            callerName = "GetContactsInGroupTask";
-
-            serviceName = AppConstants.DB_SVC;
-            endPoint = "contact_group_relationship";
-
-            verb = "GET";
-            applicationApiKey = AppConstants.API_KEY;
-            sessionToken = PrefUtil.getString(context, AppConstants.SESSION_TOKEN);
-
-            // filter to only get the group we want
-            queryParams = new HashMap<>();
-            queryParams.put("filter", "contact_group_id=" + groupId);
-
-            // request without related would return just {id, contact_group_id, contact_id}
-            // set the related field to go get the contact records referenced by
-            // each contact_group_relationship record
-            queryParams.put("related", "contact_by_contact_id");
-        }
-
-        @Override
-        protected void processResponse(String response) throws ApiException, JSONException {
-            // response is in form
-            // {
-            //      < group info >,
-            //      "contact_by_contactId" : [
-            //          { contact record }
-            //      ]
-            //  }
-            ContactsRelationalRecords relationalRecords =
-                    (ContactsRelationalRecords) ApiInvoker.deserialize(response, "",
-                            ContactsRelationalRecords.class);
-
-            List<ContactRecord> contactRecords = new ArrayList<>();
-            for(ContactsRelationalRecord record : relationalRecords.record){
-                contactRecords.add(record.getContact());
-            }
-
-
-            // sort so we can find these guys in the big contacts list in ~ linear time
-            Collections.sort(contactRecords, new SortByLastName());
-
-            int j = 0;
-            for(int i = 0; i < mRecordsList.size() && j < contactRecords.size(); i++){
-                if(mRecordsList.get(i).getId() == contactRecords.get(j).getId()){
-                    // mark the contacts already in the group
-                    // use inGroupSet so we can tell how things changed later
-                    inGroupSet.set(i);
-                    j++;
-                }
-            }
-        }
-
-        @Override
-        protected void onCompletion(boolean success) {
-            if(success){
-                // indicate that they should be checked and update the adapter in the main thread
-                selectedSet.or(inGroupSet);
-                notifyDataSetChanged();
-            }
-            getContactsInGroupTask = null;
-        }
     }
 }
