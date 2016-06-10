@@ -1,4 +1,4 @@
-package com.dreamfactory.sampleapp.ui;
+package com.dreamfactory.sampleapp.customviews;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -47,7 +47,7 @@ public class InfoViewGroup extends RelativeLayout {
         }
     }
 
-    void removeFromParent (){
+    public void removeFromParent (){
         ((ViewGroup) this.getParent()).removeView(this);
     }
     public InfoViewGroup(Context context, AttributeSet attrs) {

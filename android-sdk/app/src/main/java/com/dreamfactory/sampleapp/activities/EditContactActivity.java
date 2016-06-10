@@ -1,4 +1,4 @@
-package com.dreamfactory.sampleapp.ui;
+package com.dreamfactory.sampleapp.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,6 +13,7 @@ import com.dreamfactory.sampleapp.R;
 import com.dreamfactory.sampleapp.models.ContactInfoRecord;
 import com.dreamfactory.sampleapp.models.ContactRecord;
 import com.dreamfactory.sampleapp.models.Resource;
+import com.dreamfactory.sampleapp.customviews.EditInfoViewGroup;
 
 import java.util.ArrayList;
 
@@ -65,7 +66,7 @@ public class EditContactActivity extends CreateContactActivity {
             @Override
             public void onClick(View v) {
                 Activity tmp = (Activity) v.getTag();
-                setResult(Activity.RESULT_CANCELED);
+                setResult(RESULT_CANCELED);
                 tmp.finish();
             }
         });
@@ -78,7 +79,7 @@ public class EditContactActivity extends CreateContactActivity {
             public void onClick(View v) {
                 Activity tmp = (Activity) v.getTag();
                 if (mandatoryFieldsOk()) { // require all contacts to have a first and last name
-                    setResult(Activity.RESULT_OK, buildIntent());
+                    setResult(RESULT_OK, buildIntent());
                     tmp.finish();
                 } else {
                     Log.w("editContactActivity", "did not fill in mandatory fields");
@@ -101,7 +102,7 @@ public class EditContactActivity extends CreateContactActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == Activity.RESULT_OK){
+        if(resultCode == RESULT_OK){
             contactRecord.setImageUrl(data.getStringExtra("imageUrl"));
         }
     }

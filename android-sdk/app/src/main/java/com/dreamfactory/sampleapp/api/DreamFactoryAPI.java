@@ -4,7 +4,6 @@ import android.util.Log;
 
 import com.dreamfactory.sampleapp.DreamFactoryApp;
 import com.dreamfactory.sampleapp.models.ErrorMessage;
-import com.dreamfactory.sampleapp.utils.AppConstants;
 import com.dreamfactory.sampleapp.utils.PrefUtil;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -52,7 +51,7 @@ public class DreamFactoryAPI {
                 }
 
                 if(!runningFromTest) {
-                    String token = PrefUtil.getString(DreamFactoryApp.getAppContext(), AppConstants.SESSION_TOKEN);
+                    String token = PrefUtil.getString(DreamFactoryApp.getAppContext(), DreamFactoryApp.SESSION_TOKEN);
 
                     if (token != null && !token.isEmpty()) {
                         ongoing.addHeader("X-DreamFactory-Session-Token", token);

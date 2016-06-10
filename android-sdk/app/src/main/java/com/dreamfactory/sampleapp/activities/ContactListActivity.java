@@ -1,4 +1,4 @@
-package com.dreamfactory.sampleapp.ui;
+package com.dreamfactory.sampleapp.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -21,6 +21,7 @@ import com.dreamfactory.sampleapp.models.ContactsRelationalRecord;
 
 import com.dreamfactory.sampleapp.models.ErrorMessage;
 import com.dreamfactory.sampleapp.models.Resource;
+
 import java.util.ArrayList;
 import java.util.List;
 import retrofit2.Call;
@@ -163,7 +164,7 @@ public class ContactListActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == Activity.RESULT_OK){
+        if(resultCode == RESULT_OK){
             loadGroupContacts(contactGroupId);
         }
     }

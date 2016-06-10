@@ -1,8 +1,5 @@
 package com.dreamfactory.sampleapp.adapters;
 
-
-import android.app.Activity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +8,7 @@ import android.widget.TextView;
 
 import com.dreamfactory.sampleapp.R;
 import com.dreamfactory.sampleapp.models.ContactRecord;
+import com.dreamfactory.sampleapp.activities.BaseActivity;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -19,8 +17,8 @@ import java.util.List;
 public class CreateGroupAdapter extends ContactListAdapter {
     protected BitSet selectedSet;
 
-    public CreateGroupAdapter(Activity context, List<ContactRecord> records) {
-        super(context, records);
+    public CreateGroupAdapter(BaseActivity activity, List<ContactRecord> records) {
+        super(activity, records);
 
         // store selectedSet contacts
         selectedSet = new BitSet(records.size());
@@ -33,7 +31,7 @@ public class CreateGroupAdapter extends ContactListAdapter {
         boolean isHeader = mainSet.get(position);
 
         if(rowView == null){
-            LayoutInflater inflater = context.getLayoutInflater();
+            LayoutInflater inflater = activity.getLayoutInflater();
             rowView = inflater.inflate(R.layout.selcetable_row_layout, null);
             GroupHolder holder = new GroupHolder();
             holder.textView = (TextView) rowView.findViewById(R.id.selectable_row_label);
@@ -48,7 +46,7 @@ public class CreateGroupAdapter extends ContactListAdapter {
             rowView.setClickable(true);
             holder.checkBox.setVisibility(View.GONE);
             holder.textView.setText(("" + record.getLastName().charAt(0)).toUpperCase());
-            holder.textView.setBackgroundColor(context.getResources().getColor(R.color.contact_list_header));
+            holder.textView.setBackgroundColor(activity.getResources().getColor(R.color.contact_list_header));
         }
         else{
             rowView.setClickable(false);
@@ -61,7 +59,7 @@ public class CreateGroupAdapter extends ContactListAdapter {
             holder.checkBox.setVisibility(View.VISIBLE);
             holder.checkBox.setChecked(selectedSet.get(position - num_headers));
 
-            holder.textView.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));
+            holder.textView.setBackgroundColor(activity.getResources().getColor(android.R.color.transparent));
         }
         return rowView;
     }

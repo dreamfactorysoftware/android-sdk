@@ -1,4 +1,4 @@
-package com.dreamfactory.sampleapp.ui;
+package com.dreamfactory.sampleapp.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -25,6 +25,7 @@ import com.dreamfactory.sampleapp.models.ErrorMessage;
 import com.dreamfactory.sampleapp.models.FileRecord;
 
 import com.dreamfactory.sampleapp.models.Resource;
+import com.dreamfactory.sampleapp.customviews.InfoViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,11 +65,18 @@ public class ContactViewActivity extends BaseActivity {
 
         final ContactInfoService service = DreamFactoryAPI.getInstance().getService(ContactInfoService.class);
 
-        service.getContactInfo("contact_id=" + contactRecord.getId()).enqueue(new Callback<Resource.Parcelable<ContactInfoRecord.Parcelable>>() {
+        service.getContactInfo("contact_id=" + contactRecord.getId()).enqueue(new Callback<Resource<ContactInfoRecord>>() {
             @Override
-            public void onResponse(Call<Resource.Parcelable<ContactInfoRecord.Parcelable>> call, Response<Resource.Parcelable<ContactInfoRecord.Parcelable>> response) {
+            public void onResponse(Call<Resource<ContactInfoRecord>> call, Response<Resource<ContactInfoRecord>> response) {
                 if(response.isSuccessful()){
-                    contactInfoRecords = response.body();
+                    Resource<ContactInfoRecord> records = response.body();
+
+                    contactInfoRecords = new Resource.Parcelable<>();
+
+                    for(ContactInfoRecord record : records.getResource()) {
+                        contactInfoRecords.addResource(new ContactInfoRecord.Parcelable(record));
+                    }
+
                     // build the views once you have the data
                     buildContactInfoViews();
                 } else {
@@ -79,7 +87,7 @@ public class ContactViewActivity extends BaseActivity {
             }
 
             @Override
-            public void onFailure(Call<Resource.Parcelable<ContactInfoRecord.Parcelable>> call, Throwable t) {
+            public void onFailure(Call<Resource<ContactInfoRecord>> call, Throwable t) {
                 showError("Error while loading contact info.", t);
             }
         });
@@ -98,9 +106,9 @@ public class ContactViewActivity extends BaseActivity {
             public void onClick(View v) {
                 Activity tmp = (Activity) v.getTag();
                 if (changedContact) {
-                    setResult(Activity.RESULT_OK);
+                    setResult(RESULT_OK);
                 } else {
-                    setResult(Activity.RESULT_CANCELED);
+                    setResult(RESULT_CANCELED);
                 }
                 tmp.finish();
             }
@@ -129,7 +137,7 @@ public class ContactViewActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 1 && resultCode == Activity.RESULT_OK){
+        if(requestCode == 1 && resultCode == RESULT_OK){
             ContactRecord.Parcelable tmpRecord =
                     data.getParcelableExtra("contactRecord");
 

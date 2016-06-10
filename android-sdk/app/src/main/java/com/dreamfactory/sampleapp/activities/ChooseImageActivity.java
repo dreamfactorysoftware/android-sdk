@@ -1,4 +1,4 @@
-package com.dreamfactory.sampleapp.ui;
+package com.dreamfactory.sampleapp.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -69,7 +69,7 @@ public class ChooseImageActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 Activity tmp = (Activity) v.getTag();
-                setResult(Activity.RESULT_CANCELED);
+                setResult(RESULT_CANCELED);
                 tmp.finish();
             }
         });

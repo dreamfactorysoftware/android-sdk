@@ -20,8 +20,7 @@ public class PrefUtil {
         return settings.getString(key, defaultString);
     }
 
-    static public synchronized void putString(Context context, String key,
-                                              String value) {
+    static public synchronized void putString(Context context, String key, String value) {
         SharedPreferences settings = Prefs.get(context);
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(key, value);

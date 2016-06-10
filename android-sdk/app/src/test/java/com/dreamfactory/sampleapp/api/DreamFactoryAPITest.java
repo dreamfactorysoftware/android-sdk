@@ -1,11 +1,14 @@
 package com.dreamfactory.sampleapp.api;
 
 import com.dreamfactory.sampleapp.DreamFactoryApp;
+
 import com.dreamfactory.sampleapp.api.services.ContactGroupService;
 import com.dreamfactory.sampleapp.api.services.AuthService;
 import com.dreamfactory.sampleapp.api.services.ContactInfoService;
 import com.dreamfactory.sampleapp.api.services.ContactService;
+
 import com.dreamfactory.sampleapp.api.services.ImageService;
+
 import com.dreamfactory.sampleapp.models.ContactInfoRecord;
 import com.dreamfactory.sampleapp.models.ContactRecord;
 import com.dreamfactory.sampleapp.models.ContactsRelationalRecord;
@@ -24,6 +27,7 @@ import org.junit.Test;
 
 import java.util.List;
 
+
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import retrofit2.Response;
@@ -38,9 +42,10 @@ public class DreamFactoryAPITest {
     @Before
     public void init() throws Exception {
         DreamFactoryApp.SESSION_TOKEN = "session_token";
-        DreamFactoryApp.INSTANCE_URL = "http://10.0.2.2:8080/api/v2/";
+
+        DreamFactoryApp.INSTANCE_URL = "https://ft-nirmel.vz2.dreamfactory.com/api/v2/";
         DreamFactoryApp.DB_SVC = "db/_table";
-        DreamFactoryApp.API_KEY = "55d7ad6d21915e8539b7939f8604b4c096eff005bc2d431abd9b427a45d55e22";
+        DreamFactoryApp.API_KEY = "6498a8ad1beb9d84d63035c5d1120c007fad6de706734db9689f8996707e0f7d";
 
         DreamFactoryAPI.runningFromTest = true;
 
@@ -148,11 +153,11 @@ public class DreamFactoryAPITest {
     public void testGetContactInfo() throws Exception {
         ContactInfoService service = api.getService(ContactInfoService.class);
 
-        Response<Resource.Parcelable<ContactInfoRecord.Parcelable>> response = service.getContactInfo("contact_id=1").execute();
+        Response<Resource<ContactInfoRecord>> response = service.getContactInfo("contact_id=1").execute();
 
         Assert.assertTrue(response.isSuccessful());
 
-        List<ContactInfoRecord.Parcelable> list = response.body().getResource();
+        List<ContactInfoRecord> list = response.body().getResource();
 
         Assert.assertTrue(list.size() > 0);
     }
@@ -348,6 +353,35 @@ public class DreamFactoryAPITest {
     }
 
     @Test
+    public void testCreateContactInfo() throws Exception {
+        ContactInfoService service = api.getService(ContactInfoService.class);
+
+        ContactInfoRecord contactInfo = new ContactInfoRecord();
+        contactInfo.setCity("Sarajevo");
+        contactInfo.setContactId(7L);
+        contactInfo.setInfoType("home");
+        contactInfo.setAddress("Zmaja od Bosne");
+        contactInfo.setCountry("Bosnia and Herzegovina");
+        contactInfo.setEmail("nirmel@dreamfactory.com");
+        contactInfo.setPhone("38761123456");
+        contactInfo.setZip("71000");
+
+        Resource<ContactInfoRecord> createRecords = new Resource<>();
+        createRecords.addResource(contactInfo);
+
+        Response<Resource<ContactInfoRecord>> resp = service.createContactInfos(createRecords).execute();
+
+        if(resp.isSuccessful()) {
+            Assert.assertTrue(resp.body().getResource().size() > 0 && resp.body().getResource().get(0).getId() != 0L);
+        } else {
+            ErrorMessage error = DreamFactoryAPI.getErrorMessage(resp);
+
+            // Contact info already exist
+            Assert.assertEquals(error.getError().getCode().longValue(), 500L);
+        }
+    }
+
+    @Test
     public void testCreateFolder() throws Exception {
         ImageService service = api.getService(ImageService.class);
 
@@ -394,5 +428,73 @@ public class DreamFactoryAPITest {
         Response<Resource<FileRecord>> response = service.getProfileImages(7L).execute();
 
         Assert.assertTrue(response.isSuccessful());
+    }
+
+    @Test
+    public void testRemoveFolder() throws Exception {
+        ImageService service = api.getService(ImageService.class);
+
+        Response<FileRecord> response = service.removeFolder(8L).execute();
+
+        if(response.isSuccessful()) {
+            Assert.assertEquals("profile_images/7/", response.body().getPath());
+        } else {
+            ErrorMessage error = DreamFactoryAPI.getErrorMessage(response);
+
+            // Folder already exist
+            Assert.assertEquals(error.getError().getCode().longValue(), 400L);
+        }
+    }
+
+    @Test
+    public void testRemoveContacts() throws Exception {
+        ContactService service = api.getService(ContactService.class);
+
+        Response<Resource<ContactRecord>> resp = service.removeContacts("108").execute();
+
+        if(resp.isSuccessful()) {
+            Assert.assertTrue(resp.body().getResource().size() > 0 && resp.body().getResource().get(0).getId() != 0L);
+        } else {
+            ErrorMessage error = DreamFactoryAPI.getErrorMessage(resp);
+
+            // Contact already removed
+            Assert.assertEquals(error.getError().getCode().longValue(), 404L);
+        }
+    }
+
+    @Test
+    public void testRemoveContactInfos() throws Exception {
+        ContactInfoService service = api.getService(ContactInfoService.class);
+
+        Resource<Long> resource = new Resource<>();
+
+        resource.addResource(8L);
+
+        Response<Resource<ContactInfoRecord>> resp = service.removeContactInfos(resource).execute();
+
+        if(resp.isSuccessful()) {
+            Assert.assertTrue(resp.body().getResource().size() > 0 && resp.body().getResource().get(0).getId() != 0L);
+        } else {
+            ErrorMessage error = DreamFactoryAPI.getErrorMessage(resp);
+
+            // Contact already removed
+            Assert.assertEquals(error.getError().getCode().longValue(), 404L);
+        }
+    }
+
+    @Test
+    public void testRemoveContactGroups() throws Exception {
+        ContactGroupService service = api.getService(ContactGroupService.class);
+
+        Response<Resource<GroupRecord>> resp = service.removeGroups("9").execute();
+
+        if(resp.isSuccessful()) {
+            Assert.assertTrue(resp.body().getResource().size() > 0 && resp.body().getResource().get(0).getId() != 0L);
+        } else {
+            ErrorMessage error = DreamFactoryAPI.getErrorMessage(resp);
+
+            // Contact group already removed
+            Assert.assertEquals(error.getError().getCode().longValue(), 404L);
+        }
     }
 }

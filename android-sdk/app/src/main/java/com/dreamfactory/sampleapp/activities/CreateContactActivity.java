@@ -1,4 +1,4 @@
-package com.dreamfactory.sampleapp.ui;
+package com.dreamfactory.sampleapp.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -24,6 +24,8 @@ import com.dreamfactory.sampleapp.models.ContactsRelationalRecord;
 import com.dreamfactory.sampleapp.models.ErrorMessage;
 import com.dreamfactory.sampleapp.models.FileRecord;
 import com.dreamfactory.sampleapp.models.Resource;
+import com.dreamfactory.sampleapp.customviews.EditInfoViewGroup;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -112,7 +114,7 @@ public class CreateContactActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 Activity tmp = (Activity) v.getTag();
-                setResult(Activity.RESULT_CANCELED);
+                setResult(RESULT_CANCELED);
                 tmp.finish();
             }
         });
@@ -219,7 +221,7 @@ public class CreateContactActivity extends BaseActivity {
                                 });
                             }
 
-                            setResult(Activity.RESULT_OK);
+                            setResult(RESULT_OK);
 
                             // let the rest of the contact stuff get uploaded while this view finishes
                             // the group in the ContactList activity
@@ -235,7 +237,7 @@ public class CreateContactActivity extends BaseActivity {
                     public void onFailure(Call<Resource<ContactRecord>> call, Throwable t) {
                         showError("Error while updating contact info.", t);
 
-                        setResult(Activity.RESULT_CANCELED);
+                        setResult(RESULT_CANCELED);
 
                         CreateContactActivity.this.finish();
                     }
