@@ -8,7 +8,7 @@ import com.dreamfactory.sampleapp.models.ErrorMessage;
 import com.dreamfactory.sampleapp.models.GroupRecord;
 
 import com.dreamfactory.sampleapp.models.Resource;
-import com.dreamfactory.sampleapp.ui.BaseActivity;
+import com.dreamfactory.sampleapp.activities.BaseActivity;
 
 
 import java.util.ArrayList;

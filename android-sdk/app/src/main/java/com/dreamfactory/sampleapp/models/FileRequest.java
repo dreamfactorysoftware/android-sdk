@@ -14,11 +14,13 @@ public class FileRequest {
     @JsonProperty("path")
     private String path = null;
     /* The media type of the content of the file. */
-    @JsonProperty("content_type")
-    private String content_type = null;
+    @JsonProperty("contentType")
+    private String contentType = null;
     /* An array of name-value pairs. */
     @JsonProperty("metadata")
+
     private List<String> metadata = new ArrayList<>();
+
     public String getName() {
         return name;
     }
@@ -33,11 +35,11 @@ public class FileRequest {
         this.path = path;
     }
 
-    public String getContent_type() {
-        return content_type;
+    public String getContentType() {
+        return contentType;
     }
-    public void setContent_type(String content_type) {
-        this.content_type = content_type;
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 
     public List<String> getMetadata() {
@@ -52,7 +54,7 @@ public class FileRequest {
         return "class FileRequest {\n" +
                 "  name: " + name + "\n" +
                 "  path: " + path + "\n" +
-                "  content_type: " + content_type + "\n" +
+                "  contentType: " + contentType + "\n" +
                 "  metadata: " + metadata + "\n" +
                 "}\n";
     }

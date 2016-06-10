@@ -1,6 +1,5 @@
 package com.dreamfactory.sampleapp.models;
 
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ContactsRelationalRecord extends BaseRecord {

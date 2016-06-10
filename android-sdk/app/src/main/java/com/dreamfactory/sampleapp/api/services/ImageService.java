@@ -6,6 +6,7 @@ import com.dreamfactory.sampleapp.models.Resource;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -26,4 +27,7 @@ public interface ImageService {
 
     @POST("files/profile_images/{id}/")
     Call<FileRecord> addFolder(@Path(value = "id") Long contactId);
+
+    @DELETE("files/profile_images/{id}/?force=1")
+    Call<FileRecord> removeFolder(@Path(value = "id") Long contactId);
 }

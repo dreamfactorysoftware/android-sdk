@@ -4,13 +4,12 @@ import com.dreamfactory.sampleapp.utils.CustomJsonDateDeserializer;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by Nirmel on 6/3/2016.
  */
-public class User implements Serializable {
+public class User extends BaseRecord {
 
     @JsonProperty("session_token")
     private String sessionToken;

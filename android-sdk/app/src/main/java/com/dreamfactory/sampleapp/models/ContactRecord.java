@@ -5,7 +5,6 @@ import android.os.Parcel;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.beanutils.PropertyUtils;
 
-// make it parcelable for passing from contactListActivity to contactViewActivity
 public class ContactRecord extends BaseRecord {
 
     protected Long id;

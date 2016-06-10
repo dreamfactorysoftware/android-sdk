@@ -1,4 +1,4 @@
-package com.dreamfactory.sampleapp.ui;
+package com.dreamfactory.sampleapp.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -25,6 +25,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.dreamfactory.sampleapp.DreamFactoryApp;
 import com.dreamfactory.sampleapp.R;
 import com.dreamfactory.sampleapp.api.DreamFactoryAPI;
 import com.dreamfactory.sampleapp.api.services.AuthService;
@@ -33,7 +34,6 @@ import com.dreamfactory.sampleapp.models.RegisterResponse;
 import com.dreamfactory.sampleapp.models.User;
 import com.dreamfactory.sampleapp.models.requests.LoginRequest;
 import com.dreamfactory.sampleapp.models.requests.RegisterRequest;
-import com.dreamfactory.sampleapp.utils.AppConstants;
 import com.dreamfactory.sampleapp.utils.PrefUtil;
 
 import java.util.ArrayList;
@@ -178,7 +178,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                             if(user.getSessionToken() == null){
                                 Log.e(LoginActivity.class.getSimpleName(), "There is no session token in response");
                             } else {
-                                PrefUtil.putString(getApplicationContext(), AppConstants.SESSION_TOKEN, user.getSessionToken());
+                                PrefUtil.putString(getApplicationContext(), DreamFactoryApp.SESSION_TOKEN, user.getSessionToken());
 
                                 showGroupListActivity();
                             }
@@ -226,7 +226,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                             if (response.body().getSessionToken() == null) {
                                 Log.e(LoginActivity.class.getSimpleName(), "There is no session token in response");
                             } else {
-                                PrefUtil.putString(getApplicationContext(), AppConstants.SESSION_TOKEN, response.body().getSessionToken());
+                                PrefUtil.putString(getApplicationContext(), DreamFactoryApp.SESSION_TOKEN, response.body().getSessionToken());
 
                                 showGroupListActivity();
                             }

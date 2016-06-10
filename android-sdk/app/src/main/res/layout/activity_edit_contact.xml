@@ -5,7 +5,7 @@
 
     android:scrollbars="none"
     android:orientation="vertical"
-    tools:context="com.dreamfactory.sampleapp.ui.EditContactActivity"
+    tools:context=".activities.EditContactActivity"
     android:background="@color/activity_background_color"
     >
 

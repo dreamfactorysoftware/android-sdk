@@ -21,7 +21,7 @@
         <meta-data android:name="dbSvc" android:value="db/_table" />
         <meta-data android:name="apiKey" android:value="6498a8ad1beb9d84d63035c5d1120c007fad6de706734db9689f8996707e0f7d" />
         <activity
-            android:name=".ui.LoginActivity"
+            android:name=".activities.LoginActivity"
             android:label="@string/app_name"
             android:windowSoftInputMode="adjustResize|stateVisible" >
             <intent-filter>
@@ -30,35 +30,35 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.GroupListActivity"
+            android:name=".activities.GroupListActivity"
             android:label="@string/title_activity_group_list"
-            android:parentActivityName=".ui.LoginActivity" >
+            android:parentActivityName=".activities.LoginActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.LoginActivity" />
+                android:value=".activities.LoginActivity" />
         </activity>
         <activity
-            android:name=".ui.ContactListActivity"
+            android:name=".activities.ContactListActivity"
             android:label="@string/title_activity_contact_list" >
         </activity>
         <activity
-            android:name=".ui.ContactViewActivity"
+            android:name=".activities.ContactViewActivity"
             android:label="@string/title_activity_contact_view" >
         </activity>
         <activity
-            android:name=".ui.EditContactActivity"
+            android:name=".activities.EditContactActivity"
             android:label="@string/title_activity_edit_contact" >
         </activity>
         <activity
-            android:name=".ui.CreateContactActivity"
+            android:name=".activities.CreateContactActivity"
             android:label="@string/title_activity_create_contact" >
         </activity>
         <activity
-            android:name=".ui.GroupActivity"
+            android:name=".activities.GroupActivity"
             android:label="@string/title_activity_group" >
         </activity>
         <activity
-            android:name=".ui.ChooseImageActivity"
+            android:name=".activities.ChooseImageActivity"
             android:label="@string/title_activity_choose_image" >
         </activity>
     </application>

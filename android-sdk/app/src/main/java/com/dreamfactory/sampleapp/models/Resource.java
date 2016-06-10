@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by Nirmel on 6/3/2016.
  */
-public class Resource<T extends BaseRecord> implements Serializable {
+public class Resource<T> implements Serializable {
 
     protected List<T> resource = new ArrayList<>();
 

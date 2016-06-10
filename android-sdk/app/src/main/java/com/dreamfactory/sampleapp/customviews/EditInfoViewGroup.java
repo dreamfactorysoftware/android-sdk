@@ -1,4 +1,4 @@
-package com.dreamfactory.sampleapp.ui;
+package com.dreamfactory.sampleapp.customviews;
 
 import android.content.Context;
 import android.view.LayoutInflater;

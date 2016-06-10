@@ -1,8 +1,6 @@
 package com.dreamfactory.sampleapp.models;
 
-import com.dreamfactory.sampleapp.utils.CustomJsonDateDeserializer;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * Created by Nirmel on 6/7/2016.

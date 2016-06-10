@@ -4,14 +4,16 @@ import android.os.Parcel;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.apache.commons.beanutils.PropertyUtils;
+
 public class ContactInfoRecord extends BaseRecord {
 
-    protected Long id = 0L;
+    protected Long id;
 
     protected Long ordinal = 0L;
 
     @JsonProperty("contact_id")
-    protected Long contactId = 0L;
+    protected Long contactId;
 
     @JsonProperty("info_type")
     protected String infoType = "";
@@ -124,6 +126,12 @@ public class ContactInfoRecord extends BaseRecord {
     public static class Parcelable extends ContactInfoRecord implements android.os.Parcelable {
 
         public Parcelable() {
+        }
+
+        public Parcelable(ContactInfoRecord record) {
+            try {
+                PropertyUtils.copyProperties(this, record);
+            } catch (Exception e) { }
         }
 
         @Override

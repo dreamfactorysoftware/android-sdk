@@ -1,4 +1,4 @@
-package com.dreamfactory.sampleapp.ui;
+package com.dreamfactory.sampleapp.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -17,6 +17,7 @@ import com.dreamfactory.sampleapp.api.services.ContactGroupService;
 import com.dreamfactory.sampleapp.models.ErrorMessage;
 import com.dreamfactory.sampleapp.models.GroupRecord;
 import com.dreamfactory.sampleapp.models.Resource;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
