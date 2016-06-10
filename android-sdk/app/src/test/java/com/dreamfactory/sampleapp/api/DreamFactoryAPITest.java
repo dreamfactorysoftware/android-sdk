@@ -42,10 +42,9 @@ public class DreamFactoryAPITest {
     @Before
     public void init() throws Exception {
         DreamFactoryApp.SESSION_TOKEN = "session_token";
-
-        DreamFactoryApp.INSTANCE_URL = "https://ft-nirmel.vz2.dreamfactory.com/api/v2/";
+        DreamFactoryApp.INSTANCE_URL = "http://10.0.2.2:8080/api/v2/";
         DreamFactoryApp.DB_SVC = "db/_table";
-        DreamFactoryApp.API_KEY = "6498a8ad1beb9d84d63035c5d1120c007fad6de706734db9689f8996707e0f7d";
+        DreamFactoryApp.API_KEY = "55d7ad6d21915e8539b7939f8604b4c096eff005bc2d431abd9b427a45d55e22";
 
         DreamFactoryAPI.runningFromTest = true;
 
