@@ -2,11 +2,7 @@ package com.dreamfactory.sampleapp.models;
 
 import android.os.Parcel;
 
-import com.dreamfactory.sampleapp.utils.ClassUtil;
-
 import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 

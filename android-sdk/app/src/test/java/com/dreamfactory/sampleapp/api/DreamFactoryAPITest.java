@@ -45,7 +45,7 @@ public class DreamFactoryAPITest {
 
         DreamFactoryApp.INSTANCE_URL = "https://ft-nirmel.vz2.dreamfactory.com/api/v2/";
         DreamFactoryApp.DB_SVC = "db/_table";
-        DreamFactoryApp.API_KEY = "6498a8ad1beb9d84d63035c5d1120c007fad6de706734db9689f8996707e0f7d";
+        DreamFactoryApp.API_KEY = "86ae01a319dd30eeafb9344165b53ce1256a2bdec4c1463f97620fad22bb944a";
 
         DreamFactoryAPI.runningFromTest = true;
 
@@ -388,7 +388,7 @@ public class DreamFactoryAPITest {
         Response<FileRecord> response = service.addFolder(7L).execute();
 
         if(response.isSuccessful()) {
-            Assert.assertEquals("priofile_images/7/", response.body().getPath());
+            Assert.assertEquals("profile_images/7/", response.body().getPath());
         } else {
             ErrorMessage error = DreamFactoryAPI.getErrorMessage(response);
 
@@ -416,9 +416,14 @@ public class DreamFactoryAPITest {
 
         Response<FileRecord> response = service.getProfileImage(7L, "test.jpg").execute();
 
-        Assert.assertTrue(response.isSuccessful());
+        if(response.isSuccessful()) {
+            Assert.assertEquals(response.body().getName(), "test.jpg");
+        } else {
+            ErrorMessage error = DreamFactoryAPI.getErrorMessage(response);
 
-        Assert.assertEquals(response.body().getName(), "test.jpg");
+            // Folder already exist
+            Assert.assertEquals(error.getError().getCode().longValue(), 404L);
+        }
     }
 
     @Test
@@ -437,7 +442,7 @@ public class DreamFactoryAPITest {
         Response<FileRecord> response = service.removeFolder(8L).execute();
 
         if(response.isSuccessful()) {
-            Assert.assertEquals("profile_images/7/", response.body().getPath());
+            Assert.assertEquals("profile_images/8/", response.body().getPath());
         } else {
             ErrorMessage error = DreamFactoryAPI.getErrorMessage(response);
 
@@ -473,7 +478,7 @@ public class DreamFactoryAPITest {
         Response<Resource<ContactInfoRecord>> resp = service.removeContactInfos(resource).execute();
 
         if(resp.isSuccessful()) {
-            Assert.assertTrue(resp.body().getResource().size() > 0 && resp.body().getResource().get(0).getId() != 0L);
+            Assert.assertTrue(resp.body().getResource().size() > 0);
         } else {
             ErrorMessage error = DreamFactoryAPI.getErrorMessage(resp);
 
