@@ -2,8 +2,13 @@ package com.dreamfactory.sampleapp.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
+import com.dreamfactory.sampleapp.DreamFactoryApp;
 import com.dreamfactory.sampleapp.R;
 import com.dreamfactory.sampleapp.api.DreamFactoryAPI;
 import com.dreamfactory.sampleapp.api.services.ContactGroupService;
@@ -69,7 +75,7 @@ public class CreateContactActivity extends BaseActivity {
         twitterEditText = (EditText) findViewById(R.id.edit_contact_twitter);
         skypeEditText = (EditText) findViewById(R.id.edit_contact_skype);
         notesEditText = (EditText) findViewById(R.id.edit_contact_notes);
-        //chooseImageButton = (Button) findViewById(R.id.edit_contact_info_change_photo);
+        chooseImageButton = (Button) findViewById(R.id.edit_contact_info_change_photo);
 
         addContactInfoButton = (Button) findViewById(R.id.edit_contact_add_info);
         addContactInfoButton.setOnClickListener(new View.OnClickListener() {
@@ -132,7 +138,7 @@ public class CreateContactActivity extends BaseActivity {
                 contactRecord.setNotes(notesEditText.getText().toString());
 
                 if(profileImagePath != null && !profileImagePath.isEmpty()){
-                    contactRecord.setImageUrl("testFile.png");
+                    contactRecord.setImageUrl(DreamFactoryApp.INSTANCE_URL + "files/profile_images/" + contactRecord.getId() + "/testFile.png");
                 }
 
                 Resource<ContactRecord> resource = new Resource<>();
@@ -176,26 +182,34 @@ public class CreateContactActivity extends BaseActivity {
                                         ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
 
                                         onFailure(call, e.toException());
-                                    }
-                                }
-
-                                @Override
-                                public void onFailure(Call<Resource<ContactsRelationalRecord>> call, Throwable t) {
-                                    showError("Error while assigning contact to contact group.", t);
-                                }
-                            });
-
-                            if(profileImagePath != null && !profileImagePath.isEmpty()){
-                                imageService.addFolder(contactRecord.getId()).enqueue(new Callback<FileRecord>() {
-                                    @Override
-                                    public void onResponse(Call<FileRecord> call, Response<FileRecord> response) {
-                                        if(response.isSuccessful()){
-                                            RequestBody requestBody = RequestBody.create(MediaType.parse("image/*"), new File(profileImagePath));
-
-                                            imageService.addProfileImage(contactRecord.getId(), "testFile.png", requestBody).enqueue(new Callback<FileRecord>() {
+                                    } else {
+                                        if(profileImagePath != null && !profileImagePath.isEmpty()){
+                                            imageService.addFolder(contactRecord.getId()).enqueue(new Callback<FileRecord>() {
                                                 @Override
                                                 public void onResponse(Call<FileRecord> call, Response<FileRecord> response) {
-                                                    if(!response.isSuccessful()) {
+                                                    if(response.isSuccessful()){
+                                                        RequestBody requestBody = RequestBody.create(MediaType.parse("image/*"), new File(profileImagePath));
+
+                                                        imageService.addProfileImage(contactRecord.getId(), "testFile.png", requestBody).enqueue(new Callback<FileRecord>() {
+                                                            @Override
+                                                            public void onResponse(Call<FileRecord> call, Response<FileRecord> response) {
+                                                                if(!response.isSuccessful()) {
+                                                                    ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
+
+                                                                    onFailure(call, e.toException());
+                                                                } else {
+                                                                    setResult(RESULT_OK);
+
+                                                                    finish();
+                                                                }
+                                                            }
+
+                                                            @Override
+                                                            public void onFailure(Call<FileRecord> call, Throwable t) {
+                                                                showError("Error while uploading image.", t);
+                                                            }
+                                                        });
+                                                    } else {
                                                         ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
 
                                                         onFailure(call, e.toException());
@@ -204,28 +218,22 @@ public class CreateContactActivity extends BaseActivity {
 
                                                 @Override
                                                 public void onFailure(Call<FileRecord> call, Throwable t) {
-                                                    showError("Error while uploading image.", t);
+                                                    showError("Error while creating contact folder.", t);
                                                 }
                                             });
                                         } else {
-                                            ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
+                                            setResult(RESULT_OK);
 
-                                            onFailure(call, e.toException());
+                                            finish();
                                         }
                                     }
+                                }
 
-                                    @Override
-                                    public void onFailure(Call<FileRecord> call, Throwable t) {
-                                        showError("Error while creating contact folder.", t);
-                                    }
-                                });
-                            }
-
-                            setResult(RESULT_OK);
-
-                            // let the rest of the contact stuff get uploaded while this view finishes
-                            // the group in the ContactList activity
-                            CreateContactActivity.this.finish();
+                                @Override
+                                public void onFailure(Call<Resource<ContactsRelationalRecord>> call, Throwable t) {
+                                    showError("Error while assigning contact to contact group.", t);
+                                }
+                            });
                         } else {
                             ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
 
@@ -238,25 +246,23 @@ public class CreateContactActivity extends BaseActivity {
                         showError("Error while updating contact info.", t);
 
                         setResult(RESULT_CANCELED);
-
-                        CreateContactActivity.this.finish();
                     }
                 });
             }
         });
 
-//        chooseImageButton.setTag(this);
-//        chooseImageButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Activity activity = (Activity) v.getTag();
-//                activity.startActivityForResult(Intent.createChooser(new Intent(Intent.ACTION_GET_CONTENT).setType("image/*"), "choose an image"), 1);
-//            }
-//        });
+        chooseImageButton.setTag(this);
+        chooseImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Activity activity = (Activity) v.getTag();
+                activity.startActivityForResult(Intent.createChooser(new Intent(Intent.ACTION_GET_CONTENT).setType("image/*"), "choose an image"), 1);
+            }
+        });
     }
 
     protected void createInfoGroups(Resource<ContactInfoRecord> contactInfoRecords) {
-        if(editInfoViewGroupList.size() > 0) {
+        if(contactInfoRecords.getResource().size() > 0) {
             final ContactInfoService contactInfoService = DreamFactoryAPI.getInstance().getService(ContactInfoService.class);
 
             contactInfoService.createContactInfos(contactInfoRecords).enqueue(new Callback<Resource<ContactInfoRecord>>() {
@@ -284,8 +290,33 @@ public class CreateContactActivity extends BaseActivity {
                 if(resultCode == RESULT_OK){
                     Uri uri = imageReturnedIntent.getData();
 
-                    //TODO: Test this
-                    profileImagePath = uri.getPath();
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        try {
+                            String wholeID = DocumentsContract.getDocumentId(uri);
+                            String[] column = {MediaStore.Images.Media.DATA};
+
+
+                            // Split at colon, use second item in the array
+                            String id = wholeID.split(":")[1];
+
+                            // where id is equal to
+                            String sel = MediaStore.Images.Media._ID + "=?";
+
+                            Cursor cursor = this.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                                    column, sel, new String[]{id}, null);
+
+                            int columnIndex = cursor.getColumnIndex(column[0]);
+
+                            if (cursor.moveToFirst()) {
+                                profileImagePath = cursor.getString(columnIndex);
+                            }
+                            cursor.close();
+                        } catch (Exception e) {
+                            Log.e(CreateContactActivity.class.getSimpleName(), "could not decode image: " + e.toString());
+                        }
+                    } else {
+                        profileImagePath = uri.getPath();
+                    }
                 }
         }
     }

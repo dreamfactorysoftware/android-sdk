@@ -2,8 +2,11 @@ package com.dreamfactory.sampleapp.models;
 
 import android.os.Parcel;
 
+import com.dreamfactory.sampleapp.utils.ClassUtil;
+
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +46,10 @@ public class Resource<T> implements Serializable {
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeInt(resource.size());
 
+            if(resource.size() > 0) {
+                dest.writeValue(resource.get(0).getClass());
+            }
+
             for(T record : resource){
                 dest.writeParcelable((android.os.Parcelable) record, flags);
             }
@@ -60,18 +67,18 @@ public class Resource<T> implements Serializable {
         };
 
         private Parcelable(Parcel in) {
-            Class<T> c = (Class<T>) ((ParameterizedType) getClass()
-                    .getGenericSuperclass()).getActualTypeArguments()[0];
-
             int size = in.readInt();
 
             resource = new ArrayList<>();
 
-            for(int i = 0; i < size; i++){
+            if(size > 0) {
+                Class c = (Class) in.readValue(null);
 
-                T value = in.readParcelable(c.getClassLoader());
+                for(int i = 0; i < size; i++){
+                    T value = in.readParcelable(c.getClassLoader());
 
-                resource.add(value);
+                    resource.add(value);
+                }
             }
         }
     }

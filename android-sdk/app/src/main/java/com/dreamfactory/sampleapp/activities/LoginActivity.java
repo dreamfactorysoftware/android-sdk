@@ -1,5 +1,6 @@
 package com.dreamfactory.sampleapp.activities;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -7,6 +8,7 @@ import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -51,6 +53,8 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
+
+    protected static final int REQUEST_READ_CONTACTS_PERMISSION = 101;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -112,7 +116,30 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     }
 
     private void populateAutoComplete() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.READ_CONTACTS)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                requestPermissions(new String[]{Manifest.permission.READ_CONTACTS},
+                        REQUEST_READ_CONTACTS_PERMISSION);
+
+                return;
+            }
+        }
+
         getLoaderManager().initLoader(0, null, this);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_READ_CONTACTS_PERMISSION:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    populateAutoComplete();
+                }
+        }
     }
 
 

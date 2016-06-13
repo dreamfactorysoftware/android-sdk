@@ -73,30 +73,28 @@ public class EditContactActivity extends CreateContactActivity {
 
         edit_button.setVisibility(View.INVISIBLE);
 
-        save_button.setTag(this);
         save_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Activity tmp = (Activity) v.getTag();
                 if (mandatoryFieldsOk()) { // require all contacts to have a first and last name
                     setResult(RESULT_OK, buildIntent());
-                    tmp.finish();
+                    EditContactActivity.this.finish();
                 } else {
                     Log.w("editContactActivity", "did not fill in mandatory fields");
                 }
             }
         });
 
-//        chooseImageButton.setTag(this);
-//        chooseImageButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Activity activity = (Activity) v.getTag();
-//                Intent intent = new Intent(activity, ChooseImageActivity.class);
-//                intent.putExtra("contactId", contactRecord.id);
-//                activity.startActivityForResult(intent, 2);
-//            }
-//        });
+        chooseImageButton.setTag(this);
+        chooseImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Activity activity = (Activity) v.getTag();
+                Intent intent = new Intent(activity, ChooseImageActivity.class);
+                intent.putExtra("contactId", contactRecord.getId());
+                activity.startActivityForResult(intent, 2);
+            }
+        });
     }
 
     @Override
@@ -140,11 +138,12 @@ public class EditContactActivity extends CreateContactActivity {
         for(EditInfoViewGroup editInfoViewGroup : editInfoViewGroupList){
             ContactInfoRecord.Parcelable tmp = editInfoViewGroup.buildToContactInfoRecord();
 
-            if(tmp.getId() == 0){
+            if(tmp.getId() == null){
                 // new records don't have an id
-                tmp.setId(contactRecord.getId());
+                tmp.setContactId(contactRecord.getId());
                 contactInfoRecords.addResource(tmp);
             }
+
             tmpContactInfoRecord.addResource(tmp);
         }
 

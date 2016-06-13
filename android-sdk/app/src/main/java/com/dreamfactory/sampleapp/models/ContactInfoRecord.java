@@ -4,8 +4,6 @@ import android.os.Parcel;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.apache.commons.beanutils.PropertyUtils;
-
 public class ContactInfoRecord extends BaseRecord {
 
     protected Long id;
@@ -129,9 +127,17 @@ public class ContactInfoRecord extends BaseRecord {
         }
 
         public Parcelable(ContactInfoRecord record) {
-            try {
-                PropertyUtils.copyProperties(this, record);
-            } catch (Exception e) { }
+            this.id = record.id;
+            this.ordinal = record.ordinal;
+            this.contactId = record.contactId;
+            this.infoType = record.infoType;
+            this.phone = record.phone;
+            this.email = record.email;
+            this.address = record.address;
+            this.city = record.city;
+            this.state = record.state;
+            this.zip = record.zip;
+            this.country = record.country;
         }
 
         @Override
@@ -141,9 +147,9 @@ public class ContactInfoRecord extends BaseRecord {
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
-            dest.writeLong(id);
-            dest.writeLong(ordinal);
-            dest.writeLong(contactId);
+            dest.writeValue(id);
+            dest.writeValue(ordinal);
+            dest.writeValue(contactId);
             dest.writeString(infoType);
             dest.writeString(phone);
             dest.writeString(email);
@@ -166,9 +172,9 @@ public class ContactInfoRecord extends BaseRecord {
         };
 
         private Parcelable(Parcel in) {
-            id = in.readLong();
-            ordinal = in.readLong();
-            contactId = in.readLong();
+            id = (Long) in.readValue(Long.class.getClassLoader());
+            ordinal = (Long) in.readValue(Long.class.getClassLoader());
+            contactId = (Long) in.readValue(Long.class.getClassLoader());
             infoType = in.readString();
             phone = in.readString();
             email = in.readString();
