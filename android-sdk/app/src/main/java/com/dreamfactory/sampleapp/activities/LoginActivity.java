@@ -62,10 +62,8 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     private View mProgressView;
     private View mLoginFormView;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Set up the login form.
@@ -103,16 +101,15 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
-        final ImageButton back_button = (ImageButton) findViewById(R.id.persistent_back_button);
-        final ImageButton edit_button = (ImageButton) findViewById(R.id.persistent_edit_button);
-        final ImageButton save_button = (ImageButton) findViewById(R.id.persistent_save_button);
-        final ImageButton add_button = (ImageButton) findViewById(R.id.persistent_add_button);
+        final ImageButton backButton = (ImageButton) findViewById(R.id.persistent_back_button);
+        final ImageButton editButton = (ImageButton) findViewById(R.id.persistent_edit_button);
+        final ImageButton saveButton = (ImageButton) findViewById(R.id.persistent_save_button);
+        final ImageButton addButton = (ImageButton) findViewById(R.id.persistent_add_button);
 
-        add_button.setVisibility(View.INVISIBLE);
-        back_button.setVisibility(View.INVISIBLE);
-        edit_button.setVisibility(View.INVISIBLE);
-        save_button.setVisibility(View.INVISIBLE);
-
+        addButton.setVisibility(View.INVISIBLE);
+        backButton.setVisibility(View.INVISIBLE);
+        editButton.setVisibility(View.INVISIBLE);
+        saveButton.setVisibility(View.INVISIBLE);
     }
 
     private void populateAutoComplete() {
@@ -122,7 +119,6 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
 
                 requestPermissions(new String[]{Manifest.permission.READ_CONTACTS},
                         REQUEST_READ_CONTACTS_PERMISSION);
-
                 return;
             }
         }
@@ -141,7 +137,6 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                 }
         }
     }
-
 
     /**
      * Attempts to sign in or register the account specified by the login form.

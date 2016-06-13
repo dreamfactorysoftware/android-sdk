@@ -26,7 +26,6 @@ public class EditInfoViewGroup extends LinearLayout {
         LayoutInflater inflater = LayoutInflater.from(context);
         inflater.inflate(R.layout.edit_contact_info_layout, this, true);
 
-
         type = (EditText) findViewById(R.id.edit_contact_info_type);
         email = (EditText) findViewById(R.id.edit_contact_info_email);
         phone = (EditText) findViewById(R.id.edit_contact_info_phone);

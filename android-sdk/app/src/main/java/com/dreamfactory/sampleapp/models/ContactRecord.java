@@ -82,6 +82,10 @@ public class ContactRecord extends BaseRecord {
         this.notes = notes;
     }
 
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
     public static class Parcelable extends ContactRecord implements android.os.Parcelable {
 
         public Parcelable() {

@@ -7,26 +7,50 @@ import android.util.Log;
 
 /**
  * Created by Nirmel on 6/8/2016.
+ *
+ * Base activity for all other activities in application
  */
-public class BaseActivity extends Activity {
+public abstract class BaseActivity extends Activity {
 
     public BaseActivity() {
     }
 
+    /**
+     * Log error message
+     *
+     * @param message
+     */
     protected void logError(String message) {
         Log.e(this.getClass().getSimpleName(), message);
     }
 
+    /**
+     * Log error message with included stacktrace
+     *
+     * @param message
+     * @param t
+     */
     protected void logError(String message, Throwable t) {
         Log.e(this.getClass().getSimpleName(), message, t);
     }
 
+    /**
+     * Show and log error message with included stacktrace
+     *
+     * @param message
+     * @param t
+     */
     public void showError(String message, Throwable t) {
         showError(message + " " + (t.getMessage() != null ? t.getMessage() : ""));
 
         logError(message, t);
     }
 
+    /**
+     * Show error message
+     *
+     * @param message
+     */
     protected void showError(String message) {
         new AlertDialog.Builder(this)
                 .setTitle("Error")

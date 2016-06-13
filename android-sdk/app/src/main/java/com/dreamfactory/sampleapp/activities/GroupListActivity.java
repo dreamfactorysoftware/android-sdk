@@ -1,6 +1,5 @@
 package com.dreamfactory.sampleapp.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -22,6 +21,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * Activity responsible for showing group list
+ */
 public class GroupListActivity extends BaseActivity {
 
     private GroupListAdapter groupListAdapter;
@@ -37,33 +39,29 @@ public class GroupListActivity extends BaseActivity {
         registerForContextMenu(listView);
         listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
 
-        final ImageButton back_button = (ImageButton) findViewById(R.id.persistent_back_button);
-        final ImageButton edit_button = (ImageButton) findViewById(R.id.persistent_edit_button);
-        final ImageButton save_button = (ImageButton) findViewById(R.id.persistent_save_button);
-        final ImageButton add_button = (ImageButton) findViewById(R.id.persistent_add_button);
+        final ImageButton backButton = (ImageButton) findViewById(R.id.persistent_back_button);
+        final ImageButton editButton = (ImageButton) findViewById(R.id.persistent_edit_button);
+        final ImageButton saveButton = (ImageButton) findViewById(R.id.persistent_save_button);
+        final ImageButton addButton = (ImageButton) findViewById(R.id.persistent_add_button);
 
-        add_button.setTag(this);
-        add_button.setOnClickListener(new View.OnClickListener() {
+        addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Activity tmp = (Activity) v.getTag();
-                Intent intent = new Intent(tmp, GroupActivity.class);
-                tmp.startActivity(intent);
+                Intent intent = new Intent(getBaseContext(), GroupActivity.class);
+                GroupListActivity.this.startActivity(intent);
             }
         });
 
-        back_button.setTag(this);
-        back_button.setOnClickListener(new View.OnClickListener() {
+        backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Activity tmp = (Activity) v.getTag();
-                tmp.finish();
+                finish();
             }
         });
 
-        edit_button.setVisibility(View.INVISIBLE);
+        editButton.setVisibility(View.INVISIBLE);
 
-        save_button.setVisibility(View.INVISIBLE);
+        saveButton.setVisibility(View.INVISIBLE);
     }
 
     @Override

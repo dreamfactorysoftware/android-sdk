@@ -1,6 +1,5 @@
 package com.dreamfactory.sampleapp.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -28,7 +27,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * Activity responsible for showing contact list
+ *
+ */
 public class ContactListActivity extends BaseActivity {
+
     private Call<Resource<ContactsRelationalRecord>> getContactsInGroupCall;
 
     private ListView listView;
@@ -45,7 +49,6 @@ public class ContactListActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_list);
 
-
         // get the groupRecordId from the intent
         Intent intent = getIntent();
         contactGroupId = intent.getLongExtra("groupRecordId", 0);
@@ -57,46 +60,40 @@ public class ContactListActivity extends BaseActivity {
         registerForContextMenu(listView);
         listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
 
+        final ImageButton backButton = (ImageButton) findViewById(R.id.persistent_back_button);
+        final ImageButton editButton = (ImageButton) findViewById(R.id.persistent_edit_button);
+        final ImageButton saveButton = (ImageButton) findViewById(R.id.persistent_save_button);
+        final ImageButton addButton = (ImageButton) findViewById(R.id.persistent_add_button);
 
-        ImageButton back_button = (ImageButton) findViewById(R.id.persistent_back_button);
-        ImageButton edit_button = (ImageButton) findViewById(R.id.persistent_edit_button);
-        ImageButton save_button = (ImageButton) findViewById(R.id.persistent_save_button);
-        ImageButton add_button = (ImageButton) findViewById(R.id.persistent_add_button);
-
-        add_button.setTag(this);
-        add_button.setOnClickListener(new View.OnClickListener() {
+        addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Activity tmp = (Activity) v.getTag();
-
-                Intent intent = new Intent(tmp, CreateContactActivity.class);
+                Intent intent = new Intent(getBaseContext(), CreateContactActivity.class);
                 intent.putExtra("contactGroupId", contactGroupId);
-                tmp.startActivityForResult(intent, CREATE_CONTACT_ACTIVITY_REQUEST_CODE);
+
+                ContactListActivity.this.startActivityForResult(intent, CREATE_CONTACT_ACTIVITY_REQUEST_CODE);
             }
         });
 
-        back_button.setTag(this);
-        back_button.setOnClickListener(new View.OnClickListener() {
+        backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Activity tmp = (Activity) v.getTag();
-                tmp.finish();
+                finish();
             }
         });
 
-        edit_button.setTag(this);
-
-        edit_button.setOnClickListener(new View.OnClickListener() {
+        editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Activity tmp = (Activity) v.getTag();
-                Intent intent = new Intent(tmp, GroupActivity.class);
+                Intent intent = new Intent(getBaseContext(), GroupActivity.class);
                 intent.putExtra("contactGroupId", contactGroupId);
                 intent.putExtra("groupName", groupName);
-                tmp.startActivityForResult(intent, EDIT_CONTACT_ACTIVITY_REQUEST_CODE);
+
+                ContactListActivity.this.startActivityForResult(intent, EDIT_CONTACT_ACTIVITY_REQUEST_CODE);
             }
         });
-        save_button.setVisibility(View.INVISIBLE);
+
+        saveButton.setVisibility(View.INVISIBLE);
     }
 
     private void loadGroupContacts(Long contactGroupId) {

@@ -17,6 +17,9 @@ import com.dreamfactory.sampleapp.customviews.EditInfoViewGroup;
 
 import java.util.ArrayList;
 
+/**
+ * Activity responsible for editing contact
+ */
 public class EditContactActivity extends CreateContactActivity {
 
     private Resource.Parcelable<ContactInfoRecord.Parcelable> contactInfoRecords;
@@ -55,25 +58,24 @@ public class EditContactActivity extends CreateContactActivity {
 
     @Override
     protected void handleButtons (){
-        ImageButton back_button = (ImageButton) findViewById(R.id.persistent_back_button);
-        ImageButton edit_button = (ImageButton) findViewById(R.id.persistent_edit_button);
-        ImageButton save_button = (ImageButton) findViewById(R.id.persistent_save_button);
-        ImageButton add_button = (ImageButton) findViewById(R.id.persistent_add_button);
-        add_button.setVisibility(View.INVISIBLE);
+        final ImageButton backButton = (ImageButton) findViewById(R.id.persistent_back_button);
+        final ImageButton editButton = (ImageButton) findViewById(R.id.persistent_edit_button);
+        final ImageButton saveButton = (ImageButton) findViewById(R.id.persistent_save_button);
+        final ImageButton addButton = (ImageButton) findViewById(R.id.persistent_add_button);
 
-        back_button.setTag(this);
-        back_button.setOnClickListener(new View.OnClickListener() {
+        addButton.setVisibility(View.INVISIBLE);
+
+        backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Activity tmp = (Activity) v.getTag();
-                setResult(RESULT_CANCELED);
-                tmp.finish();
+            setResult(RESULT_CANCELED);
+            finish();
             }
         });
 
-        edit_button.setVisibility(View.INVISIBLE);
+        editButton.setVisibility(View.INVISIBLE);
 
-        save_button.setOnClickListener(new View.OnClickListener() {
+        saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mandatoryFieldsOk()) { // require all contacts to have a first and last name
@@ -85,14 +87,12 @@ public class EditContactActivity extends CreateContactActivity {
             }
         });
 
-        chooseImageButton.setTag(this);
         chooseImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Activity activity = (Activity) v.getTag();
-                Intent intent = new Intent(activity, ChooseImageActivity.class);
+                Intent intent = new Intent(getBaseContext(), ChooseImageActivity.class);
                 intent.putExtra("contactId", contactRecord.getId());
-                activity.startActivityForResult(intent, 2);
+                EditContactActivity.this.startActivityForResult(intent, CHOOSE_IMAGE_REQUEST);
             }
         });
     }
@@ -130,7 +130,6 @@ public class EditContactActivity extends CreateContactActivity {
         contactRecord.setSkype(skypeEditText.getText().toString());
         contactRecord.setNotes(notesEditText.getText().toString());
 
-
         // build the info view
         Resource.Parcelable<ContactInfoRecord.Parcelable> tmpContactInfoRecord = new Resource.Parcelable<>();
 
@@ -154,6 +153,7 @@ public class EditContactActivity extends CreateContactActivity {
 
         intent.putExtra("contactInfoRecords", (Parcelable) tmpContactInfoRecord);
         intent.putExtra("contactRecord", (Parcelable) contactRecord);
+
         return intent;
     }
 }

@@ -19,6 +19,7 @@ public class InfoViewGroup extends RelativeLayout {
         LayoutInflater inflater = LayoutInflater.from(context);
 
         inflater.inflate(R.layout.contact_info_layout, this, true);
+
         TextView type = (TextView) findViewById(R.id.type_label);
         type.setText(record.getInfoType());
 
@@ -26,24 +27,24 @@ public class InfoViewGroup extends RelativeLayout {
             RelativeLayout layout = (RelativeLayout) findViewById(R.id.info_phone_layout);
             layout.setVisibility(GONE);
         } else {
-            TextView phone_label = (TextView) findViewById(R.id.phone_label);
-            phone_label.setText(record.getPhone());
+            TextView phoneLabel = (TextView) findViewById(R.id.phone_label);
+            phoneLabel.setText(record.getPhone());
         }
 
         if (record.getEmail().isEmpty()) {
             RelativeLayout layout = (RelativeLayout) findViewById(R.id.info_email_layout);
             layout.setVisibility(GONE);
         } else {
-            TextView email_label = (TextView) findViewById(R.id.email_label);
-            email_label.setText(record.getEmail());
+            TextView emailLabel = (TextView) findViewById(R.id.email_label);
+            emailLabel.setText(record.getEmail());
         }
 
         if (record.getAddress().isEmpty() || record.getCity().isEmpty()) {
             RelativeLayout layout = (RelativeLayout) findViewById(R.id.info_address_layout);
             layout.setVisibility(GONE);
         } else {
-            TextView address_label = (TextView) findViewById(R.id.address_label);
-            address_label.setText(record.getAddress() + " " + record.getCity());
+            TextView addressLabel = (TextView) findViewById(R.id.address_label);
+            addressLabel.setText(record.getAddress() + " " + record.getCity());
         }
     }
 

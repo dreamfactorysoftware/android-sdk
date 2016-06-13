@@ -1,6 +1,5 @@
 package com.dreamfactory.sampleapp.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -19,6 +18,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * Activity used for displaying profile images
+ * related to user and choosing one as profile image
+ *
+ */
 public class ChooseImageActivity extends BaseActivity {
 
     @Override
@@ -37,10 +41,12 @@ public class ChooseImageActivity extends BaseActivity {
 
             service.getProfileImages(contactId).enqueue(new Callback<Resource<FileRecord>>() {
                 @Override
-                public void onResponse(Call<Resource<FileRecord>> call, Response<Resource<FileRecord>> response) {
+                public void onResponse(Call<Resource<FileRecord>> call,
+                                       Response<Resource<FileRecord>> response) {
                     if(response.isSuccessful()){
                         ProfileImageChooserAdapter profileImageChooserAdapter =
-                                new ProfileImageChooserAdapter(ChooseImageActivity.this, response.body().getResource());
+                                new ProfileImageChooserAdapter(ChooseImageActivity.this,
+                                        response.body().getResource());
 
                         ListView listView = (ListView) findViewById(R.id.profile_image_list);
                         listView.setAdapter(profileImageChooserAdapter);
@@ -58,24 +64,22 @@ public class ChooseImageActivity extends BaseActivity {
             });
         }
 
-        ImageButton back_button = (ImageButton) findViewById(R.id.persistent_back_button);
-        ImageButton edit_button = (ImageButton) findViewById(R.id.persistent_edit_button);
-        ImageButton save_button = (ImageButton) findViewById(R.id.persistent_save_button);
-        ImageButton add_button = (ImageButton) findViewById(R.id.persistent_add_button);
-        add_button.setVisibility(View.INVISIBLE);
+        final ImageButton backButton = (ImageButton) findViewById(R.id.persistent_back_button);
+        final ImageButton editButton = (ImageButton) findViewById(R.id.persistent_edit_button);
+        final ImageButton saveButton = (ImageButton) findViewById(R.id.persistent_save_button);
+        final ImageButton addButton = (ImageButton) findViewById(R.id.persistent_add_button);
 
-        back_button.setTag(this);
-        back_button.setOnClickListener(new View.OnClickListener() {
+        addButton.setVisibility(View.INVISIBLE);
+
+        backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Activity tmp = (Activity) v.getTag();
                 setResult(RESULT_CANCELED);
-                tmp.finish();
+                finish();
             }
         });
 
-        edit_button.setVisibility(View.INVISIBLE);
-
-        save_button.setVisibility(View.INVISIBLE);
+        editButton.setVisibility(View.INVISIBLE);
+        saveButton.setVisibility(View.INVISIBLE);
     }
 }

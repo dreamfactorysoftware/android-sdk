@@ -42,7 +42,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * Activity responsible for creating new contact
+ */
 public class CreateContactActivity extends BaseActivity {
+
+    protected static final int CHOOSE_IMAGE_REQUEST = 202;
 
     protected EditText firstNameEditText;
     protected EditText lastNameEditText;
@@ -109,28 +114,27 @@ public class CreateContactActivity extends BaseActivity {
     }
 
     protected void handleButtons() {
-        ImageButton back_button = (ImageButton) findViewById(R.id.persistent_back_button);
-        ImageButton edit_button = (ImageButton) findViewById(R.id.persistent_edit_button);
-        ImageButton save_button = (ImageButton) findViewById(R.id.persistent_save_button);
-        ImageButton add_button = (ImageButton) findViewById(R.id.persistent_add_button);
-        add_button.setVisibility(View.INVISIBLE);
+        final ImageButton backButton = (ImageButton) findViewById(R.id.persistent_back_button);
+        final ImageButton editButton = (ImageButton) findViewById(R.id.persistent_edit_button);
+        final ImageButton saveButton = (ImageButton) findViewById(R.id.persistent_save_button);
+        final ImageButton addButton = (ImageButton) findViewById(R.id.persistent_add_button);
 
-        back_button.setTag(this);
-        back_button.setOnClickListener(new View.OnClickListener() {
+        addButton.setVisibility(View.INVISIBLE);
+
+        backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Activity tmp = (Activity) v.getTag();
                 setResult(RESULT_CANCELED);
-                tmp.finish();
+                finish();
             }
         });
 
-        edit_button.setVisibility(View.INVISIBLE);
+        editButton.setVisibility(View.INVISIBLE);
 
-        save_button.setOnClickListener(new View.OnClickListener() {
+        saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ContactRecord contactRecord = new ContactRecord();
+                final ContactRecord contactRecord = new ContactRecord();
                 contactRecord.setFirstName(firstNameEditText.getText().toString());
                 contactRecord.setLastName(lastNameEditText.getText().toString());
                 contactRecord.setSkype(skypeEditText.getText().toString());
@@ -141,7 +145,7 @@ public class CreateContactActivity extends BaseActivity {
                     contactRecord.setImageUrl(DreamFactoryApp.INSTANCE_URL + "files/profile_images/" + contactRecord.getId() + "/testFile.png");
                 }
 
-                Resource<ContactRecord> resource = new Resource<>();
+                final Resource<ContactRecord> resource = new Resource<>();
                 resource.addResource(contactRecord);
 
                 final ContactService contactService = DreamFactoryAPI.getInstance().getService(ContactService.class);
@@ -256,18 +260,23 @@ public class CreateContactActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 Activity activity = (Activity) v.getTag();
-                activity.startActivityForResult(Intent.createChooser(new Intent(Intent.ACTION_GET_CONTENT).setType("image/*"), "choose an image"), 1);
+                activity.startActivityForResult(Intent.createChooser(
+                        new Intent(Intent.ACTION_GET_CONTENT).setType("image/*"),
+                        "Choose an image"), CHOOSE_IMAGE_REQUEST);
             }
         });
     }
 
     protected void createInfoGroups(Resource<ContactInfoRecord> contactInfoRecords) {
         if(contactInfoRecords.getResource().size() > 0) {
-            final ContactInfoService contactInfoService = DreamFactoryAPI.getInstance().getService(ContactInfoService.class);
+            final ContactInfoService contactInfoService = DreamFactoryAPI.getInstance()
+                    .getService(ContactInfoService.class);
 
-            contactInfoService.createContactInfos(contactInfoRecords).enqueue(new Callback<Resource<ContactInfoRecord>>() {
+            contactInfoService.createContactInfos(contactInfoRecords)
+                    .enqueue(new Callback<Resource<ContactInfoRecord>>() {
                 @Override
-                public void onResponse(Call<Resource<ContactInfoRecord>> call, Response<Resource<ContactInfoRecord>> response) {
+                public void onResponse(Call<Resource<ContactInfoRecord>> call,
+                                       Response<Resource<ContactInfoRecord>> response) {
                     if(!response.isSuccessful()){
                         ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
 
@@ -286,7 +295,7 @@ public class CreateContactActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode,Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
         switch(requestCode) {
-            case 1:
+            case CHOOSE_IMAGE_REQUEST:
                 if(resultCode == RESULT_OK){
                     Uri uri = imageReturnedIntent.getData();
 
@@ -295,14 +304,14 @@ public class CreateContactActivity extends BaseActivity {
                             String wholeID = DocumentsContract.getDocumentId(uri);
                             String[] column = {MediaStore.Images.Media.DATA};
 
-
                             // Split at colon, use second item in the array
                             String id = wholeID.split(":")[1];
 
                             // where id is equal to
                             String sel = MediaStore.Images.Media._ID + "=?";
 
-                            Cursor cursor = this.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                            Cursor cursor = this.getContentResolver().query(
+                                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                                     column, sel, new String[]{id}, null);
 
                             int columnIndex = cursor.getColumnIndex(column[0]);

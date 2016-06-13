@@ -23,6 +23,8 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 
 /**
  * Created by Nirmel on 6/3/2016.
+ *
+ * Componenet responsibe for handling services and api calls
  */
 public class DreamFactoryAPI {
 

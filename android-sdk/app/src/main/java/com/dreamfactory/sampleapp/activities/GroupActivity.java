@@ -27,6 +27,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * Activity responsible for managing group
+ */
 public class GroupActivity extends BaseActivity {
 
     protected EditText groupName;
@@ -75,7 +78,6 @@ public class GroupActivity extends BaseActivity {
                     if(editingGroup){
                         createGroupAdapter = new EditGroupAdapter(GroupActivity.this, data.getResource(), groupRecord);
                         listView.setAdapter(createGroupAdapter);
-
                     }
                     else {
                         createGroupAdapter = new CreateGroupAdapter(GroupActivity.this, data.getResource());
@@ -103,26 +105,23 @@ public class GroupActivity extends BaseActivity {
     }
 
     protected void handleButtons(){
-        ImageButton back_button = (ImageButton) findViewById(R.id.persistent_back_button);
-        ImageButton edit_button = (ImageButton) findViewById(R.id.persistent_edit_button);
-        ImageButton save_button = (ImageButton) findViewById(R.id.persistent_save_button);
-        ImageButton add_button = (ImageButton) findViewById(R.id.persistent_add_button);
+        final ImageButton backButton = (ImageButton) findViewById(R.id.persistent_back_button);
+        final ImageButton editButton = (ImageButton) findViewById(R.id.persistent_edit_button);
+        final ImageButton saveButton = (ImageButton) findViewById(R.id.persistent_save_button);
+        final ImageButton addButton = (ImageButton) findViewById(R.id.persistent_add_button);
 
-        add_button.setVisibility(View.INVISIBLE);
+        addButton.setVisibility(View.INVISIBLE);
 
-        back_button.setTag(this);
-        back_button.setOnClickListener(new View.OnClickListener() {
+        backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Activity tmp = (Activity) v.getTag();
-                tmp.finish();
+                finish();
             }
         });
 
-        edit_button.setVisibility(View.INVISIBLE);
+        editButton.setVisibility(View.INVISIBLE);
 
-        save_button.setTag(this);
-        save_button.setOnClickListener(new View.OnClickListener() {
+        saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 handleCompletion();
@@ -131,7 +130,6 @@ public class GroupActivity extends BaseActivity {
     }
 
     protected void handleCompletion (){
-
         final ContactGroupService service = DreamFactoryAPI.getInstance().getService(ContactGroupService.class);
 
         if(editingGroup){
