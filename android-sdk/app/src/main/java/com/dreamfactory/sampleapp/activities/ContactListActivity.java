@@ -34,7 +34,7 @@ public class ContactListActivity extends BaseActivity {
     private ListView listView;
     private ContactListAdapter contactListAdapter;
 
-    private int contactGroupId;
+    private Long contactGroupId;
     private String groupName;
 
     private final int EDIT_CONTACT_ACTIVITY_REQUEST_CODE = 1;
@@ -48,7 +48,7 @@ public class ContactListActivity extends BaseActivity {
 
         // get the groupRecordId from the intent
         Intent intent = getIntent();
-        contactGroupId = intent.getIntExtra("groupRecordId", 0);
+        contactGroupId = intent.getLongExtra("groupRecordId", 0);
         groupName = intent.getStringExtra("groupName");
 
         loadGroupContacts(contactGroupId);
@@ -99,7 +99,7 @@ public class ContactListActivity extends BaseActivity {
         save_button.setVisibility(View.INVISIBLE);
     }
 
-    private void loadGroupContacts(int contactGroupId) {
+    private void loadGroupContacts(Long contactGroupId) {
         if(getContactsInGroupCall != null) {
             getContactsInGroupCall.cancel();
         }

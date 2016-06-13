@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.dreamfactory.sampleapp.DreamFactoryApp;
 import com.dreamfactory.sampleapp.R;
 import com.dreamfactory.sampleapp.api.DreamFactoryAPI;
 import com.dreamfactory.sampleapp.api.services.ContactInfoService;
@@ -36,7 +37,7 @@ import retrofit2.Response;
 
 public class ContactViewActivity extends BaseActivity {
 
-    private ContactRecord contactRecord;
+    private ContactRecord.Parcelable contactRecord;
 
     private Resource.Parcelable<ContactInfoRecord.Parcelable> contactInfoRecords;
 
@@ -55,7 +56,7 @@ public class ContactViewActivity extends BaseActivity {
 
         final Intent intent = getIntent();
 
-        final ContactRecord.Parcelable contactRecord = intent.getParcelableExtra("contactRecord");
+        contactRecord = intent.getParcelableExtra("contactRecord");
 
         // put the data in the view
         buildContactView();
@@ -158,11 +159,20 @@ public class ContactViewActivity extends BaseActivity {
                 Resource<ContactRecord> resource = new Resource<>();
                 resource.addResource(contactRecord);
 
+                if(contactRecord.getImageUrl() != null) {
+                    contactRecord.setImageUrl(DreamFactoryApp.INSTANCE_URL + "files/profile_images/" + contactRecord.getId() + "/" + contactRecord.getImageUrl());
+                }
+
                 service.updateContacts(resource).enqueue(new Callback<Resource<ContactRecord>>() {
                     @Override
                     public void onResponse(Call<Resource<ContactRecord>> call, Response<Resource<ContactRecord>> response) {
                         if(response.isSuccessful()){
                             changedContact = true;
+
+                            if(!contactRecord.getImageUrl().isEmpty()) {
+                                // re-get the contact profile image
+                                getProfileImage();
+                            }
                         } else {
                             ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
 
@@ -175,11 +185,6 @@ public class ContactViewActivity extends BaseActivity {
                         showError("Error while updating contact.", t);
                     }
                 });
-
-                if(!contactRecord.getImageUrl().isEmpty()) {
-                    // re-get the contact profile image
-                    getProfileImage();
-                }
             }
 
             final Resource<ContactInfoRecord> resource = new Resource<>();
@@ -227,7 +232,15 @@ public class ContactViewActivity extends BaseActivity {
     private void getProfileImage() {
         final ImageService service = DreamFactoryAPI.getInstance().getService(ImageService.class);
 
-        service.getProfileImage(contactRecord.getId(), contactRecord.getImageUrl()).enqueue(new Callback<FileRecord>() {
+        // Skip possible query params
+        if(contactRecord.getImageUrl().contains("?")) {
+            contactRecord.setImageUrl(contactRecord.getImageUrl().substring(0, contactRecord.getImageUrl().indexOf("?")));
+        }
+
+        // Resolve image name from url
+        String imageName = contactRecord.getImageUrl().substring(contactRecord.getImageUrl().lastIndexOf("/") + 1);
+
+        service.getProfileImage(contactRecord.getId(), imageName).enqueue(new Callback<FileRecord>() {
             @Override
             public void onResponse(Call<FileRecord> call, Response<FileRecord> response) {
                 if(response.isSuccessful()){

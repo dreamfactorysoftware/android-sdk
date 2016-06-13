@@ -3,7 +3,6 @@ package com.dreamfactory.sampleapp.models;
 import android.os.Parcel;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.commons.beanutils.PropertyUtils;
 
 public class ContactRecord extends BaseRecord {
 
@@ -89,9 +88,13 @@ public class ContactRecord extends BaseRecord {
         }
 
         public Parcelable(ContactRecord record) {
-            try {
-                PropertyUtils.copyProperties(this, record);
-            } catch (Exception e) { }
+            this.id = record.id;
+            this.firstName = record.firstName;
+            this.lastName = record.lastName;
+            this.imageUrl = record.imageUrl;
+            this.twitter = record.twitter;
+            this.skype = record.skype;
+            this.notes = record.notes;
         }
 
         @Override

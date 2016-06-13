@@ -56,7 +56,13 @@ public class EditInfoViewGroup extends LinearLayout {
     }
 
     public boolean mandatoryFieldsOk() {
-        return !type.getText().toString().isEmpty();
+        boolean valid = !type.getText().toString().isEmpty();
+
+        if(!valid) {
+            type.setError(getResources().getString(R.string.error_field_required));
+        }
+
+        return valid;
     }
 
     public ContactInfoRecord.Parcelable buildToContactInfoRecord() {

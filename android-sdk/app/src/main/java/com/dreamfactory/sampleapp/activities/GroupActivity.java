@@ -38,6 +38,9 @@ public class GroupActivity extends BaseActivity {
     protected boolean editingGroup;
     protected GroupRecord groupRecord;
 
+    protected boolean removeContactsFinished = false;
+    protected boolean assignContactsFinished = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,10 +51,10 @@ public class GroupActivity extends BaseActivity {
 
         Intent intent = getIntent();
 
-        if(intent.getIntExtra("contactGroupId", 0) != 0){
+        if(intent.hasExtra("contactGroupId")){
             editingGroup = true;
             groupRecord = new GroupRecord();
-            groupRecord.setId(intent.getLongExtra("contactGroupId", 0));
+            groupRecord.setId(intent.getLongExtra("contactGroupId", 0L));
             groupRecord.setName(intent.getStringExtra("groupName"));
             groupName.setText(groupRecord.getName());
         }
@@ -143,6 +146,11 @@ public class GroupActivity extends BaseActivity {
                     public void onResponse(Call<Resource<GroupRecord>> call, Response<Resource<GroupRecord>> response) {
                         if(response.isSuccessful()) {
                             setResult(Activity.RESULT_OK);
+
+                            // Close if group members are not changed
+                            if(!((EditGroupAdapter) createGroupAdapter).didGroupChange()){
+                                finish();
+                            }
                         } else {
                             ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
 
@@ -155,12 +163,12 @@ public class GroupActivity extends BaseActivity {
                         showError("Error while updating contact group name.", t);
                     }
                 });
-            } else if(((EditGroupAdapter) createGroupAdapter).didGroupChange()){
-                // if the group is different now
-                setResult(Activity.RESULT_OK);
-            } else{
+            } else if(!((EditGroupAdapter) createGroupAdapter).didGroupChange()){
                 // don't update calling activity
                 setResult(Activity.RESULT_CANCELED);
+
+                // Close in case group name or members are not changed
+                finish();
             }
 
             if(((EditGroupAdapter) createGroupAdapter).didGroupChange()){
@@ -169,38 +177,50 @@ public class GroupActivity extends BaseActivity {
 
                 List<Long> contactsToRemove = ((EditGroupAdapter)createGroupAdapter).getContactsToRemove();
 
-                Resource<ContactsRelationalRecord> resourcesToRemove = new Resource<>();
+                if(contactsToRemove.size() > 0) {
+                    Resource<ContactsRelationalRecord> resourcesToRemove = new Resource<>();
 
-                for(Long contactId : contactsToRemove) {
-                    ContactsRelationalRecord record = new ContactsRelationalRecord();
-                    record.setContactId(contactId);
-                    record.setContactGroupId(groupRecord.getId());
+                    for (Long contactId : contactsToRemove) {
+                        ContactsRelationalRecord record = new ContactsRelationalRecord();
+                        record.setContactId(contactId);
+                        record.setContactGroupId(groupRecord.getId());
 
-                    resourcesToRemove.addResource(record);
-                }
+                        resourcesToRemove.addResource(record);
+                    }
 
-                service.deleteGroupContacts(resourcesToRemove).enqueue(new Callback<Resource<ContactsRelationalRecord>>() {
-                    @Override
-                    public void onResponse(Call<Resource<ContactsRelationalRecord>> call, Response<Resource<ContactsRelationalRecord>> response) {
-                        if(response.isSuccessful()) {
-                            GroupActivity.this.finish();
-                        } else {
-                            ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
+                    service.deleteGroupContacts(resourcesToRemove).enqueue(new Callback<Resource<ContactsRelationalRecord>>() {
+                        @Override
+                        public void onResponse(Call<Resource<ContactsRelationalRecord>> call, Response<Resource<ContactsRelationalRecord>> response) {
+                            if (response.isSuccessful()) {
+                                removeContactsFinished = true;
 
-                            onFailure(call, e.toException());
+                                synchronized (this) {
+                                    if (assignContactsFinished && removeContactsFinished) {
+                                        setResult(Activity.RESULT_OK);
+
+                                        finish();
+                                    }
+                                }
+                            } else {
+                                ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
+
+                                onFailure(call, e.toException());
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onFailure(Call<Resource<ContactsRelationalRecord>> call, Throwable t) {
-                        showError("Error while removing contacts from group.", t);
-                    }
-                });
+                        @Override
+                        public void onFailure(Call<Resource<ContactsRelationalRecord>> call, Throwable t) {
+                            showError("Error while removing contacts from group.", t);
+                        }
+                    });
+                } else {
+                    removeContactsFinished = true;
+                }
             }
         } else {
             final Resource<GroupRecord> resource = new Resource<>();
 
-            GroupRecord groupRecord = new GroupRecord();
+            groupRecord = new GroupRecord();
             groupRecord.setName(groupName.getText().toString());
 
             resource.addResource(groupRecord);
@@ -209,11 +229,19 @@ public class GroupActivity extends BaseActivity {
                 @Override
                 public void onResponse(Call<Resource<GroupRecord>> call, Response<Resource<GroupRecord>> response) {
                     if(response.isSuccessful()){
-                        GroupRecord groupRecord = response.body().getResource().get(0);
+                        GroupRecord resultGroup = response.body().getResource().get(0);
+
+                        groupRecord.setId(resultGroup.getId());
 
                         List<Long> contactsToAssign = createGroupAdapter.getSelectedContacts();
 
                         assignContactsToGroup(contactsToAssign);
+
+                        if(assignContactsFinished) {
+                            setResult(Activity.RESULT_OK);
+
+                            finish();
+                        }
                     } else{
                         setResult(Activity.RESULT_CANCELED);
 
@@ -234,6 +262,11 @@ public class GroupActivity extends BaseActivity {
     }
 
     private void assignContactsToGroup(List<Long> contactsToAssign) {
+        if(contactsToAssign.size() == 0) {
+            assignContactsFinished = true;
+            return;
+        }
+
         final ContactGroupService service = DreamFactoryAPI.getInstance().getService(ContactGroupService.class);
 
         Resource<ContactsRelationalRecord> resourcesToCreate = new Resource<>();
@@ -250,7 +283,15 @@ public class GroupActivity extends BaseActivity {
             @Override
             public void onResponse(Call<Resource<ContactsRelationalRecord>> call, Response<Resource<ContactsRelationalRecord>> response) {
                 if(response.isSuccessful()) {
-                    setResult(Activity.RESULT_OK);
+                    assignContactsFinished = true;
+
+                    synchronized (this) {
+                        if (assignContactsFinished && removeContactsFinished) {
+                            setResult(Activity.RESULT_OK);
+
+                            finish();
+                        }
+                    }
                 } else {
                     setResult(Activity.RESULT_CANCELED);
 
@@ -258,8 +299,6 @@ public class GroupActivity extends BaseActivity {
 
                     onFailure(call, e.toException());
                 }
-
-                finish();
             }
 
             @Override
