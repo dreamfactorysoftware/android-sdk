@@ -25,7 +25,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class GroupListAdapter extends BaseAdapter{
+public class GroupListAdapter extends BaseAdapter {
+
     private BaseActivity activity;
     private List<GroupRecord> records;
     private BitSet deleteSet;
@@ -98,7 +99,7 @@ public class GroupListAdapter extends BaseAdapter{
         deleteSet.clear();
     }
 
-    public void RemoveAllSelected() {
+    public void removeAllSelected() {
         // need to delete records with references to the contact_group record before
         // deleting the contact group record its self
         final ContactGroupService contactGroupService = DreamFactoryAPI.getInstance().getService(ContactGroupService.class);
@@ -156,10 +157,10 @@ public class GroupListAdapter extends BaseAdapter{
 
     private void removeFromList() {
         // remove selected groups from the list, called once the delete has been OK'd with the server
-        int delete_offset = 0; // account for shift that happens as items are deleted from the list
+        int deleteOffset = 0; // account for shift that happens as items are deleted from the list
         for(int i = deleteSet.nextSetBit(0); i >= 0; i = deleteSet.nextSetBit(i + 1)) {
-            records.remove(i - delete_offset);
-            delete_offset++;
+            records.remove(i - deleteOffset);
+            deleteOffset++;
         }
         notifyDataSetChanged();
     }

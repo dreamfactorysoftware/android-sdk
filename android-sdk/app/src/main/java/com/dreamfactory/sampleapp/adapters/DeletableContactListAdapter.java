@@ -1,6 +1,5 @@
 package com.dreamfactory.sampleapp.adapters;
 
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,7 +37,7 @@ public class DeletableContactListAdapter implements AbsListView.MultiChoiceModeL
 
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-        adapter.RemoveAllSelected();
+        adapter.removeAllSelected();
         mode.finish();
         return true;
     }

@@ -87,7 +87,7 @@ public class GroupActivity extends BaseActivity {
                     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            createGroupAdapter.handle_click(view);
+                            createGroupAdapter.handleClick(view);
                         }
                     });
                 } else {

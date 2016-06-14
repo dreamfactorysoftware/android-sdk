@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.dreamfactory.sampleapp.R;
 import com.dreamfactory.sampleapp.models.FileRecord;
 
-import java.io.File;
 import java.util.List;
 
 public class ProfileImageChooserAdapter extends BaseAdapter {

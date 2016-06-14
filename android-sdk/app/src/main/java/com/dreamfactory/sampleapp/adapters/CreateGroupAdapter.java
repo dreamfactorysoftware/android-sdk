@@ -27,7 +27,7 @@ public class CreateGroupAdapter extends ContactListAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View rowView = convertView;
-        int num_headers = getNumHeaders(position);
+        int numHeaders = getNumHeaders(position);
         boolean isHeader = mainSet.get(position);
 
         if(rowView == null){
@@ -40,7 +40,7 @@ public class CreateGroupAdapter extends ContactListAdapter {
         }
 
         GroupHolder holder = (GroupHolder) rowView.getTag();
-        ContactRecord record = mRecordsList.get(position - num_headers);
+        ContactRecord record = mRecordsList.get(position - numHeaders);
 
         if(isHeader){
             rowView.setClickable(true);
@@ -50,21 +50,21 @@ public class CreateGroupAdapter extends ContactListAdapter {
         }
         else{
             rowView.setClickable(false);
-            holder.textView.setText(record.getFirstName() + " " + record.getLastName());
+            holder.textView.setText(record.getFullName());
 
             holder.record = record;
 
-            holder.position = position - num_headers;
+            holder.position = position - numHeaders;
 
             holder.checkBox.setVisibility(View.VISIBLE);
-            holder.checkBox.setChecked(selectedSet.get(position - num_headers));
+            holder.checkBox.setChecked(selectedSet.get(position - numHeaders));
 
             holder.textView.setBackgroundColor(activity.getResources().getColor(android.R.color.transparent));
         }
         return rowView;
     }
 
-    public void handle_click(View v){
+    public void handleClick(View v){
         // used by multi modal
         GroupHolder groupHolder = (GroupHolder) v.getTag();
         selectedSet.flip(groupHolder.position);
