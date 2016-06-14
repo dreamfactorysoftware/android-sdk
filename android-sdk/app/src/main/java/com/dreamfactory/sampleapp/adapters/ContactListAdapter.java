@@ -34,7 +34,7 @@ import retrofit2.Response;
 public class ContactListAdapter extends BaseAdapter {
 
     protected BaseActivity activity;
-    protected List<ContactRecord> mRecordsList;
+    public List<ContactRecord> mRecordsList;
 
     protected BitSet mainSet; // track where section headers are in the list view
     protected BitSet compareSet; // declared up here for reuse
