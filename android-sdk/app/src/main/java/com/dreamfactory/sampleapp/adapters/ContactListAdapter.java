@@ -207,6 +207,8 @@ public class ContactListAdapter extends BaseAdapter {
             }
         }
 
+        if(contactIdsToRemove.getResource().size() == 0) return;
+
         final ContactGroupService contactGroupService = DreamFactoryAPI.getInstance().getService(ContactGroupService.class);
 
         contactGroupService.deleteContactsFromGroups(contactIdsToRemove).enqueue(new Callback<Resource<ContactsRelationalRecord>>() {
@@ -245,7 +247,18 @@ public class ContactListAdapter extends BaseAdapter {
                 } else {
                     ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
 
-                    onFailure(call, e.toException());
+                    // These two errors are fine for delete case
+                    if(e.getError().getCode() == 404L || e.getError().getCode() == 400L) {
+                        activity.logError("Error while removing contact infos.", e.toException());
+
+                        contactInfosRemoved = true;
+
+                        if(contactRemovedFromGroups && contactInfosRemoved) {
+                            removeContacts(contactIdsToRemove);
+                        }
+                    } else {
+                        onFailure(call, e.toException());
+                    }
                 }
             }
 

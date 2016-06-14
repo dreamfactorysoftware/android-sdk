@@ -110,9 +110,11 @@ public class GroupListAdapter extends BaseAdapter{
 
         int i = deleteSet.nextSetBit(0);
 
-        builder.append("contact_group_id=").append(records.get(i).getId());
+        builder.append("(contact_group_id=").append(records.get(i).getId()).append(")");
+        groupIds.add(records.get(i).getId());
+
         for(i = deleteSet.nextSetBit(i+1);i >=0; i = deleteSet.nextSetBit(i + 1)){
-            builder.append("||contact_group_id=").append(records.get(i).getId());
+            builder.append(" and (contact_group_id=").append(records.get(i).getId()).append(")");
 
             groupIds.add(records.get(i).getId());
         }

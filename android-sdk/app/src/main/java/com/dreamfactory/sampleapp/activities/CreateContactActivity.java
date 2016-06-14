@@ -66,6 +66,9 @@ public class CreateContactActivity extends BaseActivity {
 
     private String profileImagePath;
 
+    private boolean contactInfosCreationFinished = false;
+    private boolean contactGroupCreationFinished = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,8 +144,14 @@ public class CreateContactActivity extends BaseActivity {
                 contactRecord.setTwitter(twitterEditText.getText().toString());
                 contactRecord.setNotes(notesEditText.getText().toString());
 
+                final String imageName;
+
                 if(profileImagePath != null && !profileImagePath.isEmpty()){
-                    contactRecord.setImageUrl(DreamFactoryApp.INSTANCE_URL + "files/profile_images/" + contactRecord.getId() + "/testFile.png");
+                    imageName = profileImagePath.substring(profileImagePath.lastIndexOf("/") + 1);
+
+                    contactRecord.setImageUrl(DreamFactoryApp.INSTANCE_URL + "files/profile_images/" + contactRecord.getId() + "/" + imageName);
+                } else {
+                    imageName = null;
                 }
 
                 final Resource<ContactRecord> resource = new Resource<>();
@@ -169,7 +178,7 @@ public class CreateContactActivity extends BaseActivity {
                                 contactInfoRecords.addResource(contactInfoRecord);
                             }
 
-                            createInfoGroups(contactInfoRecords);
+                            createContactInfos(contactInfoRecords);
 
                             final Resource<ContactsRelationalRecord> resource = new Resource<>();
 
@@ -194,17 +203,21 @@ public class CreateContactActivity extends BaseActivity {
                                                     if(response.isSuccessful()){
                                                         RequestBody requestBody = RequestBody.create(MediaType.parse("image/*"), new File(profileImagePath));
 
-                                                        imageService.addProfileImage(contactRecord.getId(), "testFile.png", requestBody).enqueue(new Callback<FileRecord>() {
+                                                        imageService.addProfileImage(contactRecord.getId(), imageName, requestBody).enqueue(new Callback<FileRecord>() {
                                                             @Override
                                                             public void onResponse(Call<FileRecord> call, Response<FileRecord> response) {
                                                                 if(!response.isSuccessful()) {
                                                                     ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
 
                                                                     onFailure(call, e.toException());
-                                                                } else {
+                                                                } else if(contactInfosCreationFinished){
+                                                                    contactGroupCreationFinished = true;
+
                                                                     setResult(RESULT_OK);
 
                                                                     finish();
+                                                                } else {
+                                                                    contactGroupCreationFinished = true;
                                                                 }
                                                             }
 
@@ -225,10 +238,14 @@ public class CreateContactActivity extends BaseActivity {
                                                     showError("Error while creating contact folder.", t);
                                                 }
                                             });
-                                        } else {
+                                        } else if(contactInfosCreationFinished){
+                                            contactGroupCreationFinished = true;
+
                                             setResult(RESULT_OK);
 
                                             finish();
+                                        } else {
+                                            contactGroupCreationFinished = true;
                                         }
                                     }
                                 }
@@ -247,7 +264,7 @@ public class CreateContactActivity extends BaseActivity {
 
                     @Override
                     public void onFailure(Call<Resource<ContactRecord>> call, Throwable t) {
-                        showError("Error while updating contact info.", t);
+                        showError("Error while creating contact.", t);
 
                         setResult(RESULT_CANCELED);
                     }
@@ -267,7 +284,7 @@ public class CreateContactActivity extends BaseActivity {
         });
     }
 
-    protected void createInfoGroups(Resource<ContactInfoRecord> contactInfoRecords) {
+    protected void createContactInfos(Resource<ContactInfoRecord> contactInfoRecords) {
         if(contactInfoRecords.getResource().size() > 0) {
             final ContactInfoService contactInfoService = DreamFactoryAPI.getInstance()
                     .getService(ContactInfoService.class);
@@ -281,6 +298,14 @@ public class CreateContactActivity extends BaseActivity {
                         ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
 
                         onFailure(call, e.toException());
+                    } else {
+                        contactInfosCreationFinished = true;
+                    }
+
+                    if(contactInfosCreationFinished && contactGroupCreationFinished) {
+                        setResult(RESULT_OK);
+
+                        finish();
                     }
                 }
 
@@ -289,6 +314,8 @@ public class CreateContactActivity extends BaseActivity {
                     showError("Error while creating contact info.", t);
                 }
             });
+        } else {
+            contactInfosCreationFinished = true;
         }
     }
 

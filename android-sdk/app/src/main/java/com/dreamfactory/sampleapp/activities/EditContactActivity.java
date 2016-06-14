@@ -1,6 +1,5 @@
 package com.dreamfactory.sampleapp.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -10,12 +9,19 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.dreamfactory.sampleapp.R;
+import com.dreamfactory.sampleapp.api.DreamFactoryAPI;
+import com.dreamfactory.sampleapp.api.services.ContactInfoService;
 import com.dreamfactory.sampleapp.models.ContactInfoRecord;
 import com.dreamfactory.sampleapp.models.ContactRecord;
+import com.dreamfactory.sampleapp.models.ErrorMessage;
 import com.dreamfactory.sampleapp.models.Resource;
 import com.dreamfactory.sampleapp.customviews.EditInfoViewGroup;
 
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Activity responsible for editing contact
@@ -25,6 +31,8 @@ public class EditContactActivity extends CreateContactActivity {
     private Resource.Parcelable<ContactInfoRecord.Parcelable> contactInfoRecords;
 
     private ContactRecord.Parcelable contactRecord;
+
+    private boolean contactInfosCreated = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +87,13 @@ public class EditContactActivity extends CreateContactActivity {
             @Override
             public void onClick(View v) {
                 if (mandatoryFieldsOk()) { // require all contacts to have a first and last name
-                    setResult(RESULT_OK, buildIntent());
-                    EditContactActivity.this.finish();
+                    Intent intent = buildIntent();
+
+                    if(contactInfosCreated) {
+                        setResult(RESULT_OK, intent);
+
+                        finish();
+                    }
                 } else {
                     Log.w("editContactActivity", "did not fill in mandatory fields");
                 }
@@ -122,7 +135,7 @@ public class EditContactActivity extends CreateContactActivity {
 
     private Intent buildIntent(){
         // just to keep onCreate a little cleaner
-        Intent intent = new Intent();
+        final Intent intent = new Intent();
 
         contactRecord.setFirstName(firstNameEditText.getText().toString());
         contactRecord.setLastName(lastNameEditText.getText().toString());
@@ -148,7 +161,33 @@ public class EditContactActivity extends CreateContactActivity {
 
         if(contactInfoRecords.getResource().size() > 0) {
             // create any new contact info records
-            createInfoGroups(contactInfoRecords);
+            final ContactInfoService contactInfoService = DreamFactoryAPI.getInstance()
+                    .getService(ContactInfoService.class);
+
+            contactInfoService.createContactInfos(contactInfoRecords)
+                    .enqueue(new Callback<Resource<ContactInfoRecord>>() {
+                        @Override
+                        public void onResponse(Call<Resource<ContactInfoRecord>> call,
+                                               Response<Resource<ContactInfoRecord>> response) {
+                            if(!response.isSuccessful()){
+                                ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
+
+                                onFailure(call, e.toException());
+                            } else {
+                                contactInfosCreated = true;
+
+                                setResult(RESULT_OK, intent);
+                                finish();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Resource<ContactInfoRecord>> call, Throwable t) {
+                            showError("Error while creating contact info.", t);
+                        }
+                    });
+        } else {
+            contactInfosCreated = true;
         }
 
         intent.putExtra("contactInfoRecords", (Parcelable) tmpContactInfoRecord);

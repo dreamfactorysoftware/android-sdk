@@ -20,7 +20,7 @@ public abstract class BaseActivity extends Activity {
      *
      * @param message
      */
-    protected void logError(String message) {
+    public void logError(String message) {
         Log.e(this.getClass().getSimpleName(), message);
     }
 
@@ -30,7 +30,7 @@ public abstract class BaseActivity extends Activity {
      * @param message
      * @param t
      */
-    protected void logError(String message, Throwable t) {
+    public void logError(String message, Throwable t) {
         Log.e(this.getClass().getSimpleName(), message, t);
     }
 
@@ -51,7 +51,7 @@ public abstract class BaseActivity extends Activity {
      *
      * @param message
      */
-    protected void showError(String message) {
+    public void showError(String message) {
         new AlertDialog.Builder(this)
                 .setTitle("Error")
                 .setMessage(message)

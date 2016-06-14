@@ -284,7 +284,7 @@ public class GroupActivity extends BaseActivity {
                     assignContactsFinished = true;
 
                     synchronized (this) {
-                        if (assignContactsFinished && removeContactsFinished) {
+                        if (assignContactsFinished && (removeContactsFinished || !editingGroup)) {
                             setResult(Activity.RESULT_OK);
 
                             finish();
