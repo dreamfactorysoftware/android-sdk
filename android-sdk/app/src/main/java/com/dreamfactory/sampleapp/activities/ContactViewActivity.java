@@ -252,8 +252,10 @@ public class ContactViewActivity extends BaseActivity {
                 if(response.isSuccessful()){
                     FileRecord fileRecord = response.body();
 
-                    ConvertToBitmap convertToBitmapTask = new ConvertToBitmap();
-                    convertToBitmapTask.execute(fileRecord.getContent());
+                    if(fileRecord.getContent() != null) {
+                        ConvertToBitmap convertToBitmapTask = new ConvertToBitmap();
+                        convertToBitmapTask.execute(fileRecord.getContent());
+                    }
                 } else {
                     ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
 

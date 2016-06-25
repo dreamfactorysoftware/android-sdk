@@ -11,11 +11,22 @@
 
     <include layout="@layout/persistent_bar"> </include>
 
-    <ListView
-        android:layout_marginTop="30dp"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/profile_image_list">
-    </ListView>
-
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/upload_photo"
+            android:text="Upload New Image"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center_horizontal" />
+        <ListView
+            android:layout_marginTop="30dp"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/upload_photo"
+            android:id="@+id/profile_image_list">
+        </ListView>
+    </RelativeLayout>
 </LinearLayout>

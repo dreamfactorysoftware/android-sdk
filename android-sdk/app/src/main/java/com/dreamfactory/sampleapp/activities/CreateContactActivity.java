@@ -31,6 +31,7 @@ import com.dreamfactory.sampleapp.models.ErrorMessage;
 import com.dreamfactory.sampleapp.models.FileRecord;
 import com.dreamfactory.sampleapp.models.Resource;
 import com.dreamfactory.sampleapp.customviews.EditInfoViewGroup;
+import com.dreamfactory.sampleapp.utils.ImageUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -272,12 +273,10 @@ public class CreateContactActivity extends BaseActivity {
             }
         });
 
-        chooseImageButton.setTag(this);
         chooseImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Activity activity = (Activity) v.getTag();
-                activity.startActivityForResult(Intent.createChooser(
+                CreateContactActivity.this.startActivityForResult(Intent.createChooser(
                         new Intent(Intent.ACTION_GET_CONTENT).setType("image/*"),
                         "Choose an image"), CHOOSE_IMAGE_REQUEST);
             }
@@ -326,33 +325,7 @@ public class CreateContactActivity extends BaseActivity {
                 if(resultCode == RESULT_OK){
                     Uri uri = imageReturnedIntent.getData();
 
-                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                        try {
-                            String wholeID = DocumentsContract.getDocumentId(uri);
-                            String[] column = {MediaStore.Images.Media.DATA};
-
-                            // Split at colon, use second item in the array
-                            String id = wholeID.split(":")[1];
-
-                            // where id is equal to
-                            String sel = MediaStore.Images.Media._ID + "=?";
-
-                            Cursor cursor = this.getContentResolver().query(
-                                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                                    column, sel, new String[]{id}, null);
-
-                            int columnIndex = cursor.getColumnIndex(column[0]);
-
-                            if (cursor.moveToFirst()) {
-                                profileImagePath = cursor.getString(columnIndex);
-                            }
-                            cursor.close();
-                        } catch (Exception e) {
-                            Log.e(CreateContactActivity.class.getSimpleName(), "could not decode image: " + e.toString());
-                        }
-                    } else {
-                        profileImagePath = uri.getPath();
-                    }
+                    profileImagePath = ImageUtil.getImagePath(uri, getContentResolver());
                 }
         }
     }

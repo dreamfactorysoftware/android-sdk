@@ -1,8 +1,10 @@
 package com.dreamfactory.sampleapp.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
@@ -14,6 +16,12 @@ import com.dreamfactory.sampleapp.api.services.ImageService;
 import com.dreamfactory.sampleapp.models.ErrorMessage;
 import com.dreamfactory.sampleapp.models.FileRecord;
 import com.dreamfactory.sampleapp.models.Resource;
+import com.dreamfactory.sampleapp.utils.ImageUtil;
+
+import java.io.File;
+
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -25,14 +33,48 @@ import retrofit2.Response;
  */
 public class ChooseImageActivity extends BaseActivity {
 
+    protected static final int CHOOSE_IMAGE_REQUEST = 202;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_image);
 
+        refresh();
+
+        final ImageButton backButton = (ImageButton) findViewById(R.id.persistent_back_button);
+        final ImageButton editButton = (ImageButton) findViewById(R.id.persistent_edit_button);
+        final ImageButton saveButton = (ImageButton) findViewById(R.id.persistent_save_button);
+        final ImageButton addButton = (ImageButton) findViewById(R.id.persistent_add_button);
+        final Button uploadPhotoButton = (Button) findViewById(R.id.upload_photo);
+
+        addButton.setVisibility(View.INVISIBLE);
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setResult(RESULT_CANCELED);
+                finish();
+            }
+        });
+
+        editButton.setVisibility(View.INVISIBLE);
+        saveButton.setVisibility(View.INVISIBLE);
+
+        uploadPhotoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ChooseImageActivity.this.startActivityForResult(Intent.createChooser(
+                        new Intent(Intent.ACTION_GET_CONTENT).setType("image/*"),
+                        "Choose an image"), CHOOSE_IMAGE_REQUEST);
+            }
+        });
+    }
+
+    private void refresh() {
         Intent intent = getIntent();
 
-        Long contactId = intent.getLongExtra("contactId", 0);
+        final Long contactId = intent.getLongExtra("contactId", 0);
 
         if(contactId == 0){
             logError("No contact id sent");
@@ -53,7 +95,10 @@ public class ChooseImageActivity extends BaseActivity {
                     } else {
                         ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
 
-                        onFailure(call, e.toException());
+                        // Skip folder not found error
+                        if(e.getError().getCode() != 404L) {
+                            onFailure(call, e.toException());
+                        }
                     }
                 }
 
@@ -63,23 +108,69 @@ public class ChooseImageActivity extends BaseActivity {
                 }
             });
         }
+    }
 
-        final ImageButton backButton = (ImageButton) findViewById(R.id.persistent_back_button);
-        final ImageButton editButton = (ImageButton) findViewById(R.id.persistent_edit_button);
-        final ImageButton saveButton = (ImageButton) findViewById(R.id.persistent_save_button);
-        final ImageButton addButton = (ImageButton) findViewById(R.id.persistent_add_button);
+    protected void onActivityResult(int requestCode, int resultCode,Intent imageReturnedIntent) {
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+        switch(requestCode) {
+            case CHOOSE_IMAGE_REQUEST:
+                if(resultCode == RESULT_OK){
+                    Uri uri = imageReturnedIntent.getData();
 
-        addButton.setVisibility(View.INVISIBLE);
+                    final String profileImagePath = ImageUtil.getImagePath(uri, getContentResolver());
 
-        backButton.setOnClickListener(new View.OnClickListener() {
+                    final ImageService imageService = DreamFactoryAPI.getInstance().getService(ImageService.class);
+
+                    final Long contactId = getIntent().getLongExtra("contactId", 0);
+
+                    imageService.addFolder(contactId).enqueue(new Callback<FileRecord>() {
+                        @Override
+                        public void onResponse(Call<FileRecord> call, Response<FileRecord> response) {
+                            if(response.isSuccessful()){
+                                addProfileImage(contactId, profileImagePath);
+                            } else {
+                                ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
+
+                                if(e.getError().getCode() == 400L) {
+                                    addProfileImage(contactId, profileImagePath);
+                                } else {
+                                    onFailure(call, e.toException());
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<FileRecord> call, Throwable t) {
+                            showError("Error while creating contact folder.", t);
+                        }
+                    });
+                }
+        }
+    }
+
+    private void addProfileImage(Long contactId, String profileImagePath) {
+        final String imageName = profileImagePath.substring(profileImagePath.lastIndexOf("/") + 1);
+
+        RequestBody requestBody = RequestBody.create(MediaType.parse("image/*"), new File(profileImagePath));
+
+        final ImageService imageService = DreamFactoryAPI.getInstance().getService(ImageService.class);
+
+        imageService.addProfileImage(contactId, imageName, requestBody).enqueue(new Callback<FileRecord>() {
             @Override
-            public void onClick(View v) {
-                setResult(RESULT_CANCELED);
-                finish();
+            public void onResponse(Call<FileRecord> call, Response<FileRecord> response) {
+                if(!response.isSuccessful()) {
+                    ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
+
+                    onFailure(call, e.toException());
+                } else {
+                    refresh();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FileRecord> call, Throwable t) {
+                showError("Error while uploading image.", t);
             }
         });
-
-        editButton.setVisibility(View.INVISIBLE);
-        saveButton.setVisibility(View.INVISIBLE);
     }
 }
