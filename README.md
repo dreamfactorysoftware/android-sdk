@@ -59,7 +59,7 @@ When the app starts up you can register a new user, or log in as an existing use
 
 #Example API calls
 
-The app uses the Retrofit2 library to send REST requests. The request formatting is exposed in case you want to roll your own code or use a third party library to send requests.
+The app uses the Retrofit2 library to send REST requests.
 
 The general form of a DreamFactory REST API call is:
 
