@@ -1,7 +1,10 @@
 package com.dreamfactory.sampleapp.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -35,6 +38,8 @@ public class ChooseImageActivity extends BaseActivity {
 
     protected static final int CHOOSE_IMAGE_REQUEST = 202;
 
+    protected static final int REQUEST_READ_EXTERNAL_STORAGE_PERMISSION = 121;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,11 +69,37 @@ public class ChooseImageActivity extends BaseActivity {
         uploadPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ChooseImageActivity.this.startActivityForResult(Intent.createChooser(
-                        new Intent(Intent.ACTION_GET_CONTENT).setType("image/*"),
-                        "Choose an image"), CHOOSE_IMAGE_REQUEST);
+                takePicture();
             }
         });
+    }
+
+    private void takePicture() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        REQUEST_READ_EXTERNAL_STORAGE_PERMISSION);
+                return;
+            }
+        }
+
+        ChooseImageActivity.this.startActivityForResult(Intent.createChooser(
+                new Intent(Intent.ACTION_GET_CONTENT).setType("image/*"),
+                "Choose an image"), CHOOSE_IMAGE_REQUEST);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_READ_EXTERNAL_STORAGE_PERMISSION:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    takePicture();
+                }
+        }
     }
 
     private void refresh() {
