@@ -4,7 +4,7 @@
 
     android:scrollbars="none"
     android:orientation="vertical"
-    tools:context="com.dreamfactory.sampleapp.ui.ContactListActivity"
+    tools:context=".activities.ContactListActivity"
     android:background="@color/activity_background_color">
 
     <include layout="@layout/persistent_bar"></include>

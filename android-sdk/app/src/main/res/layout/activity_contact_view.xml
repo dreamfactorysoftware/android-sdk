@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.dreamfactory.sampleapp.ui.ContactViewActivity"
+    tools:context=".activities.ContactViewActivity"
     android:background="@color/activity_background_color">
 
     <include layout="@layout/persistent_bar"> </include>
