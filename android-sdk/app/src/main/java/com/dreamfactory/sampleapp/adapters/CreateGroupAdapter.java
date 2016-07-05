@@ -1,8 +1,5 @@
 package com.dreamfactory.sampleapp.adapters;
 
-
-import android.app.Activity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +8,7 @@ import android.widget.TextView;
 
 import com.dreamfactory.sampleapp.R;
 import com.dreamfactory.sampleapp.models.ContactRecord;
+import com.dreamfactory.sampleapp.activities.BaseActivity;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -19,8 +17,8 @@ import java.util.List;
 public class CreateGroupAdapter extends ContactListAdapter {
     protected BitSet selectedSet;
 
-    public CreateGroupAdapter(Activity context, List<ContactRecord> records) {
-        super(context, records);
+    public CreateGroupAdapter(BaseActivity activity, List<ContactRecord> records) {
+        super(activity, records);
 
         // store selectedSet contacts
         selectedSet = new BitSet(records.size());
@@ -29,11 +27,11 @@ public class CreateGroupAdapter extends ContactListAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View rowView = convertView;
-        int num_headers = getNumHeaders(position);
+        int numHeaders = getNumHeaders(position);
         boolean isHeader = mainSet.get(position);
 
         if(rowView == null){
-            LayoutInflater inflater = context.getLayoutInflater();
+            LayoutInflater inflater = activity.getLayoutInflater();
             rowView = inflater.inflate(R.layout.selcetable_row_layout, null);
             GroupHolder holder = new GroupHolder();
             holder.textView = (TextView) rowView.findViewById(R.id.selectable_row_label);
@@ -42,43 +40,43 @@ public class CreateGroupAdapter extends ContactListAdapter {
         }
 
         GroupHolder holder = (GroupHolder) rowView.getTag();
-        ContactRecord record = mRecordsList.get(position - num_headers);
+        ContactRecord record = mRecordsList.get(position - numHeaders);
 
         if(isHeader){
             rowView.setClickable(true);
             holder.checkBox.setVisibility(View.GONE);
-            holder.textView.setText(("" + record.last_name.charAt(0)).toUpperCase());
-            holder.textView.setBackgroundColor(context.getResources().getColor(R.color.contact_list_header));
+            holder.textView.setText(("" + record.getLastName().charAt(0)).toUpperCase());
+            holder.textView.setBackgroundColor(activity.getResources().getColor(R.color.contact_list_header));
         }
         else{
             rowView.setClickable(false);
-            holder.textView.setText(record.first_name + " " + record.last_name);
+            holder.textView.setText(record.getFullName());
 
             holder.record = record;
 
-            holder.position = position - num_headers;
+            holder.position = position - numHeaders;
 
             holder.checkBox.setVisibility(View.VISIBLE);
-            holder.checkBox.setChecked(selectedSet.get(position - num_headers));
+            holder.checkBox.setChecked(selectedSet.get(position - numHeaders));
 
-            holder.textView.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));
+            holder.textView.setBackgroundColor(activity.getResources().getColor(android.R.color.transparent));
         }
         return rowView;
     }
 
-    public void handle_click(View v){
+    public void handleClick(View v){
         // used by multi modal
         GroupHolder groupHolder = (GroupHolder) v.getTag();
         selectedSet.flip(groupHolder.position);
         groupHolder.checkBox.setChecked(selectedSet.get(groupHolder.position));
     }
 
-    public List<Integer> getSelectedContacts() {
+    public List<Long> getSelectedContacts() {
         // returns list of contacts selected to be in group
-        List<Integer> selectedContacts = new ArrayList<>();
+        List<Long> selectedContacts = new ArrayList<>();
 
         for(int i = selectedSet.nextSetBit(0); i >= 0; i = selectedSet.nextSetBit(i + 1)){
-            selectedContacts.add(mRecordsList.get(i).id);
+            selectedContacts.add(mRecordsList.get(i).getId());
         }
         return selectedContacts;
     }

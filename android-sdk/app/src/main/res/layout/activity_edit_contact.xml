@@ -5,7 +5,7 @@
 
     android:scrollbars="none"
     android:orientation="vertical"
-    tools:context="com.dreamfactory.sampleapp.ui.EditContactActivity"
+    tools:context=".activities.EditContactActivity"
     android:background="@color/activity_background_color"
     >
 
@@ -87,12 +87,12 @@
                     android:layout_marginRight="0dp"
                     android:layout_marginTop="-5dp"
                     />
-                <!--<Button-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:id="@+id/edit_contact_info_change_photo"-->
-                    <!--android:text="Change Profile Image"-->
-                    <!--android:layout_gravity="center_horizontal"/>-->
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/edit_contact_info_change_photo"
+                    android:text="Change Profile Image"
+                    android:layout_gravity="center_horizontal" />
             </LinearLayout>
 
             <Button

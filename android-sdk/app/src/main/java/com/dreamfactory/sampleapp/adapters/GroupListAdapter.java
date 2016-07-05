@@ -1,7 +1,7 @@
 package com.dreamfactory.sampleapp.adapters;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,30 +9,30 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.dreamfactory.sampleapp.R;
+import com.dreamfactory.sampleapp.api.DreamFactoryAPI;
+import com.dreamfactory.sampleapp.api.services.ContactGroupService;
+import com.dreamfactory.sampleapp.models.ContactsRelationalRecord;
+import com.dreamfactory.sampleapp.models.ErrorMessage;
 import com.dreamfactory.sampleapp.models.GroupRecord;
-import com.dreamfactory.sampleapp.ui.ContactListActivity;
-import dfapi.BaseAsyncRequest;
-import com.dreamfactory.sampleapp.utils.AppConstants;
-import com.dreamfactory.sampleapp.utils.PrefUtil;
-
-import org.json.JSONException;
-
+import com.dreamfactory.sampleapp.models.Resource;
+import com.dreamfactory.sampleapp.activities.BaseActivity;
+import com.dreamfactory.sampleapp.activities.ContactListActivity;
+import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.HashMap;
 import java.util.List;
 
-import dfapi.ApiException;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-public class GroupListAdapter extends BaseAdapter{
-    private Activity context;
-    public List<GroupRecord> records;
+public class GroupListAdapter extends BaseAdapter {
+
+    private BaseActivity activity;
+    private List<GroupRecord> records;
     private BitSet deleteSet;
 
-    private RemoveContactGroupRelationshipsTask removeContactGroupRelationTask;
-    private RemoveGroupsTask removeGroupsTask;
-
-    public GroupListAdapter(Activity context, List<GroupRecord> records){
-        this.context = context;
+    public GroupListAdapter(BaseActivity activity, List<GroupRecord> records){
+        this.activity = activity;
         this.records = records;
         deleteSet = new BitSet(records.size());
     }
@@ -52,11 +52,11 @@ public class GroupListAdapter extends BaseAdapter{
         return 0;
     }
 
-    public void showContactList(int groupId, String groupName) {
-        Intent intent = new Intent(context, ContactListActivity.class);
+    public void showContactList(Long groupId, String groupName) {
+        Intent intent = new Intent(activity, ContactListActivity.class);
         intent.putExtra("groupRecordId", groupId);
         intent.putExtra("groupName", groupName);
-        context.startActivity(intent);
+        activity.startActivity(intent);
     }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -64,7 +64,7 @@ public class GroupListAdapter extends BaseAdapter{
 
         if(rowView == null){
             // reuse views
-            LayoutInflater inflater = context.getLayoutInflater();
+            LayoutInflater inflater = activity.getLayoutInflater();
             rowView = inflater.inflate(R.layout.rowlayout, null);
             GroupListHolder viewHolder = new GroupListHolder();
             viewHolder.text = (TextView) rowView.findViewById(R.id.row_text_label);
@@ -75,7 +75,7 @@ public class GroupListAdapter extends BaseAdapter{
         // fill data
         GroupListHolder holder = (GroupListHolder) rowView.getTag();
         GroupRecord record = records.get(position);
-        holder.text.setText(record.name);
+        holder.text.setText(record.getName());
         holder.record = record;
 
         return rowView;
@@ -88,7 +88,7 @@ public class GroupListAdapter extends BaseAdapter{
 
     public void handleClick(int position){
         GroupRecord record = (GroupRecord) getItem(position);
-        showContactList(record.id, record.name);
+        showContactList(record.getId(), record.getName());
     }
 
     public void set(int position, boolean value){
@@ -99,90 +99,75 @@ public class GroupListAdapter extends BaseAdapter{
         deleteSet.clear();
     }
 
-    public void RemoveAllSelected() {
+    public void removeAllSelected() {
         // need to delete records with references to the contact_group record before
         // deleting the contact group record its self
-        removeContactGroupRelationTask = new RemoveContactGroupRelationshipsTask();
-        removeContactGroupRelationTask.execute();
+        final ContactGroupService contactGroupService = DreamFactoryAPI.getInstance().getService(ContactGroupService.class);
+
+        // delete multiple records by chaining filters together
+        StringBuilder builder = new StringBuilder();
+
+        final List<Long> groupIds = new ArrayList<>();
+
+        int i = deleteSet.nextSetBit(0);
+
+        builder.append("(contact_group_id=").append(records.get(i).getId()).append(")");
+        groupIds.add(records.get(i).getId());
+
+        for(i = deleteSet.nextSetBit(i+1);i >=0; i = deleteSet.nextSetBit(i + 1)){
+            builder.append(" and (contact_group_id=").append(records.get(i).getId()).append(")");
+
+            groupIds.add(records.get(i).getId());
+        }
+
+        contactGroupService.deleteContactsFromGroups(builder.toString()).enqueue(new Callback<Resource<ContactsRelationalRecord>>() {
+            @Override
+            public void onResponse(Call<Resource<ContactsRelationalRecord>> call, Response<Resource<ContactsRelationalRecord>> response) {
+                if(response.isSuccessful()){
+                    contactGroupService.removeGroups(TextUtils.join(",", groupIds)).enqueue(new Callback<Resource<GroupRecord>>() {
+                        @Override
+                        public void onResponse(Call<Resource<GroupRecord>> call, Response<Resource<GroupRecord>> response) {
+                            if(response.isSuccessful()) {
+                                removeFromList();
+                            } else {
+                                ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
+
+                                onFailure(call, e.toException());
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Resource<GroupRecord>> call, Throwable t) {
+                            activity.showError("Error while removing contact groups.", t);
+                        }
+                    });
+                } else {
+                    ErrorMessage e = DreamFactoryAPI.getErrorMessage(response);
+
+                    onFailure(call, e.toException());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Resource<ContactsRelationalRecord>> call, Throwable t) {
+                activity.showError("Error while removing contact from groups.", t);
+            }
+        });
     }
 
     private void removeFromList() {
         // remove selected groups from the list, called once the delete has been OK'd with the server
-        int delete_offset = 0; // account for shift that happens as items are deleted from the list
+        int deleteOffset = 0; // account for shift that happens as items are deleted from the list
         for(int i = deleteSet.nextSetBit(0); i >= 0; i = deleteSet.nextSetBit(i + 1)) {
-            records.remove(i - delete_offset);
-            delete_offset++;
+            records.remove(i - deleteOffset);
+            deleteOffset++;
         }
         notifyDataSetChanged();
     }
 
-    private class RemoveContactGroupRelationshipsTask extends BaseAsyncRequest {
-        @Override
-        protected void doSetup() throws ApiException, JSONException {
-            callerName = "removeGroupRelationships";
+    public void setRecords(List<GroupRecord> records) {
+        this.records = records;
 
-            serviceName = AppConstants.DB_SVC;
-            endPoint = "contact_group_relationship";
-            verb = "DELETE";
-
-            // delete multiple records by chaining filters together
-            StringBuilder builder = new StringBuilder();
-            int i = deleteSet.nextSetBit(0);
-
-            builder.append("contact_group_id=").append(records.get(i).id);
-            for(i = deleteSet.nextSetBit(i+1);i >=0; i = deleteSet.nextSetBit(i + 1)){
-                builder.append("||contact_group_id=").append(records.get(i).id);
-            }
-
-            queryParams = new HashMap<>();
-            queryParams.put("filter", builder.toString());
-
-            applicationApiKey = AppConstants.API_KEY;
-            sessionToken = PrefUtil.getString(context, AppConstants.SESSION_TOKEN);
-        }
-
-        @Override
-        protected void onCompletion(boolean success) {
-            if(success) {
-                removeGroupsTask = new RemoveGroupsTask();
-                removeGroupsTask.execute();
-            }
-            removeContactGroupRelationTask = null;
-        }
-    }
-
-    private class RemoveGroupsTask extends BaseAsyncRequest {
-        @Override
-        protected void doSetup() throws ApiException, JSONException {
-            callerName = "removeGroups";
-            serviceName = AppConstants.DB_SVC;
-            endPoint = "contact_group";
-            verb = "DELETE";
-
-            // delete records by ids
-            StringBuilder builder = new StringBuilder();
-            int i = deleteSet.nextSetBit(0);
-
-            builder.append(records.get(i).id);
-            for(i = deleteSet.nextSetBit(i + 1);i >=0; i = deleteSet.nextSetBit(i + 1)){
-                builder.append(",").append(records.get(i).id);
-            }
-
-            // ids is a comma separated list of contact_group record ids
-            queryParams = new HashMap<>();
-            queryParams.put("ids", builder.toString());
-
-            applicationApiKey = AppConstants.API_KEY;
-            sessionToken = PrefUtil.getString(context, AppConstants.SESSION_TOKEN);
-        }
-
-        @Override
-        protected void onCompletion(boolean success) {
-            if(success){
-                // remove the groups from the display list
-                removeFromList();
-            }
-            removeGroupsTask = null;
-        }
+        notifyDataSetChanged();
     }
 }

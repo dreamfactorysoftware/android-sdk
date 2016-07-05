@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:scrollbars="none"
-    tools:context="com.dreamfactory.sampleapp.ui.GroupListActivity"
+    tools:context=".activities.GroupListActivity"
     android:orientation="vertical"
     android:id="@+id/groupListScroll"
     android:background="@color/activity_background_color">
